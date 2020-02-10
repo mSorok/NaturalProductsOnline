@@ -1,0 +1,134 @@
+/* coconut variable overrides */
+
+$grid-breakpoints: (
+        xxl: 1440px
+);
+
+$container-max-widths: (
+        xxl: 1400px
+);
+
+$theme-colors: (
+        "primary": #004e8f
+);
+
+$enable-rounded: false;
+$enable-shadows: true;
+
+$coconut-box-shadow: 0 .2rem .5rem 0 rgba(60, 60, 160, .15) !important;
+$coconut-header-height: 215px;
+
+/* bootstrap and its default variables */
+@import "~bootstrap/scss/bootstrap";
+
+/* CSS */
+html {
+  scroll-behavior: smooth;
+}
+
+#header {
+  background-color: white;
+  padding-top: 15px;
+  box-shadow: $coconut-box-shadow;
+}
+
+#headerIcon {
+  margin-bottom: 10px;
+}
+
+#headerNav {
+  margin-top: 15px;
+}
+
+#searchButton, #structureSearchButton, #structureSearchDrawExampleButton {
+  margin-left: 5px;
+}
+
+#searchInput {
+}
+
+.content {
+  padding-top: $coconut-header-height;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-bottom: 10px;
+}
+
+#headerNav .nav-tabs {
+  border-bottom: none !important;
+}
+
+.card.cardBrowserItem {
+  width: 16rem;
+  margin: 2rem;
+}
+
+.compoundCardItem {
+  width: 100%;
+}
+
+.compoundCardRow:before {
+  display: block;
+  content: " ";
+  margin-top: -$coconut-header-height;
+  height: $coconut-header-height;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.card table tr td {
+  font-size: small;
+  border: none;
+  padding: 0.15rem;
+  margin-bottom: 0;
+}
+
+.card table tr th {
+  font-size: small;
+}
+
+table tr td, table tr th {
+  font-size: small;
+  border: none;
+  padding: 0.15rem;
+  margin-bottom: 0;
+}
+
+.card {
+  box-shadow: $coconut-box-shadow;
+}
+
+.compoundCardItem .table tr td:first-child {
+  width: 34%;
+}
+
+.tooltip-inner {
+  max-width: 400px;
+}
+
+#compoundCardSidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  padding-top: $coconut-header-height;
+}
+
+#structureSearchEditor {
+  width: 896px;
+  height: 504px;
+  border: thin solid map_get($theme-colors, "primary");
+  box-shadow: $coconut-box-shadow
+}
+
+.tableThumbnail {
+  min-width: 200px;
+}
+
+.cardItemHeadline {
+  font-size: smaller;
+}
+
+.standAloneIcon {
+  color: map_get($theme-colors, "primary");
+}

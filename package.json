@@ -1,0 +1,49 @@
+{
+  "name": "naturalproductsonline",
+  "version": "0.0.1-SNAPSHOT",
+  "description": "Natural Products Online",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mSorok/NaturalProductsOnline"
+  },
+  "keywords": [],
+  "author": "Peter Merseburger, Maria Sorokina",
+  "license": "MIT",
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.25",
+    "@fortawesome/free-solid-svg-icons": "^5.11.2",
+    "@fortawesome/react-fontawesome": "^0.1.5",
+    "bootstrap": "^4.3.1",
+    "jquery": "^3.4.1",
+    "openchemlib": "^7.2.1",
+    "react": "^16.10.2",
+    "react-bootstrap": "^1.0.0-beta.14",
+    "react-dom": "^16.10.2",
+    "react-router-bootstrap": "^0.25.0",
+    "react-router-dom": "^5.1.2",
+    "rest": "^2.0.0"
+  },
+  "scripts": {
+    "watch": "webpack --watch -d",
+    "build": "npx webpack"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.6.2",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/preset-env": "^7.6.2",
+    "@babel/preset-react": "^7.0",
+    "@welldone-software/why-did-you-render": "^3.3.6",
+    "autoprefixer": "^9.6.4",
+    "babel-loader": "^8.0",
+    "css-loader": "^3.2.0",
+    "file-loader": "^4.2.0",
+    "html-loader": "^0.5.5",
+    "node-sass": "^4.12.0",
+    "postcss-loader": "^3.0.0",
+    "sass-loader": "^8.0.0",
+    "style-loader": "^1.0.0",
+    "url-loader": "^2.2.0",
+    "webpack": "^4.41.0",
+    "webpack-cli": "^3.3.9"
+  }
+}
