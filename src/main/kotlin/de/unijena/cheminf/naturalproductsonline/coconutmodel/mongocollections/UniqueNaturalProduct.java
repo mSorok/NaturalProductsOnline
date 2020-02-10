@@ -12,9 +12,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Hashtable;
 
+//adapt to the new version of COCONUT and NAturalProductsOnline
+
 @Document
 public class UniqueNaturalProduct {
-
 
     @Id
     public String id;
