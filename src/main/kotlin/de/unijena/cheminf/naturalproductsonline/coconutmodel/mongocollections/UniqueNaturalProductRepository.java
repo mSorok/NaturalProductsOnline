@@ -2,9 +2,11 @@ package de.unijena.cheminf.naturalproductsonline.coconutmodel.mongocollections;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import java.util.List;
 
+@RepositoryRestResource(path="compound")
 public interface UniqueNaturalProductRepository  extends MongoRepository<UniqueNaturalProduct, String> {
 
     public List<UniqueNaturalProduct> findBySmiles(String smiles);
@@ -18,6 +20,8 @@ public interface UniqueNaturalProductRepository  extends MongoRepository<UniqueN
 
     @Query("{molecular_formula : ?0}")
     public List<UniqueNaturalProduct> findByMolecular_formula(String molecular_formula);
+
+    //todo add find by molecular weight
 
 
 

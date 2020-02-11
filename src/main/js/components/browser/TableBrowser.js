@@ -8,7 +8,7 @@ export default class TableBrowser extends React.Component {
     render() {
         const naturalProductTableItems = this.props.naturalProducts.map(naturalProduct =>
             <NaturalProductTableItem key={naturalProduct.inchikey} naturalProduct={naturalProduct}/>
-            console.log(this.props)
+
         );
 
         return (
