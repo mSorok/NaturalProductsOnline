@@ -37,7 +37,7 @@ export default class Overview extends React.Component {
         return (
             <Card className="compoundCardItem">
                 <Card.Body>
-                    <Card.Title className="text-primary">{naturalProduct.inchikey}</Card.Title>
+                    <Card.Title className="text-primary">{naturalProduct.coconut_id}</Card.Title>
                     <br />
                     <Row>
                         <Col sm={4}>

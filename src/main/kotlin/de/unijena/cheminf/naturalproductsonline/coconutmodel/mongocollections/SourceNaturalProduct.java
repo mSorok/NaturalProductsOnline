@@ -1,6 +1,7 @@
 package de.unijena.cheminf.naturalproductsonline.coconutmodel.mongocollections;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
@@ -18,6 +19,8 @@ public class SourceNaturalProduct {
     public String originalSmiles;
 
     public String simpleSmiles;
+
+    public String absoluteSmiles;
 
     public String originalInchi;
 
@@ -56,16 +59,9 @@ public class SourceNaturalProduct {
     public ArrayList<String> synonyms;
 
 
-
-
     //Constructor
-    public SourceNaturalProduct(){}
-
-
-
-
-
-
+    public SourceNaturalProduct() {
+    }
 
 
     public String getId() {
@@ -235,5 +231,13 @@ public class SourceNaturalProduct {
 
     public void setGeographicLocation(ArrayList<String> geographicLocation) {
         this.geographicLocation = geographicLocation;
+    }
+
+    public String getAbsoluteSmiles() {
+        return absoluteSmiles;
+    }
+
+    public void setAbsoluteSmiles(String absoluteSmiles) {
+        this.absoluteSmiles = absoluteSmiles;
     }
 }

@@ -16,6 +16,14 @@ export default class Representations extends React.Component {
                     <Table size="sm">
                         <tbody>
                         <tr>
+                            <td>COCONUT id</td>
+                            <td>{naturalProduct.coconut_id}</td>
+                        </tr>
+                        <tr>
+                            <td>Name</td>
+                            <td>{naturalProduct.name}</td>
+                        </tr>
+                        <tr>
                             <td>InChI</td>
                             <td>{naturalProduct.inchi}</td>
                         </tr>

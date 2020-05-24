@@ -132,6 +132,7 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
         naturalProducts += this.uniqueNaturalProductRepository.findByInchi(query)
         naturalProducts += this.uniqueNaturalProductRepository.findByInchikey(query)
         naturalProducts += this.uniqueNaturalProductRepository.findByMolecular_formula(query)
+        naturalProducts += this.uniqueNaturalProductRepository.findByCoconut_id(query)
 
         return mapOf(
                 "originalQuery" to query,
@@ -139,14 +140,17 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
         )
     }
 
+    //TODO add search by name and search by COCONUT id
     fun doSimpleSearchWithHeuristic(query: String): Map<String, Any> {
         // determine type of input on very basic principles without validation
         val regexMap: Map<String, Regex> = mapOf(
                 "inchi" to Regex("^InChI=.*$"),
                 "inchikey" to Regex("^[A-Z]{14}-[A-Z]{10}-[A-Z]$"),
                 "molecular_formula" to Regex("C[0-9]+?H[0-9].+"),
-                "smiles" to Regex("^[^Jj][A-Za-z0-9\\(\\)\\[\\]\\-=#$:\\+\\@\\.\\/\\>\\<]{3,}$")
+                "smiles" to Regex("^[^Jj][A-Za-z0-9\\(\\)\\[\\]\\-=#$:\\+\\@\\.\\/\\>\\<]{3,}$"),
+                "coconut_id" to Regex("^CNP[0-9]+?")
                 // "molecular_weight" to Regex("^\\d+?[.,]?\\d+?$")
+                //TODO add regex for name
         )
 
         val hitsMap = mutableMapOf<String, Boolean>()
@@ -159,6 +163,7 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
         val naturalProducts: List<UniqueNaturalProduct> = when {
             hitsMap["inchi"]!! -> this.uniqueNaturalProductRepository.findByInchi(query)
             hitsMap["inchikey"]!! -> this.uniqueNaturalProductRepository.findByInchikey(query)
+            hitsMap["coconut_id"]!! -> this.uniqueNaturalProductRepository.findByCoconut_id(query)
             hitsMap["molecular_formula"]!! -> this.uniqueNaturalProductRepository.findByMolecular_formula(query)
             hitsMap["smiles"]!! -> this.uniqueNaturalProductRepository.findBySmiles(query) // this.doStructureSearchBySmiles(query)
             else -> emptyList()
@@ -167,6 +172,7 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
         val determinedInputType: String = when {
             hitsMap["inchi"]!! -> "InChI"
             hitsMap["inchikey"]!! -> "InChIKey"
+            hitsMap["coconut_id"]!! -> "coconut_id"
             hitsMap["molecular_formula"]!! -> "molecular formula"
             hitsMap["smiles"]!! -> "SMILES"
             else -> ""

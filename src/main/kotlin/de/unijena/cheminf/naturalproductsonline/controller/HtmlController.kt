@@ -12,7 +12,7 @@ class HtmlController {
             "/browser/*",
             "/search/*",
             "/search/simple/*",
-            "/compound/{identifier:smiles|inchi|inchikey}/{identifierValue}") //TODO here - ADD CNP id
+            "/compound/{identifier:smiles|inchi|inchikey|coconut_id|id}/{identifierValue}")
     fun index(): String {
         return "index"
     }

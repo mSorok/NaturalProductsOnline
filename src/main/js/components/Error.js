@@ -20,7 +20,7 @@ export default class Error extends React.Component {
                     <FontAwesomeIcon icon="bug" className="standAloneIcon" size="3x"/>
                 </Row>
                 <Row className="justify-content-center">
-                    <p>An error occurred..</p>
+                    <p>An error occurred...</p>
                 </Row>
             </Container>
         );

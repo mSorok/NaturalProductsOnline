@@ -7,7 +7,7 @@ const React = require("react");
 export default class TableBrowser extends React.Component {
     render() {
         const naturalProductTableItems = this.props.naturalProducts.map(naturalProduct =>
-            <NaturalProductTableItem key={naturalProduct.inchikey} naturalProduct={naturalProduct}/>
+            <NaturalProductTableItem key={naturalProduct.coconut_id} naturalProduct={naturalProduct}/>
 
         );
 
@@ -17,6 +17,7 @@ export default class TableBrowser extends React.Component {
                 <tr>
                     <th className="tableThumbnail"></th>
                     <th>Name</th>
+                    <th>COCONUT id</th>th>
                     <th>NPL score</th>
                     <th>Mol. formula</th>
                     <th>Mol. weight</th>

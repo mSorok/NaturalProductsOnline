@@ -15,7 +15,7 @@ export default class NotFound extends React.Component {
         return (
             <Container>
                 <Row className="justify-content-center">
-                    <h1>404 - Whoooooops!</h1>
+                    <h1>404 - Something went wrong on our side...</h1>
                 </Row>
                 <Row className="justify-content-center">
                     <h2>Page Not Found!</h2>

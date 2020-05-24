@@ -15,6 +15,9 @@ public interface UniqueNaturalProductRepository  extends MongoRepository<UniqueN
 
     public List<UniqueNaturalProduct> findByInchikey(String inchikey);
 
+    @Query("{ coconut_id : ?0}")
+    public List<UniqueNaturalProduct> findByCoconut_id(String coconut_id);
+
     @Query("{ clean_smiles : ?0}")
     public List<UniqueNaturalProduct> findByClean_smiles(String clean_smiles);
 

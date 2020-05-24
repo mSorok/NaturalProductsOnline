@@ -42,7 +42,7 @@ export default class StructureSearch extends React.Component {
     }
 
     handleDesireForCoffee() {
-        const caffeineSmiles = "[H]C1=NC2=C(C(=O)N(C(=O)N2C([H])([H])[H])C([H])([H])[H])N1C([H])([H])[H]";
+        /*const caffeineSmiles = "[H]C1=NC2=C(C(=O)N(C(=O)N2C([H])([H])[H])C([H])([H])[H])N1C([H])([H])[H]";*/
         const caffeineCleanSmiles = "O=C1C2=C(N=CN2C)N(C(=O)N1C)C";
 
         this.editor.setSmiles(caffeineCleanSmiles);
@@ -149,7 +149,7 @@ export default class StructureSearch extends React.Component {
                         &nbsp;Search
                     </Button>
                     <Button id="structureSearchDrawExampleButton" variant="primary" type="submit" onClick={this.handleDesireForCoffee}>
-                        <FontAwesomeIcon icon="mug-hot" fixedWidth/>
+                        &nbsp;Load example
                     </Button>
                 </Row>
                 <br/>

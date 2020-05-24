@@ -1,21 +1,19 @@
 package de.unijena.cheminf.naturalproductsonline.coconutmodel.mongocollections;
 
 
-
 import org.javatuples.Pair;
+import org.openscience.cdk.fingerprint.IBitFingerprint;
+import org.openscience.cdk.fingerprint.ICountFingerprint;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.security.PublicKey;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Hashtable;
-
-//adapt to the new version of COCONUT and NAturalProductsOnline
+import java.util.*;
 
 @Document
 public class UniqueNaturalProduct {
+
 
     @Id
     public String id;
@@ -40,6 +38,13 @@ public class UniqueNaturalProduct {
     public String clean_smiles;
 
     public String sugar_free_smiles;
+
+    public String deep_smiles = "";
+
+
+    public Hashtable<String, HashSet<String>> absolute_smiles;
+
+    public String cas;
 
     public Integer contains_ring_sugars;
 
@@ -79,6 +84,10 @@ public class UniqueNaturalProduct {
 
     public Integer number_of_oxygens;
 
+    public Integer max_number_of_rings;
+
+    public Integer min_number_of_rings;
+
     public Integer number_of_rings;
 
     public Integer number_repeated_fragments;
@@ -91,18 +100,46 @@ public class UniqueNaturalProduct {
 
     public Integer bond_count;
 
-    public Hashtable<String, Integer> fragments;
-
-    public Hashtable<String, Integer> fragmentsWithSugar;
-
     public HashSet<String> found_in_databases;
 
 
+    // Molecular fragmentation
+
+    public Hashtable<String, Integer> fragments; //those are Signature Fingerprints (similar to circular fingerprints, with Faulon's representation)
+
+    public Hashtable<String, Integer> fragmentsWithSugar;
+
     public String murko_framework;
 
+    public Hashtable<String, Integer> ertlFunctionalFragments;
+    public Hashtable<String, Integer> ertlFunctionalFragmentsPseudoSmiles;
 
 
-    //Additional features
+
+    public String pubchemFingerprint;
+
+    public String circularFingerprint;
+
+    public String klekotaRothFingerprint;
+
+    public String hybridizationFingerprint;
+
+    public String maccsFingerprint;
+
+    public String shortestPathFingerprint;
+
+    public String substructureFingerprint;
+
+    public String extendedFingerprint;
+
+
+
+
+    // Symmetry measures
+    //TODO later
+
+
+    // Molecular descriptors
 
     //AlogP
     public Double alogp;
@@ -190,17 +227,10 @@ public class UniqueNaturalProduct {
 
 
 
-
-
-    //TODO consider MDEDescriptor
-    //TODO consider WHIMDescriptor
-
-
-
-
     public UniqueNaturalProduct(){
         this.fragments = new Hashtable<>();
         this.fragmentsWithSugar = new Hashtable<>();
+        this.ertlFunctionalFragments = new Hashtable<>();
     }
 
 
@@ -330,12 +360,21 @@ public class UniqueNaturalProduct {
         this.number_of_oxygens = number_of_oxygens;
     }
 
-    public Integer getNumber_of_rings() {
-        return number_of_rings;
+
+    public Integer getMax_number_of_rings() {
+        return max_number_of_rings;
     }
 
-    public void setNumber_of_rings(Integer number_of_rings) {
-        this.number_of_rings = number_of_rings;
+    public void setMax_number_of_rings(Integer max_number_of_rings) {
+        this.max_number_of_rings = max_number_of_rings;
+    }
+
+    public Integer getMin_number_of_rings() {
+        return min_number_of_rings;
+    }
+
+    public void setMin_number_of_rings(Integer min_number_of_rings) {
+        this.min_number_of_rings = min_number_of_rings;
     }
 
     public Integer getNumber_repeated_fragments() {
@@ -757,5 +796,109 @@ public class UniqueNaturalProduct {
 
     public void setFound_in_databases(HashSet<String> found_in_databases) {
         this.found_in_databases = found_in_databases;
+    }
+
+    public Hashtable<String, Integer> getErtlFunctionalFragments() {
+        return ertlFunctionalFragments;
+    }
+
+    public void setErtlFunctionalFragments(Hashtable<String, Integer> ertlFunctionalFragments) {
+        this.ertlFunctionalFragments = ertlFunctionalFragments;
+    }
+
+    public Hashtable<String, Integer> getErtlFunctionalFragmentsPseudoSmiles() {
+        return ertlFunctionalFragmentsPseudoSmiles;
+    }
+
+    public void setErtlFunctionalFragmentsPseudoSmiles(Hashtable<String, Integer> ertlFunctionalFragmentsPseudoSmiles) {
+        this.ertlFunctionalFragmentsPseudoSmiles = ertlFunctionalFragmentsPseudoSmiles;
+    }
+
+    public Hashtable<String, HashSet<String>> getAbsolute_smiles() {
+        return absolute_smiles;
+    }
+
+    public void setAbsolute_smiles(Hashtable<String, HashSet<String>> absolute_smiles) {
+        this.absolute_smiles = absolute_smiles;
+    }
+
+    public String getPubchemFingerprint() {
+        return pubchemFingerprint;
+    }
+
+    public void setPubchemFingerprint(String pubchemFingerprint) {
+        this.pubchemFingerprint = pubchemFingerprint;
+    }
+
+    public String getCircularFingerprint() {
+        return circularFingerprint;
+    }
+
+    public void setCircularFingerprint(String circularFingerprint) {
+        this.circularFingerprint = circularFingerprint;
+    }
+
+    public String getKlekotaRothFingerprint() {
+        return klekotaRothFingerprint;
+    }
+
+    public void setKlekotaRothFingerprint(String klekotaRothFingerprint) {
+        this.klekotaRothFingerprint = klekotaRothFingerprint;
+    }
+
+    public String getHybridizationFingerprint() {
+        return hybridizationFingerprint;
+    }
+
+    public void setHybridizationFingerprint(String hybridizationFingerprint) {
+        this.hybridizationFingerprint = hybridizationFingerprint;
+    }
+
+    public String getMaccsFingerprint() {
+        return maccsFingerprint;
+    }
+
+    public void setMaccsFingerprint(String maccsFingerprint) {
+        this.maccsFingerprint = maccsFingerprint;
+    }
+
+    public String getShortestPathFingerprint() {
+        return shortestPathFingerprint;
+    }
+
+    public void setShortestPathFingerprint(String shortestPathFingerprint) {
+        this.shortestPathFingerprint = shortestPathFingerprint;
+    }
+
+    public String getSubstructureFingerprint() {
+        return substructureFingerprint;
+    }
+
+    public void setSubstructureFingerprint(String substructureFingerprint) {
+        this.substructureFingerprint = substructureFingerprint;
+    }
+
+    public String getDeep_smiles() {
+        return deep_smiles;
+    }
+
+    public void setDeep_smiles(String deep_smiles) {
+        this.deep_smiles = deep_smiles;
+    }
+
+    public String getCas() {
+        return cas;
+    }
+
+    public void setCas(String cas) {
+        this.cas = cas;
+    }
+
+    public String getExtendedFingerprint() {
+        return extendedFingerprint;
+    }
+
+    public void setExtendedFingerprint(String extendedFingerprint) {
+        this.extendedFingerprint = extendedFingerprint;
     }
 }

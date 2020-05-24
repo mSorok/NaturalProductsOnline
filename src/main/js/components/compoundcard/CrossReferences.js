@@ -63,7 +63,6 @@ export default class CrossReferences extends React.Component {
                     <tr key={index}>
                         <td>{item["source"]}</td>
                         <td>{item["idInSource"]}</td>
-                        <td>{item["acquisition_date"]}</td>
                         <td>{buttonToSource}</td>
                     </tr>
                 );
@@ -74,13 +73,12 @@ export default class CrossReferences extends React.Component {
                     <Card.Body>
                         <Card.Title className="text-primary">Cross References</Card.Title>
                         <br/>
-                        <p>For {this.props.naturalProduct.inchikey} exist {countSources} different references:</p>
+                        <p>External identifiers:</p>
                         <Table size="sm">
                             <thead>
                             <tr>
                                 <th>Reference</th>
                                 <th>Original ID</th>
-                                <th>Acquisition date</th>
                                 <th>Link to reference</th>
                             </tr>
                             </thead>

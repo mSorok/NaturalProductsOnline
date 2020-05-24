@@ -19,7 +19,7 @@ export default class CardBrowser extends React.Component {
 
             naturalProducts.splice(0, cardRowSize).map(naturalProduct => {
                 cardRow.push(
-                    <NaturalProductCardItem key={naturalProduct.inchikey} naturalProduct={naturalProduct}/>
+                    <NaturalProductCardItem key={naturalProduct.coconut_id} naturalProduct={naturalProduct}/>
                 );
             });
 

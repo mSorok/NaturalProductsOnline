@@ -16,7 +16,9 @@ export default class About extends React.Component {
                 </Row>
                 <br/>
                 <Row>
-                    <p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+                    <p>Natural Products Online is an open source project for Natural Products (NPs) storage, search and analysis. The present version hosts COCONUT, the
+                        COlleCtion of Open Natural ProdUcTs, one of the biggest and best annotated resources for NPs available free of charge and without any restriction.
+                    </p>
                 </Row>
                 <br/>
                 <Row className="justify-content-center">

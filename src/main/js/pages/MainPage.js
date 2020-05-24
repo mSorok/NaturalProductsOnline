@@ -38,7 +38,7 @@ class MainPage extends React.Component {
             <Route exact path="/" component={Index}/>
         <Route path="/about" component={About}/>
         <Route path="/browser*" component={Browser}/>
-        <Route path="/compound/:identifier(smiles|inchi|inchikey)/:identifierValue" component={NaturalProductCompoundCard}/>
+        <Route path="/compound/:identifier(smiles|inchi|inchikey|coconut_id|id)/:identifierValue" component={NaturalProductCompoundCard}/>
         <Route path="/download" component={Download}/>
         <Route path="/search/advanced" component={AdvancedSearch}/>
         <Route path="/search/simple/:q" component={SearchResult}/>

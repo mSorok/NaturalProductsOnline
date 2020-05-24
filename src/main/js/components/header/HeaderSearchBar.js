@@ -33,7 +33,7 @@ export default class HeaderSearchBar extends React.Component {
                 <Col>
                     <Form.Label><small>Find natural products</small></Form.Label>
                     <InputGroup>
-                        <Form.Control id="searchInput" type="text" placeholder="SMILES, InChI, InChIKey, formula"/>
+                        <Form.Control id="searchInput" type="text" placeholder="Molecule name, SMILES, InChI, InChIKey, formula, COCONUT id"/>
                         <InputGroup.Append>
                             <Button id="searchButton" variant="primary" type="submit" onClick={this.handleSearchSubmit}>
                                 <FontAwesomeIcon id="searchButtonIcon" icon="search" fixedWidth/>
