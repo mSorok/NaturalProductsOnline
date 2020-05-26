@@ -22,6 +22,11 @@
         <cdk.version>2.3</cdk.version>
         <guava.version>28.0-jre</guava.version>
         <docker.image.prefix>nponline</docker.image.prefix>
+        <frontend-maven-plugin.version>1.8.0</frontend-maven-plugin.version>
+        <frontend-src-dir>${project.basedir}/src/main/js</frontend-src-dir>
+        <node.version>v11.2.0</node.version>
+        <yarn.version>v1.16.0</yarn.version>
+
     </properties>
 
     <dependencies>
@@ -250,6 +255,12 @@
             <version>3.2.4.RELEASE</version>
         </dependency>
 
+        <!--<dependency>
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
+            <version>${frontend-maven-plugin.version}</version>
+        </dependency>-->
+
 
     </dependencies>
 
@@ -314,15 +325,14 @@
                             <arguments>install</arguments>
                         </configuration>
                     </execution>
-                    <execution>
+                    <!--<execution>
                         <id>webpack build</id>
                         <goals>
                             <goal>webpack</goal>
                         </goals>
 
-                        <!-- optional: the default phase is "generate-resources" -->
                         <phase>generate-resources</phase>
-                    </execution>
+                    </execution>-->
                 </executions>
             </plugin>
 
@@ -337,7 +347,77 @@
                     </buildArgs>
                 </configuration>
             </plugin>
+
+           <!-- <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>${frontend-maven-plugin.version}</version>
+
+                <configuration>
+                    <nodeVersion>${node.version}</nodeVersion>
+                    <yarnVersion>${yarn.version}</yarnVersion>
+                    <workingDirectory>${frontend-src-dir}</workingDirectory>
+                    <installDirectory>${project.build.directory}</installDirectory>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>install-frontend-tools</id>
+                        <goals>
+                            <goal>install-node-and-yarn</goal>
+                        </goals>
+                    </execution>
+
+                    <execution>
+                        <id>yarn-install</id>
+                        <goals>
+                            <goal>yarn</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>build-frontend</id>
+                        <goals>
+                            <goal>yarn</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <arguments>build</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin> -->
+
+
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.0.1</version>
+                <executions>
+                    <execution>
+                        <id>position-react-build</id>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${frontend-src-dir}/build</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
+
+
     </build>
 
 
