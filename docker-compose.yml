@@ -1,0 +1,28 @@
+version: '3.2'
+
+services:
+  natural-products-online:
+    build: '.'
+    image: nponline/coconut:latest
+    container_name: natural-products-online
+    environment:
+        VIRTUAL_HOST: coconut.naturalproducts.net
+        VIRTUAL_PORT: 8091
+        LETSENCRYPT_HOST: coconut.naturalproducts.net
+        LETSENCRYPT_EMAIL: maria.ssorokina@gmail.com
+
+
+  coconut-mongo-db:
+    image: mongo:latest
+    command: mongod --port 27018
+    ports:
+      - '27018:27018'
+    container_name: coconut-mongo-db
+    volumes:
+    - ./mongodata:/mongodata
+
+
+networks:
+  default:
+    external:
+      name: nginx-proxy
