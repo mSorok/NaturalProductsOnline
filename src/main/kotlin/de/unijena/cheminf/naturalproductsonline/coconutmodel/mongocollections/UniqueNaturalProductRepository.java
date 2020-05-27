@@ -24,8 +24,15 @@ public interface UniqueNaturalProductRepository  extends MongoRepository<UniqueN
     @Query("{molecular_formula : ?0}")
     public List<UniqueNaturalProduct> findByMolecular_formula(String molecular_formula);
 
-    //todo add find by molecular weight
+    public List<UniqueNaturalProduct> findByName(String name);
 
+
+    @Query("{molecular_weight : ?0}") //TODO make it approximative
+    public List<UniqueNaturalProduct> findByMolecular_weight(String weight);
+
+
+    @Query("$search: {text: {path: [name, synonyms] , query: ?0, fuzzy: {} }}")
+    public List<UniqueNaturalProduct> fuzzyNameSearch(String name);
 
 
     @Query("{ npl_noh_score: { $exists:false } }")

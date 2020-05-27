@@ -5,6 +5,7 @@ import HeaderSearchBar from "./HeaderSearchBar";
 import HeaderNavBar from "./HeaderNavBar";
 import CheminfIcon from "../../../resources/images/cheminf_logo.png";
 import Image from "react-bootstrap/Image";
+import {Link} from "react-router-dom";
 
 const React = require("react");
 
@@ -16,7 +17,7 @@ export default class Header extends React.Component {
                 <Container>
                     <Row>
                         <Col sm={2} className="align-self-end">
-                            <Image id="headerIcon" alt="COCONUT Database Logo" className="img-fluid" src={CheminfIcon}/>
+                            <Link to="/"><Image id="headerIcon" alt="COCONUT Database Logo" className="img-fluid" src={CheminfIcon}/></Link>
                         </Col>
                         <Col sm={10} className="align-self-end">
                             <HeaderSearchBar/>

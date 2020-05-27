@@ -48,6 +48,7 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
         /* switch between simple and simple heuristic search
         * the latter tries to guess the input type that could become harder with more search options
         */
+        println(queryString)
         return this.doSimpleSearchWithHeuristic(URLDecoder.decode(queryString.trim(), "UTF-8"))
         // return this.doSimpleSearch(URLDecoder.decode(queryString.trim(), "UTF-8"))
     }
@@ -143,40 +144,53 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
     //TODO add search by name and search by COCONUT id
     fun doSimpleSearchWithHeuristic(query: String): Map<String, Any> {
         // determine type of input on very basic principles without validation
-        val regexMap: Map<String, Regex> = mapOf(
-                "inchi" to Regex("^InChI=.*$"),
-                "inchikey" to Regex("^[A-Z]{14}-[A-Z]{10}-[A-Z]$"),
-                "molecular_formula" to Regex("C[0-9]+?H[0-9].+"),
-                "smiles" to Regex("^[^Jj][A-Za-z0-9\\(\\)\\[\\]\\-=#$:\\+\\@\\.\\/\\>\\<]{3,}$"),
-                "coconut_id" to Regex("^CNP[0-9]+?")
-                // "molecular_weight" to Regex("^\\d+?[.,]?\\d+?$")
-                //TODO add regex for name
-        )
 
-        val hitsMap = mutableMapOf<String, Boolean>()
+        var queryType = "unknown"
 
-        for ((name, regex) in regexMap) {
-            hitsMap[name] = regex.containsMatchIn(query)
+
+        var inchiPattern = Regex("^InChI=.*$")
+        val inchikeyPattern = Regex("^[A-Z]{14}-[A-Z]{10}-[A-Z]$")
+        val molecularFormulaPattern = Regex("C[0-9]+?H[0-9].+")
+        //var smilesPattern = Regex("^([^Jj][A-Za-z0-9@+\\-\\[\\]\\(\\)\\\\\\/%=#\$]+)\$")
+        val coconutPattern = Regex("^CNP[0-9]+?$")
+
+        var naturalProducts : List<UniqueNaturalProduct>
+        val determinedInputType : String
+
+
+        /*if(smilesPattern.containsMatchIn(query)){
+             naturalProducts =  this.uniqueNaturalProductRepository.findBySmiles(query)
+             determinedInputType = "SMILES"
+        }
+        else */
+        if(coconutPattern.containsMatchIn(query)){
+             naturalProducts =  this.uniqueNaturalProductRepository.findByCoconut_id(query)
+             determinedInputType = "COCONUT ID"
+        }
+        else if(inchiPattern.containsMatchIn(query)){
+             naturalProducts =  this.uniqueNaturalProductRepository.findByInchi(query)
+             determinedInputType = "InChi"
+        }
+        else if(inchikeyPattern.containsMatchIn(query)){
+             naturalProducts =  this.uniqueNaturalProductRepository.findByInchikey(query)
+             determinedInputType = "InChi Key"
+        }
+        else if(molecularFormulaPattern.containsMatchIn(query)){
+            naturalProducts = this.uniqueNaturalProductRepository.findByMolecular_formula(query)
+             determinedInputType = "molecular formula"
+        }
+        else{
+            //try to march by name
+             naturalProducts = this.uniqueNaturalProductRepository.findByName(query)
+
+            if(naturalProducts == null || naturalProducts.isEmpty()){
+                naturalProducts = this.uniqueNaturalProductRepository.fuzzyNameSearch(query)
+            }
+             determinedInputType = "name"
         }
 
-        // only search by smiles if no other formats match; problem: smiles matches almost everything
-        val naturalProducts: List<UniqueNaturalProduct> = when {
-            hitsMap["inchi"]!! -> this.uniqueNaturalProductRepository.findByInchi(query)
-            hitsMap["inchikey"]!! -> this.uniqueNaturalProductRepository.findByInchikey(query)
-            hitsMap["coconut_id"]!! -> this.uniqueNaturalProductRepository.findByCoconut_id(query)
-            hitsMap["molecular_formula"]!! -> this.uniqueNaturalProductRepository.findByMolecular_formula(query)
-            hitsMap["smiles"]!! -> this.uniqueNaturalProductRepository.findBySmiles(query) // this.doStructureSearchBySmiles(query)
-            else -> emptyList()
-        }
 
-        val determinedInputType: String = when {
-            hitsMap["inchi"]!! -> "InChI"
-            hitsMap["inchikey"]!! -> "InChIKey"
-            hitsMap["coconut_id"]!! -> "coconut_id"
-            hitsMap["molecular_formula"]!! -> "molecular formula"
-            hitsMap["smiles"]!! -> "SMILES"
-            else -> ""
-        }
+
 
         return mapOf(
                 "originalQuery" to query,
