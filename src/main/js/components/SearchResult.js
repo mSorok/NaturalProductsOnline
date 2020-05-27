@@ -60,7 +60,7 @@ export default class SearchResult extends React.Component {
                     <Row>
                         {searchIsLoaded &&
                             <p>Your search for "{searchResult.originalQuery}" yielded {resultCount} natural product{resultCount > 1 ? "s" : null}
-                            {typeof(searchResult.determinedInputType) !== "undefined" && searchResult.determinedInputType !== "" ? " under the assumption of the entered sequence being of type " + searchResult.determinedInputType + "." : "."} </p>}
+                            {typeof(searchResult.determinedInputType) !== "undefined" && searchResult.determinedInputType !== "" ? " with the assumption that the entered query is of a " + searchResult.determinedInputType + "." : "."} </p>}
                     </Row>
                     <br/>
                     {searchResult && <CardBrowser naturalProducts={searchResult.naturalProducts}/>}

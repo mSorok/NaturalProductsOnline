@@ -14,8 +14,8 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
     }
 
 
-
-    /*@Override
+/*
+    @Override
     public List<UniqueNaturalProduct> fuzzyNameSearch(String name) {
 
 //TODO aggegation + $text
@@ -23,5 +23,6 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
         List<UniqueNaturalProduct> result =  null;
 
         return result;
-    }*/
+    }
+    */
 }
