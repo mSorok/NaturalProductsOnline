@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.GetMapping
 class DownloadController(@Qualifier("webApplicationContext") val resourceLoader: ResourceLoader) {
 
     @GetMapping("/download/sdf")
-    fun downloadFile(): ResponseEntity<Resource> {
-        val resource: Resource = resourceLoader.getResource("classpath:static/np.sdf")
+    fun downloadSDFFile(): ResponseEntity<Resource> {
+        val resource: Resource = resourceLoader.getResource("classpath:static/data/np.sdf")
 
         val headers = HttpHeaders()
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=COCONUT_DB.sdf")
@@ -23,6 +23,33 @@ class DownloadController(@Qualifier("webApplicationContext") val resourceLoader:
         return ResponseEntity.ok()
                 .headers(headers)
                 .contentType(MediaType.valueOf("chemical/x-mdl-sdfile"))
+                .body(resource)
+    }
+
+
+    @GetMapping("/download/mongo")
+    fun downloadMongoDump(): ResponseEntity<Resource> {
+        val resource: Resource = resourceLoader.getResource("classpath:static/data/COCONUTlatest.zip")
+
+        val headers = HttpHeaders()
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=COCONUTlatest.zip")
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.valueOf("application/zip"))
+                .body(resource)
+    }
+
+    @GetMapping("/download/mongoreadme")
+    fun downloadMongoReadme(): ResponseEntity<Resource> {
+        val resource: Resource = resourceLoader.getResource("classpath:static/data/README.mongo4coconut")
+
+        val headers = HttpHeaders()
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=README.mongo4coconut")
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.valueOf("text/plain"))
                 .body(resource)
     }
 

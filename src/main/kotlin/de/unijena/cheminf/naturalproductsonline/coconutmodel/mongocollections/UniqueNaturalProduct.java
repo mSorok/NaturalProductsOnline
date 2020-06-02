@@ -46,9 +46,9 @@ public class UniqueNaturalProduct {
 
     public String cas;
 
-    public Integer contains_ring_sugars;
+    public boolean contains_ring_sugars;
 
-    public Integer contains_linear_sugars;
+    public boolean contains_linear_sugars;
 
 
 
@@ -84,11 +84,12 @@ public class UniqueNaturalProduct {
 
     public Integer number_of_oxygens;
 
+    public Integer number_of_rings;
+
     public Integer max_number_of_rings;
 
     public Integer min_number_of_rings;
 
-    public Integer number_of_rings;
 
     public Integer number_repeated_fragments;
 
@@ -116,21 +117,18 @@ public class UniqueNaturalProduct {
 
 
 
-    public String pubchemFingerprint;
+    public ArrayList<Integer> pubchemFingerprint;
 
-    public String circularFingerprint;
+    public ArrayList<Integer> circularFingerprint;
 
-    public String klekotaRothFingerprint;
+    public ArrayList<Integer> substructureFingerprint;
 
-    public String hybridizationFingerprint;
+    public ArrayList<Integer> extendedFingerprint;
 
-    public String maccsFingerprint;
+    public byte[] pubchemBits;
+    public String pubchemBitsString;
 
-    public String shortestPathFingerprint;
 
-    public String substructureFingerprint;
-
-    public String extendedFingerprint;
 
 
 
@@ -765,19 +763,19 @@ public class UniqueNaturalProduct {
         this.sugar_free_smiles = sugar_free_smiles;
     }
 
-    public Integer getContains_ring_sugars() {
+    public boolean getContains_ring_sugars() {
         return contains_ring_sugars;
     }
 
-    public void setContains_ring_sugars(Integer contains_ring_sugars) {
+    public void setContains_ring_sugars(boolean contains_ring_sugars) {
         this.contains_ring_sugars = contains_ring_sugars;
     }
 
-    public Integer getContains_linear_sugars() {
+    public boolean getContains_linear_sugars() {
         return contains_linear_sugars;
     }
 
-    public void setContains_linear_sugars(Integer contains_linear_sugars) {
+    public void setContains_linear_sugars(boolean contains_linear_sugars) {
         this.contains_linear_sugars = contains_linear_sugars;
     }
 
@@ -822,59 +820,21 @@ public class UniqueNaturalProduct {
         this.absolute_smiles = absolute_smiles;
     }
 
-    public String getPubchemFingerprint() {
+    public ArrayList<Integer> getPubchemFingerprint() {
         return pubchemFingerprint;
     }
 
-    public void setPubchemFingerprint(String pubchemFingerprint) {
+    public void setPubchemFingerprint(ArrayList<Integer> pubchemFingerprint) {
         this.pubchemFingerprint = pubchemFingerprint;
     }
 
-    public String getCircularFingerprint() {
-        return circularFingerprint;
-    }
 
-    public void setCircularFingerprint(String circularFingerprint) {
-        this.circularFingerprint = circularFingerprint;
-    }
 
-    public String getKlekotaRothFingerprint() {
-        return klekotaRothFingerprint;
-    }
-
-    public void setKlekotaRothFingerprint(String klekotaRothFingerprint) {
-        this.klekotaRothFingerprint = klekotaRothFingerprint;
-    }
-
-    public String getHybridizationFingerprint() {
-        return hybridizationFingerprint;
-    }
-
-    public void setHybridizationFingerprint(String hybridizationFingerprint) {
-        this.hybridizationFingerprint = hybridizationFingerprint;
-    }
-
-    public String getMaccsFingerprint() {
-        return maccsFingerprint;
-    }
-
-    public void setMaccsFingerprint(String maccsFingerprint) {
-        this.maccsFingerprint = maccsFingerprint;
-    }
-
-    public String getShortestPathFingerprint() {
-        return shortestPathFingerprint;
-    }
-
-    public void setShortestPathFingerprint(String shortestPathFingerprint) {
-        this.shortestPathFingerprint = shortestPathFingerprint;
-    }
-
-    public String getSubstructureFingerprint() {
+    public ArrayList<Integer> getSubstructureFingerprint() {
         return substructureFingerprint;
     }
 
-    public void setSubstructureFingerprint(String substructureFingerprint) {
+    public void setSubstructureFingerprint(ArrayList<Integer> substructureFingerprint) {
         this.substructureFingerprint = substructureFingerprint;
     }
 
@@ -894,11 +854,40 @@ public class UniqueNaturalProduct {
         this.cas = cas;
     }
 
-    public String getExtendedFingerprint() {
+    public ArrayList<Integer> getExtendedFingerprint() {
         return extendedFingerprint;
     }
 
-    public void setExtendedFingerprint(String extendedFingerprint) {
+    public void setExtendedFingerprint(ArrayList<Integer> extendedFingerprint) {
         this.extendedFingerprint = extendedFingerprint;
+    }
+
+
+
+    public byte[] getPubchemBits() {
+        return pubchemBits;
+    }
+
+    public void setPubchemBits(byte[] pubchemBits) {
+        this.pubchemBits = pubchemBits;
+    }
+
+
+
+    public String getPubchemBitsString() {
+        return pubchemBitsString;
+    }
+
+    public void setPubchemBitsString(String pubchemBitsString) {
+        this.pubchemBitsString = pubchemBitsString;
+    }
+
+
+    public ArrayList<Integer> getCircularFingerprint() {
+        return circularFingerprint;
+    }
+
+    public void setCircularFingerprint(ArrayList<Integer> circularFingerprint) {
+        this.circularFingerprint = circularFingerprint;
     }
 }

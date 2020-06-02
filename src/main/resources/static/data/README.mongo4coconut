@@ -1,0 +1,46 @@
+@Author: Maria Sorokina (maria.ssorokina@gmail.com)
+@Creation: 2020-06-01
+@Last modified: 2020-O6-01
+
+# Restore COCONUT in MongoDB
+
+1. ensure that MongoDB is installed and is running on your system. For more information:
+
+2. Unzip the downloaded file and move in the created directory (until seing BSON files):
+$ unzip COCONUTlatest.zip
+$ cd COCONUTlatest
+
+3. Restore COCONUT as MongoDB database:
+$ mongorestore --db=COCONUTlatest  .
+
+4. (optiona) Restore without indexes and add them later (faster and safer):
+
+mongorestore --db=COCONUTlatest --noIndexRestore .
+
+
+mongo
+use COCONUTlatest
+db.sourceNaturalProduct.createIndex( {source:1})
+db.sourceNaturalProduct.createIndex( {simpleInchi:"hashed"})
+db.sourceNaturalProduct.createIndex( {simpleInchiKey:1})
+db.sourceNaturalProduct.createIndex( {originalInchiKey:1})
+db.sourceNaturalProduct.createIndex( {originalSmiles:"hashed"})
+db.sourceNaturalProduct.createIndex( {absoluteSmiles:"hashed"})
+db.sourceNaturalProduct.createIndex( {idInSource:1})
+db.uniqueNaturalProduct.createIndex( {inchi:"hashed"})
+db.uniqueNaturalProduct.createIndex( {inchikey:1})
+db.uniqueNaturalProduct.createIndex( {clean_smiles: "hashed"})
+db.uniqueNaturalProduct.createIndex( {molecular_formula:1})
+db.uniqueNaturalProduct.createIndex( {coconut_id:1})
+db.uniqueNaturalProduct.createIndex( {fragmentsWithSugar:"hashed"})
+db.uniqueNaturalProduct.createIndex( {fragments:"hashed"})
+db.uniqueNaturalProduct.createIndex( {synonyms:"text", name:"text"})
+db.fragment.createIndex({signature:1})
+db.fragment.createIndex({signature:1, withsugar:-1})
+
+
+
+
+
+
+

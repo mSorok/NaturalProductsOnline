@@ -40,4 +40,7 @@ public interface UniqueNaturalProductRepository  extends MongoRepository<UniqueN
 
     @Query("{ apol: { $exists:false } }")
     List<UniqueNaturalProduct> findAllByApolComputed();
+
+    @Query("{ pubchemBits : { $bitsAllSet : ?0  }}")
+    List<UniqueNaturalProduct> findAllPubchemBitsSet(byte[] querybits) ;
 }
