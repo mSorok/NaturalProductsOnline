@@ -5,6 +5,8 @@ services:
     build: '.'
     image: nponline/coconut:latest
     container_name: natural-products-online
+    volumes:
+    - ./data:/data
     environment:
         VIRTUAL_HOST: coconut.naturalproducts.net
         VIRTUAL_PORT: 8091

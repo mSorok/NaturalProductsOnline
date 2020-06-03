@@ -24,7 +24,7 @@ export default class StructureSearch extends React.Component {
             exactMatch: true
         };
 
-        this.handleDesireForCoffee = this.handleDesireForCoffee.bind(this);
+        this.handleDefaultCaffeine = this.handleDefaultCaffeine().bind(this);
         this.handleStructureSubmit = this.handleStructureSubmit.bind(this);
         this.handleCheckboxExactMatch = this.handleCheckboxExactMatch.bind(this);
 
@@ -41,8 +41,7 @@ export default class StructureSearch extends React.Component {
         }
     }
 
-    handleDesireForCoffee() {
-        /*const caffeineSmiles = "[H]C1=NC2=C(C(=O)N(C(=O)N2C([H])([H])[H])C([H])([H])[H])N1C([H])([H])[H]";*/
+    handleDefaultCaffeine() {
         const caffeineCleanSmiles = "O=C1C2=C(N=CN2C)N(C(=O)N1C)C";
 
         this.editor.setSmiles(caffeineCleanSmiles);
@@ -56,7 +55,7 @@ export default class StructureSearch extends React.Component {
         });
 
         if (this.state.exactMatch) {
-            this.doSearch("/api/search/structure?smiles=", encodeURIComponent(structureAsSmiles));
+            this.doSearch("/api/search/exact/structure?smiles=", encodeURIComponent(structureAsSmiles));
         } else {
             this.doSearch("/api/search/substructure?smiles=", encodeURIComponent(structureAsSmiles));
         }
@@ -103,7 +102,7 @@ export default class StructureSearch extends React.Component {
                 resultRow =
                     <Row className="justify-content-center">
                         <Spinner/>
-                        {!exactMatch && <p>Note: The substructure search is estimated to take 3-4 minutes.</p>}
+                        {!exactMatch && <p>Note: The substructure search might be long if the input molecule is small.</p>}
                     </Row>
             } else {
                 if (ajaxResult.naturalProducts.length > 0) {
@@ -117,7 +116,7 @@ export default class StructureSearch extends React.Component {
                             </Row>
                         </>
                 } else {
-                    resultRow = <Row><p>There are no results that exactly match your structure.</p></Row>;
+                    resultRow = <Row><p>No matches found in the database.</p></Row>;
                 }
             }
         }
@@ -144,11 +143,17 @@ export default class StructureSearch extends React.Component {
                     </Form>
                 </Row>
                 <Row>
-                    <Button id="structureSearchButton" variant="primary" type="submit" onClick={this.handleStructureSubmit}>
+                    <Button id="structureSearchButton" variant="primary" type="submit" onClick={this.handleStructureSubmit}> //TODO here
                         <FontAwesomeIcon icon="search" fixedWidth/>
-                        &nbsp;Search
+                        &nbsp;Substructure search
                     </Button>
-                    <Button id="structureSearchDrawExampleButton" variant="primary" type="submit" onClick={this.handleDesireForCoffee}>
+
+                    <Button id="similaritySearchButton" variant="primary" type="submit" onClick={this.handleStructureSubmit}> //TODO here
+                        <FontAwesomeIcon icon="search" fixedWidth/>
+                        &nbsp;Similarity search (not functional for now)
+                    </Button>
+
+                    <Button id="structureSearchDrawExampleButton" variant="primary" type="submit" onClick={this.handleDefaultCaffeine()}>
                         &nbsp;Load example
                     </Button>
                 </Row>

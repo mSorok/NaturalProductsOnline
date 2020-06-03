@@ -43,7 +43,7 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
     @Autowired
     lateinit var atomContainerToUniqueNaturalProductService: AtomContainerToUniqueNaturalProductService
 
-    @RequestMapping("/search/structure")
+    @RequestMapping("/search/exact/structure")
     fun structureSearchBySmiles(@RequestParam("smiles") smiles: String): Map<String, Any> {
         return this.doStructureSearchBySmiles(URLDecoder.decode(smiles.trim(), "UTF-8"))
     }
@@ -162,17 +162,27 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
 
 
     fun doSubstructureSearch(smiles: String): Map<String, Any> {
+        println("Entering substructure search")
+
+        println(smiles)
+
         try {
             val queryAC: IAtomContainer = this.smilesParser.parseSmiles(smiles)
 
+            println(pubchemFingerprinter.getBitFingerprint(queryAC).asBitSet().toByteArray())
+
             // run $allBitsSet in mongo
             val matchedList = this.uniqueNaturalProductRepository.findAllPubchemBitsSet(pubchemFingerprinter.getBitFingerprint(queryAC).asBitSet().toByteArray())
+
+            println("found molecules with bits set")
 
             // return a list of UNP:
             // for each UNP - convert to IAC and run the Ullmann
             val pattern = Ullmann.findSubstructure(queryAC)
             val hits = mutableListOf<UniqueNaturalProduct>()
             var hitsCount: Int = 0
+
+            //Stop at first 250? Stop at random 250?
 
             for( unp in  matchedList){
                 var targetAC : IAtomContainer = this.atomContainerToUniqueNaturalProductService.createAtomContainer(unp)
@@ -184,8 +194,12 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
                     hitsCount++
                     hits.add(unp)
 
+                    println(unp.coconut_id)
+
                 }
             }
+
+            println("ready to return results!")
 
             return mapOf(
                     "originalQuery" to smiles,

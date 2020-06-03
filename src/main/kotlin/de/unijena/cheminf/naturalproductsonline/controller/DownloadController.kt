@@ -15,7 +15,7 @@ class DownloadController(@Qualifier("webApplicationContext") val resourceLoader:
 
     @GetMapping("/download/sdf")
     fun downloadSDFFile(): ResponseEntity<Resource> {
-        val resource: Resource = resourceLoader.getResource("classpath:static/data/np.sdf")
+        val resource: Resource = resourceLoader.getResource("file:./data/np.sdf")
 
         val headers = HttpHeaders()
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=COCONUT_DB.sdf")
@@ -29,7 +29,7 @@ class DownloadController(@Qualifier("webApplicationContext") val resourceLoader:
 
     @GetMapping("/download/mongo")
     fun downloadMongoDump(): ResponseEntity<Resource> {
-        val resource: Resource = resourceLoader.getResource("classpath:static/data/COCONUTlatest.zip")
+        val resource: Resource = resourceLoader.getResource("file:./data/COCONUTlatest.zip")
 
         val headers = HttpHeaders()
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=COCONUTlatest.zip")
@@ -42,7 +42,12 @@ class DownloadController(@Qualifier("webApplicationContext") val resourceLoader:
 
     @GetMapping("/download/mongoreadme")
     fun downloadMongoReadme(): ResponseEntity<Resource> {
-        val resource: Resource = resourceLoader.getResource("classpath:static/data/README.mongo4coconut")
+
+
+
+
+        val resource: Resource = resourceLoader.getResource("file:./data/README.mongo4coconut")
+
 
         val headers = HttpHeaders()
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=README.mongo4coconut")

@@ -27,40 +27,44 @@ export default class Download extends React.Component {
         return (
             <Container>
 
-                <Row class = "my-3 w-75">
+                <Row>
                     <Col>
                 <h2>Download COCONUT data</h2>
                     </Col>
                 </Row>
 
+                <ColoredLine color="white" />
 
-                <Row lg={1} md={2}>
-                    <Col>
+
+                <Row>
+                    <Col sm={5}>
                         <p>Download Natural Products Structures in SDF format</p>
                     </Col>
-                    <Col>
+                    <Col sm={2}>
 
                         <Button id="downloadSdfFile" type="primary" href="/download/sdf">
                             <FontAwesomeIcon icon="file-download" fixedWidth/>
                             &nbsp;Download
                         </Button>
                     </Col>
-                    <Col></Col>
+                    <Col sm={2}>&nbsp;</Col>
                 </Row>
 
+                <ColoredLine color="white" />
 
 
-                <Row lg={1} md={2}>
-                    <Col>
+
+                <Row>
+                    <Col sm={5}>
                         <p>Download the complete COCONUT dataset as a MongoDB dump</p>
                     </Col>
-                    <Col>
+                    <Col sm={2}>
                         <Button id="downloadMongoDump" type="primary" href="/download/mongo">
                             <FontAwesomeIcon icon="file-download" fixedWidth/>
                             &nbsp;Download
                         </Button>
                     </Col>
-                    <Col>
+                    <Col sm={2}>
                         <Button id="downloadMongoDump" type="primary" href="/download/mongoreadme">
                             <FontAwesomeIcon icon="file-download" fixedWidth/>
                             &nbsp;README
