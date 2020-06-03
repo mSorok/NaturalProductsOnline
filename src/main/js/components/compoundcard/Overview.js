@@ -64,7 +64,7 @@ export default class Overview extends React.Component {
                                 </tr>
                                 </tbody>
                             </Table>
-                            <Button id="downloadMolfile" variant="outline-primary" size="sm" onClick={(e) => this.handleMolfileDownload(e, naturalProduct.smiles, naturalProduct.inchikey)}>
+                            <Button id="downloadMolfile" variant="outline-primary" size="sm" onClick={(e) => this.handleMolfileDownload(e, naturalProduct.smiles, naturalProduct.coconut_id)}>
                                 <FontAwesomeIcon icon="file-download" fixedWidth/>
                                 &nbsp;Molfile
                             </Button>

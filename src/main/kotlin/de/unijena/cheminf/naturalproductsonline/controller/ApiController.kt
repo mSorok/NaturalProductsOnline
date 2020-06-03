@@ -43,7 +43,7 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
     @Autowired
     lateinit var atomContainerToUniqueNaturalProductService: AtomContainerToUniqueNaturalProductService
 
-    @RequestMapping("/search/exact/structure")
+    @RequestMapping("/search/exact-structure")
     fun structureSearchBySmiles(@RequestParam("smiles") smiles: String): Map<String, Any> {
         return this.doStructureSearchBySmiles(URLDecoder.decode(smiles.trim(), "UTF-8"))
     }
@@ -166,6 +166,8 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
 
         println(smiles)
 
+        var maxResults = 1000
+
         try {
             val queryAC: IAtomContainer = this.smilesParser.parseSmiles(smiles)
 
@@ -180,30 +182,37 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
             // for each UNP - convert to IAC and run the Ullmann
             val pattern = Ullmann.findSubstructure(queryAC)
             val hits = mutableListOf<UniqueNaturalProduct>()
-            var hitsCount: Int = 0
 
-            //Stop at first 250? Stop at random 250?
 
-            for( unp in  matchedList){
+            var counter: Int = 0
+
+            loop@ for(unp in matchedList){
+
                 var targetAC : IAtomContainer = this.atomContainerToUniqueNaturalProductService.createAtomContainer(unp)
 
-                val match = pattern.match(targetAC);
+                val match = pattern.match(targetAC)
 
-                // do not save all hits since this would have insane memory requirements for simple and often reoccurring substructures
                 if (match.isNotEmpty()) {
-                    hitsCount++
                     hits.add(unp)
 
                     println(unp.coconut_id)
 
+                    counter++
+
+                    if (counter==maxResults) break@loop
+
                 }
             }
+
+
+
+            hits.sortBy { it.heavy_atom_number }
 
             println("ready to return results!")
 
             return mapOf(
                     "originalQuery" to smiles,
-                    "count" to hitsCount,
+                    "count" to  hits.size,
                     "naturalProducts" to hits
             )
 
@@ -212,5 +221,21 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
         } catch (e: CDKException) {
             error("A CDKException occured: ${e.message}")
         }
+    }
+
+
+    fun doSimilaritySearch(smiles: String): Map<String, Any>{
+
+        var count: Int = 0
+        var hits = 0
+
+
+
+        return mapOf(
+                "originalQuery" to smiles,
+                "count" to count,
+                "naturalProducts" to hits
+        )
+
     }
 }

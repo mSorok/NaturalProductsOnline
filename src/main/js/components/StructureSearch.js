@@ -6,10 +6,24 @@ import Form from "react-bootstrap/Form";
 import Spinner from "./Spinner";
 import CardBrowser from "./browser/CardBrowser";
 import Error from "./Error";
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
+import Col from "react-bootstrap/Col";
+
 
 const React = require("react");
 const OpenChemLib = require("openchemlib/full");
 const restClient = require("../restClient");
+
+const ColoredLine = ({ color}) => (
+    <hr
+        style={{
+            color: color,
+            backgroundColor: color,
+            height: 1
+        }}
+    />
+);
 
 
 export default class StructureSearch extends React.Component {
@@ -21,11 +35,24 @@ export default class StructureSearch extends React.Component {
             ajaxIsLoaded: false,
             ajaxResult: [],
             searchSubmitted: false,
-            exactMatch: true
+
+            exactMatch: false,
+            fullExactMatch:true,
+            bondTypeFreeExactMatch:false,
+
+            substructureSearch: false,
+
+
+            similaritySearch: false
         };
 
-        this.handleDefaultCaffeine = this.handleDefaultCaffeine().bind(this);
+        this.handleDesireForCoffee = this.handleDesireForCoffee.bind(this);
+        this.handleEditorClearing = this.handleEditorClearing.bind(this);
         this.handleStructureSubmit = this.handleStructureSubmit.bind(this);
+
+        this.handleSearchTypeSelect = this.handleSearchTypeSelect.bind(this);
+
+
         this.handleCheckboxExactMatch = this.handleCheckboxExactMatch.bind(this);
 
         this.searchResultHeadline = React.createRef();
@@ -41,10 +68,14 @@ export default class StructureSearch extends React.Component {
         }
     }
 
-    handleDefaultCaffeine() {
+    handleDesireForCoffee() {
         const caffeineCleanSmiles = "O=C1C2=C(N=CN2C)N(C(=O)N1C)C";
 
         this.editor.setSmiles(caffeineCleanSmiles);
+    }
+
+    handleEditorClearing(){
+        this.editor.setSmiles("");
     }
 
     handleStructureSubmit() {
@@ -55,9 +86,11 @@ export default class StructureSearch extends React.Component {
         });
 
         if (this.state.exactMatch) {
-            this.doSearch("/api/search/exact/structure?smiles=", encodeURIComponent(structureAsSmiles));
-        } else {
+            this.doSearch("/api/search/exact-structure?smiles=", encodeURIComponent(structureAsSmiles));
+        } else if (this.state.substructureSearch) {
             this.doSearch("/api/search/substructure?smiles=", encodeURIComponent(structureAsSmiles));
+        } else{
+            this.doSearch("/api/search/exact-structure?smiles=", encodeURIComponent(structureAsSmiles));
         }
 
     }
@@ -67,6 +100,47 @@ export default class StructureSearch extends React.Component {
             exactMatch: e.target.checked
         });
     }
+
+
+    handleSearchTypeSelect(key){
+        if(key==="exact-match"){
+            this.setState(
+                {
+                    exactMatch:true,
+                    substructureSearch: false,
+                    similaritySearch: false
+
+                }
+            );
+        }
+        if(key==="substructure-search"){
+            console.log("substructure");
+            this.setState(
+                {
+                    exactMatch:false,
+                    substructureSearch: true,
+                    similaritySearch: false
+
+                }
+            );
+        }
+
+        if(key==="similarity-search"){
+            this.setState(
+                {
+                    exactMatch:false,
+                    substructureSearch: false,
+                    similaritySearch: true
+
+                }
+            );
+        }
+
+    }
+
+
+
+
 
     doSearch(path, searchString) {
         restClient({
@@ -92,7 +166,7 @@ export default class StructureSearch extends React.Component {
     }
 
     render() {
-        const {ajaxError, ajaxIsLoaded, ajaxResult, searchSubmitted, exactMatch} = this.state;
+        const {ajaxError, ajaxIsLoaded, ajaxResult, searchSubmitted, exactMatch, fullExactMatch, bondTypeFreeExactMatch, substructureSearch, similaritySearch } = this.state;
         let resultRow;
 
         if (searchSubmitted) {
@@ -102,7 +176,8 @@ export default class StructureSearch extends React.Component {
                 resultRow =
                     <Row className="justify-content-center">
                         <Spinner/>
-                        {!exactMatch && <p>Note: The substructure search might be long if the input molecule is small.</p>}
+                        {substructureSearch && <p>Note: The substructure search might be long if the input molecule is small.</p>}
+                        {similaritySearch && <p>Note: The similarity search can be long.</p>}
                     </Row>
             } else {
                 if (ajaxResult.naturalProducts.length > 0) {
@@ -116,7 +191,7 @@ export default class StructureSearch extends React.Component {
                             </Row>
                         </>
                 } else {
-                    resultRow = <Row><p>No matches found in the database.</p></Row>;
+                    resultRow = <Row><p>There are no results that exactly match your structure.</p></Row>;
                 }
             }
         }
@@ -127,36 +202,70 @@ export default class StructureSearch extends React.Component {
                     <h2>Structure Search</h2>
                 </Row>
                 <br/>
-                <Row>
-                    <div id="structureSearchEditor"/>
-                </Row>
+
+
+                <Tabs defaultActiveKey="draw" id="select-input-type">
+                    <Tab eventKey="draw" title="Draw structure">
+
+                        <Row className="justify-content-md-center">
+                            <Col md="auto">
+                                <br/>
+                                <p>Use the editor to draw your structure</p>
+                            </Col>
+                            <Col xs lg="2">
+                                <br/>
+                                <Button id="structureSearchDrawExampleButton" variant="outline-info" type="submit" onClick={this.handleDesireForCoffee}>
+                                    &nbsp;Load example
+                                </Button>
+                            </Col>
+                            <Col xs lg="2">
+                                <br/>
+                                <Button variant="outline-warning" id="clear-structure" type="submit" onClick={this.handleEditorClearing} >
+                                    &nbsp;Clear structure
+                                </Button>
+                            </Col>
+                        </Row>
+                        <ColoredLine color="white" />
+
+                        <Row  className="justify-content-md-center">
+                            <br/>
+                            <br/>
+                            <div id="structureSearchEditor"/>
+                        </Row>
+
+                    </Tab>
+
+                    <Tab eventKey="paste" title="Paste structure" disabled>
+                        <p>Here will be submission form for SMILES and Inchi etc</p>
+                    </Tab>
+                </Tabs>
+
+
+
                 <br/>
-                <Row>
-                    <Form>
-                        <Form.Group>
-                            <Form.Check id="checkboxExactMatch"
-                                        type="checkbox"
-                                        label="Exact match"
-                                        onChange={this.handleCheckboxExactMatch}
-                                        checked={exactMatch}/>
-                        </Form.Group>
-                    </Form>
-                </Row>
-                <Row>
-                    <Button id="structureSearchButton" variant="primary" type="submit" onClick={this.handleStructureSubmit}> //TODO here
-                        <FontAwesomeIcon icon="search" fixedWidth/>
-                        &nbsp;Substructure search
-                    </Button>
 
-                    <Button id="similaritySearchButton" variant="primary" type="submit" onClick={this.handleStructureSubmit}> //TODO here
-                        <FontAwesomeIcon icon="search" fixedWidth/>
-                        &nbsp;Similarity search (not functional for now)
-                    </Button>
+                <Tabs defaultActiveKey="exact-match" id="select-search-type" onSelect={this.handleSearchTypeSelect} >
+                    <Tab eventKey="exact-match" title="Exact match" >
+                        <p>Here will be radio buttons for exact match search params</p>
+                    </Tab>
+                    <Tab eventKey="substructure-search" title="Substructure search" >
+                        <p>Here will be radio buttons for substructure search params</p>
+                        <p>Only 1000 first matches will be displayed</p>
+                    </Tab>
+                    <Tab eventKey="similarity-search" title="Similarity search" disabled>
+                        <p>Here will be radio buttons for similarity search params</p>
+                    </Tab>
+                </Tabs>
 
-                    <Button id="structureSearchDrawExampleButton" variant="primary" type="submit" onClick={this.handleDefaultCaffeine()}>
-                        &nbsp;Load example
+
+                <Container>
+                    <Row>
+                    <Button id="structureSearchButton" variant="primary" type="submit" size="lg" block onClick={this.handleStructureSubmit}>
+                        <FontAwesomeIcon icon="search" fixedWidth/>
+                        &nbsp;Submit search
                     </Button>
-                </Row>
+                    </Row>
+                </Container>
                 <br/>
                 {ajaxIsLoaded && <Row><h2 ref={this.searchResultHeadline}>Search Results</h2></Row>}
                 {resultRow}
