@@ -37,6 +37,8 @@ export default class StructureSearch extends React.Component {
             ajaxResult: [],
             newQuery:true, //TODO
 
+            inputType: "draw",
+
             searchSubmitted: false,
             searchSubmittedButIncorrect:false,
             searchHitsLimit: 100,
@@ -49,6 +51,8 @@ export default class StructureSearch extends React.Component {
 
             substructureSearch: false,
             substructureSearchType: "default",
+
+            stringInput: "",
 
 
             similaritySearch: false
@@ -67,6 +71,10 @@ export default class StructureSearch extends React.Component {
         this.handleSubstructureSearchTypeSelect = this.handleSubstructureSearchTypeSelect.bind(this);
 
         this.handleCloseAlert = this.handleCloseAlert.bind(this);
+
+        this.handleInputType = this.handleInputType.bind(this);
+
+        this.handleStringInput = this.handleStringInput.bind(this);
 
 
 
@@ -130,9 +138,18 @@ export default class StructureSearch extends React.Component {
     }
 
     handleStructureSubmit() {
-        let structureAsSmiles = this.editor.getSmiles();
 
-        //TODO test if SMILES
+        let structureAsSmiles = "";
+        if(this.state.inputType=="draw"){
+            structureAsSmiles = this.editor.getSmiles();
+        }else if(this.state.inputType=="paste"){
+            structureAsSmiles = this.state.stringInput;
+        }
+
+
+
+        //TODO test if SMILES (or other Inchi and co)
+        
         if (structureAsSmiles != null && structureAsSmiles != "" && structureAsSmiles != " ") {
 
 
@@ -182,6 +199,17 @@ export default class StructureSearch extends React.Component {
 
 
 
+    handleInputType(key){
+        if(key==="draw"){
+            this.state.inputType = "draw";
+        }else{
+            this.state.inputType = "paste";
+        }
+    }
+
+    handleStringInput(e){
+        this.state.stringInput=e.target.value;
+    }
 
     handleSearchTypeSelect(key){
         if(key==="exact-match"){
@@ -297,7 +325,7 @@ export default class StructureSearch extends React.Component {
                 <br/>
 
 
-                <Tabs defaultActiveKey="draw" id="select-input-type">
+                <Tabs defaultActiveKey="draw" id="select-input-type" onSelect={this.handleInputType}>
                     <Tab eventKey="draw" title="Draw structure">
 
                         <Row className="justify-content-md-center">
@@ -328,8 +356,19 @@ export default class StructureSearch extends React.Component {
 
                     </Tab>
 
-                    <Tab eventKey="paste" title="Paste structure" disabled>
-                        <p>Here will be submission form for SMILES and Inchi etc</p>
+
+
+
+                    <Tab eventKey="paste" title="Paste structure">
+                        <Form>
+                            <Form.Group controlId="molecularStructureString">
+                                <Form.Label>Paste molecule</Form.Label>
+                                <Form.Control onChange={this.handleStringInput} />
+                                <Form.Text className="text-muted">SMILES, InChI, COCONUT id, name</Form.Text>
+                            </Form.Group>
+                        </Form>
+
+
                     </Tab>
                 </Tabs>
 
