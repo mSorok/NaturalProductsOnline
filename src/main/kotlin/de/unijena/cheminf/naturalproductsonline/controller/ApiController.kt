@@ -4,15 +4,18 @@ package de.unijena.cheminf.naturalproductsonline.controller
 import de.unijena.cheminf.naturalproductsonline.coconutmodel.mongocollections.UniqueNaturalProduct
 import de.unijena.cheminf.naturalproductsonline.coconutmodel.mongocollections.UniqueNaturalProductRepository
 import de.unijena.cheminf.naturalproductsonline.utils.AtomContainerToUniqueNaturalProductService
+import net.sf.jniinchi.INCHI_OPTION
 import org.openscience.cdk.exception.CDKException
 import org.openscience.cdk.exception.InvalidSmilesException
 import org.openscience.cdk.fingerprint.PubchemFingerprinter
+import org.openscience.cdk.inchi.InChIGeneratorFactory
 import org.openscience.cdk.interfaces.IAtomContainer
-import org.openscience.cdk.isomorphism.Ullmann
+import org.openscience.cdk.isomorphism.*
 import org.openscience.cdk.silent.SilentChemObjectBuilder
 import org.openscience.cdk.smiles.SmiFlavor
 import org.openscience.cdk.smiles.SmilesGenerator
 import org.openscience.cdk.smiles.SmilesParser
+import org.openscience.cdk.isomorphism.DfPattern
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
@@ -22,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.net.URLDecoder
 import org.springframework.data.mongodb.core.query.Query.query
-
+import java.util.ArrayList
 
 
 @RestController
@@ -40,19 +43,41 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
     val smilesGenerator: SmilesGenerator = SmilesGenerator(SmiFlavor.Unique)
     internal var pubchemFingerprinter = PubchemFingerprinter(SilentChemObjectBuilder.getInstance())
 
+    val options = mutableListOf(INCHI_OPTION.SNon, INCHI_OPTION.ChiralFlagOFF, INCHI_OPTION.AuxNone)
+
+    val universalIsomorphismTester = UniversalIsomorphismTester()
+
+
     @Autowired
     lateinit var atomContainerToUniqueNaturalProductService: AtomContainerToUniqueNaturalProductService
 
+
+    /**
+     *  Exact structure handling
+     */
     @RequestMapping("/search/exact-structure")
-    fun structureSearchBySmiles(@RequestParam("smiles") smiles: String): Map<String, Any> {
-        return this.doStructureSearchBySmiles(URLDecoder.decode(smiles.trim(), "UTF-8"))
+    fun structureSearchBySmiles(@RequestParam("smiles") smiles: String, @RequestParam("type") type: String, @RequestParam("max-hits") maxHits:String): Map<String, Any> {
+
+        if(type=="smi") {
+            return this.doExactStructureSearchBySmiles(URLDecoder.decode(smiles.trim(), "UTF-8"), maxHits.toIntOrNull())
+        }else{
+            return this.doExactStructureSearchByInchi(URLDecoder.decode(smiles.trim(), "UTF-8"), maxHits.toIntOrNull())
+        }
     }
 
+
+    /**
+     *  Substructure handling
+     */
     @RequestMapping("/search/substructure")
-    fun substructureSearch(@RequestParam("smiles") smiles: String): Map<String, Any> {
-        return this.doSubstructureSearch(URLDecoder.decode(smiles.trim(), "UTF-8"))
+    fun substructureSearch(@RequestParam("smiles") smiles: String , @RequestParam("type") type: String , @RequestParam("max-hits") maxHits:String): Map<String, Any> {
+        return this.doSubstructureSearch(URLDecoder.decode(smiles.trim(), "UTF-8"), type, maxHits.toIntOrNull())
     }
 
+
+    /**
+     * Simple (navigation bar) search handling
+     */
     @RequestMapping("/search/simple")
     fun simpleSearch(@RequestParam("query") queryString: String): Map<String, Any> {
         /* switch between simple and simple heuristic search
@@ -63,25 +88,62 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
         // return this.doSimpleSearch(URLDecoder.decode(queryString.trim(), "UTF-8"))
     }
 
-    fun doStructureSearchBySmiles(smiles: String): Map<String, Any> {
-        try {
-            val parsedSmiles: IAtomContainer = this.smilesParser.parseSmiles(smiles)
-            val canonicalSmiles: String = this.smilesGenerator.create(parsedSmiles)
 
-            val results = this.uniqueNaturalProductRepository.findByClean_smiles(canonicalSmiles)
+    /**
+     *  ************************************************************************************************
+     *  Seatch functions
+     */
+
+    fun doExactStructureSearchByInchi(smiles: String, maxHitsSubmitted: Int?): Map<String, Any> {
+
+        //TODO do something with maxHits
+        try {
+            val queryAC: IAtomContainer = this.smilesParser.parseSmiles(smiles)
+            val gen = InChIGeneratorFactory.getInstance().getInChIGenerator(queryAC, options)
+
+            var queryInchi =  gen.getInchi()
+
+
+            val results = this.uniqueNaturalProductRepository.findByInchi(queryInchi)
 
             return mapOf(
-                    "originalQuery" to canonicalSmiles,
+                    "originalQuery" to smiles,
                     "count" to results.size,
                     "naturalProducts" to results
             )
-
         } catch (e: InvalidSmilesException) {
             error("An InvalidSmilesException occured: ${e.message}")
         } catch (e: CDKException) {
             error("A CDKException occured: ${e.message}")
         }
     }
+
+    fun doExactStructureSearchBySmiles(smiles: String , maxHitsSubmitted: Int?) : Map<String, Any>{
+
+        //TODO do something with maxHits
+
+        try {
+            val queryAC: IAtomContainer = this.smilesParser.parseSmiles(smiles)
+            val querySmiles = smilesGenerator.create(queryAC)
+
+
+            val results = this.uniqueNaturalProductRepository.findByClean_smiles(querySmiles)
+
+            return mapOf(
+                    "originalQuery" to smiles,
+                    "count" to results.size,
+                    "naturalProducts" to results
+            )
+        } catch (e: InvalidSmilesException) {
+            error("An InvalidSmilesException occured: ${e.message}")
+        } catch (e: CDKException) {
+            error("A CDKException occured: ${e.message}")
+        }
+
+    }
+
+
+
 
     fun doSimpleSearch(query: String): Map<String, Any> {
         val naturalProducts = mutableSetOf<UniqueNaturalProduct>()
@@ -121,29 +183,29 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
         }
         else */
         if(coconutPattern.containsMatchIn(query)){
-             naturalProducts =  this.uniqueNaturalProductRepository.findByCoconut_id(query)
-             determinedInputType = "COCONUT ID"
+            naturalProducts =  this.uniqueNaturalProductRepository.findByCoconut_id(query)
+            determinedInputType = "COCONUT ID"
         }
         else if(inchiPattern.containsMatchIn(query)){
-             naturalProducts =  this.uniqueNaturalProductRepository.findByInchi(query)
-             determinedInputType = "InChi"
+            naturalProducts =  this.uniqueNaturalProductRepository.findByInchi(query)
+            determinedInputType = "InChi"
         }
         else if(inchikeyPattern.containsMatchIn(query)){
-             naturalProducts =  this.uniqueNaturalProductRepository.findByInchikey(query)
-             determinedInputType = "InChi Key"
+            naturalProducts =  this.uniqueNaturalProductRepository.findByInchikey(query)
+            determinedInputType = "InChi Key"
         }
         else if(molecularFormulaPattern.containsMatchIn(query)){
             naturalProducts = this.uniqueNaturalProductRepository.findByMolecular_formula(query)
-             determinedInputType = "molecular formula"
+            determinedInputType = "molecular formula"
         }
         else{
             //try to march by name
-             naturalProducts = this.uniqueNaturalProductRepository.findByName(query)
+            naturalProducts = this.uniqueNaturalProductRepository.findByName(query)
 
             if(naturalProducts == null || naturalProducts.isEmpty()){
                 naturalProducts = this.uniqueNaturalProductRepository.fuzzyNameSearch(query)
             }
-             determinedInputType = "name"
+            determinedInputType = "name"
         }
 
 
@@ -161,12 +223,19 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
 
 
 
-    fun doSubstructureSearch(smiles: String): Map<String, Any> {
+    fun doSubstructureSearch(smiles: String, type: String, maxHitsSubmitted: Int?): Map<String, Any> {
         println("Entering substructure search")
 
         println(smiles)
 
         var maxResults = 1000
+
+        if(maxHitsSubmitted != null ){
+            maxResults = maxHitsSubmitted
+        }
+
+        val hits = mutableListOf<UniqueNaturalProduct>()
+        var counter: Int = 0
 
         try {
             val queryAC: IAtomContainer = this.smilesParser.parseSmiles(smiles)
@@ -177,33 +246,67 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
             val matchedList = this.uniqueNaturalProductRepository.findAllPubchemBitsSet(pubchemFingerprinter.getBitFingerprint(queryAC).asBitSet().toByteArray())
 
             println("found molecules with bits set")
-
+            val pattern: Pattern
             // return a list of UNP:
-            // for each UNP - convert to IAC and run the Ullmann
-            val pattern = Ullmann.findSubstructure(queryAC)
-            val hits = mutableListOf<UniqueNaturalProduct>()
+            if(type=="default") {
+                // for each UNP - convert to IAC and run the Ullmann
+                pattern = Ullmann.findSubstructure(queryAC)
+                loop@ for(unp in matchedList){
 
+                    var targetAC : IAtomContainer = this.atomContainerToUniqueNaturalProductService.createAtomContainer(unp)
 
-            var counter: Int = 0
+                    val match = pattern.match(targetAC)
 
-            loop@ for(unp in matchedList){
+                    if (match.isNotEmpty()) {
+                        hits.add(unp)
 
-                var targetAC : IAtomContainer = this.atomContainerToUniqueNaturalProductService.createAtomContainer(unp)
+                        println(unp.coconut_id)
 
-                val match = pattern.match(targetAC)
+                        counter++
 
-                if (match.isNotEmpty()) {
-                    hits.add(unp)
+                        if (counter==maxResults) break@loop
 
-                    println(unp.coconut_id)
-
-                    counter++
-
-                    if (counter==maxResults) break@loop
-
+                    }
                 }
-            }
 
+            }else if(type=="df"){
+                pattern = DfPattern.findSubstructure(queryAC)
+
+                loop@ for(unp in matchedList){
+
+                    var targetAC : IAtomContainer = this.atomContainerToUniqueNaturalProductService.createAtomContainer(unp)
+                    if (pattern.matches(targetAC)) {
+                        hits.add(unp)
+                        println(unp.coconut_id)
+                        counter++
+                        if (counter==maxResults) break@loop
+
+                    }
+                }
+
+
+            }else{
+                //Vento-Foggia
+                 pattern = VentoFoggia.findSubstructure(queryAC)
+                loop@ for(unp in matchedList){
+
+                    var targetAC : IAtomContainer = this.atomContainerToUniqueNaturalProductService.createAtomContainer(unp)
+
+                    val match = pattern.match(targetAC)
+
+                    if (match.isNotEmpty()) {
+                        hits.add(unp)
+
+                        println(unp.coconut_id)
+
+                        counter++
+
+                        if (counter==maxResults) break@loop
+
+                    }
+                }
+
+            }
 
 
             hits.sortBy { it.heavy_atom_number }
@@ -222,6 +325,8 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
             error("A CDKException occured: ${e.message}")
         }
     }
+
+
 
 
     fun doSimilaritySearch(smiles: String): Map<String, Any>{

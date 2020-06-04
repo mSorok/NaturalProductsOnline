@@ -9,6 +9,7 @@ import Error from "./Error";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import Col from "react-bootstrap/Col";
+import Alert from "react-bootstrap/Alert";
 
 
 const React = require("react");
@@ -34,17 +35,26 @@ export default class StructureSearch extends React.Component {
             ajaxError: null,
             ajaxIsLoaded: false,
             ajaxResult: [],
-            searchSubmitted: false,
+            newQuery:true, //TODO
 
-            exactMatch: false,
-            fullExactMatch:true,
-            bondTypeFreeExactMatch:false,
+            searchSubmitted: false,
+            searchSubmittedButIncorrect:false,
+            searchHitsLimit: 100,
+
+            exactMatch: true,
+            exactMatchType: "inchi",
+
+            smilesCorrect:false,
+
 
             substructureSearch: false,
+            substructureSearchType: "default",
 
 
             similaritySearch: false
         };
+
+        this.handleSearchHitsLimit = this.handleSearchHitsLimit.bind(this);
 
         this.handleDesireForCoffee = this.handleDesireForCoffee.bind(this);
         this.handleEditorClearing = this.handleEditorClearing.bind(this);
@@ -52,8 +62,13 @@ export default class StructureSearch extends React.Component {
 
         this.handleSearchTypeSelect = this.handleSearchTypeSelect.bind(this);
 
+        this.handleExactMatchTypeSelect = this.handleExactMatchTypeSelect.bind(this);
 
-        this.handleCheckboxExactMatch = this.handleCheckboxExactMatch.bind(this);
+        this.handleSubstructureSearchTypeSelect = this.handleSubstructureSearchTypeSelect.bind(this);
+
+        this.handleCloseAlert = this.handleCloseAlert.bind(this);
+
+
 
         this.searchResultHeadline = React.createRef();
     }
@@ -68,9 +83,45 @@ export default class StructureSearch extends React.Component {
         }
     }
 
+    handleExactMatchTypeSelect(e){
+        if(e.target.value=="inchi"){
+            console.log("I'm in inchi");
+            this.state.exactMatchType="inchi";
+
+        }else if(e.target.value=="smi") {
+            console.log("I'm in smi");
+            this.state.exactMatchType="smiles";
+        }
+    }
+
+    handleSubstructureSearchTypeSelect(e){
+        if(e.target.value=="sub-def"){
+            console.log("I'm in sub-def");
+            this.state.substructureSearchType="default";
+
+        }else if(e.target.value=="vf") {
+            console.log("I'm in vf");
+            this.state.substructureSearchType="vf";
+        }else if(e.target.value=="df") {
+            console.log("I'm in df");
+            this.state.substructureSearchType="df";
+        }
+    }
+
+
+
+
+
+    handleSearchHitsLimit(e){
+        this.setState(
+            {
+                searchHitsLimit:e.target.value
+            }
+        );
+    }
+
     handleDesireForCoffee() {
         const caffeineCleanSmiles = "O=C1C2=C(N=CN2C)N(C(=O)N1C)C";
-
         this.editor.setSmiles(caffeineCleanSmiles);
     }
 
@@ -81,25 +132,55 @@ export default class StructureSearch extends React.Component {
     handleStructureSubmit() {
         let structureAsSmiles = this.editor.getSmiles();
 
-        this.setState({
-            searchSubmitted: true
-        });
+        //TODO test if SMILES
+        if (structureAsSmiles != null && structureAsSmiles != "" && structureAsSmiles != " ") {
 
-        if (this.state.exactMatch) {
-            this.doSearch("/api/search/exact-structure?smiles=", encodeURIComponent(structureAsSmiles));
-        } else if (this.state.substructureSearch) {
-            this.doSearch("/api/search/substructure?smiles=", encodeURIComponent(structureAsSmiles));
-        } else{
-            this.doSearch("/api/search/exact-structure?smiles=", encodeURIComponent(structureAsSmiles));
+
+            this.setState({
+                searchSubmitted: true
+            });
+
+            this.state.smilesCorrect = true;
+            this.state.searchSubmittedButIncorrect = false;
+
+            if (this.state.exactMatch) {
+                if (this.state.exactMatchType == "inchi") {
+                    this.doSearch("/api/search/exact-structure?type=inchi&max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
+                } else {
+                    this.doSearch("/api/search/exact-structure?type=smi&max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
+                }
+
+            } else if (this.state.substructureSearch) {
+                if (this.state.substructureSearchType == "dafault") {
+                    this.doSearch("/api/search/substructure?type=default&max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
+                } else if (this.state.substructureSearchType == "df") {
+                    this.doSearch("/api/search/substructure?type=uit&max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
+                } else {
+                    this.doSearch("/api/search/substructure?type=vf&max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
+                }
+            } else {
+                this.doSearch("/api/search/exact-structure?max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
+            }
+
+        }
+        else{
+            console.log("you need to submit a valid molecule!")
+            this.state.smilesCorrect = false;
+            this.state.searchSubmittedButIncorrect = true;
+            this.setState({
+                searchSubmittedButIncorrect: true
+            });
         }
 
     }
 
-    handleCheckboxExactMatch(e) {
-        this.setState({
-            exactMatch: e.target.checked
-        });
+
+
+    handleCloseAlert(){
+        this.state.searchSubmittedButIncorrect=false;
     }
+
+
 
 
     handleSearchTypeSelect(key){
@@ -166,38 +247,50 @@ export default class StructureSearch extends React.Component {
     }
 
     render() {
-        const {ajaxError, ajaxIsLoaded, ajaxResult, searchSubmitted, exactMatch, fullExactMatch, bondTypeFreeExactMatch, substructureSearch, similaritySearch } = this.state;
+        const {ajaxError, ajaxIsLoaded, ajaxResult, searchSubmitted, searchSubmittedButIncorrect, exactMatch, fullExactMatch, bondTypeFreeExactMatch, substructureSearch, similaritySearch, smilesCorrect } = this.state;
         let resultRow;
+        let alertMessage;
 
         if (searchSubmitted) {
-            if (ajaxError) {
-                resultRow = <Error/>;
-            } else if (!ajaxIsLoaded) {
-                resultRow =
-                    <Row className="justify-content-center">
-                        <Spinner/>
-                        {substructureSearch && <p>Note: The substructure search might be long if the input molecule is small.</p>}
-                        {similaritySearch && <p>Note: The similarity search can be long.</p>}
-                    </Row>
-            } else {
-                if (ajaxResult.naturalProducts.length > 0) {
+            if(smilesCorrect){
+                if (ajaxError) {
+                    resultRow = <Error/>;
+                } else if (!ajaxIsLoaded) {
                     resultRow =
-                        <>
-                            <Row>
-                                <p>Your search for "{ajaxResult.originalQuery}" yielded {ajaxResult.count} results. {ajaxResult.count > 250 && "Only 250 of these are shown."}</p>
-                            </Row>
-                            <Row>
-                                <CardBrowser naturalProducts={ajaxResult.naturalProducts}/>
-                            </Row>
-                        </>
+                        <Row className="justify-content-center">
+                            <Spinner/>
+                            {substructureSearch &&
+                            <p>Note: The substructure search might be long if the input molecule is small.</p>}
+                            {similaritySearch && <p>Note: The similarity search can be long.</p>}
+                        </Row>
                 } else {
-                    resultRow = <Row><p>There are no results that exactly match your structure.</p></Row>;
+                    if (ajaxResult.naturalProducts.length > 0) {
+                        resultRow =
+                            <>
+                                <Row>
+                                    <p>Your search for "{ajaxResult.originalQuery}" yielded {ajaxResult.count} results.</p>
+                                </Row>
+                                <Row>
+                                    <CardBrowser naturalProducts={ajaxResult.naturalProducts}/>
+                                </Row>
+                            </>
+                    } else {
+                        resultRow = <Row><p>There are no results that exactly match your structure.</p></Row>;
+                    }
                 }
             }
+        }
+        else if(searchSubmittedButIncorrect){
+            console.log("trying to pop an alert");
+            this.state.searchSubmitted = false;
+            this.state.searchSubmittedButIncorrect = true;
+            alertMessage = <Alert variant="danger" > Warning! You need to draw or paste a molecular structure! </Alert>;
         }
 
         return (
             <Container>
+
+
                 <Row>
                     <h2>Structure Search</h2>
                 </Row>
@@ -245,12 +338,84 @@ export default class StructureSearch extends React.Component {
                 <br/>
 
                 <Tabs defaultActiveKey="exact-match" id="select-search-type" onSelect={this.handleSearchTypeSelect} >
+
+
                     <Tab eventKey="exact-match" title="Exact match" >
-                        <p>Here will be radio buttons for exact match search params</p>
+
+
+                        <Form>
+                            <Form.Group>
+                                <div key="exact-match-type" className="lg-8">
+                                    <Form.Check
+                                        name='ext-radios'
+                                        type="radio"
+                                        label="Exact match (by InChI)"
+                                        id="inch"
+                                        value="inch"
+                                        defaultChecked
+                                        onChange={this.handleExactMatchTypeSelect}
+                                    />
+
+                                    <Form.Check
+                                        name='ext-radios'
+                                        type="radio"
+                                        label="Exact match (by canonical SMILES)"
+                                        id="smi"
+                                        value="smi"
+                                        onChange={this.handleExactMatchTypeSelect}
+                                    />
+
+                                </div>
+                            </Form.Group>
+                        </Form>
+
+
                     </Tab>
+
+
+
                     <Tab eventKey="substructure-search" title="Substructure search" >
-                        <p>Here will be radio buttons for substructure search params</p>
-                        <p>Only 1000 first matches will be displayed</p>
+
+
+                        <Form>
+                            <Form.Group>
+                                <div key="substructure-match-type" className="lg-8">
+                                    <Form.Check
+                                        name='sub-radios'
+                                        type="radio"
+                                        label="Default substructure search (Ullmann algorithm)"
+                                        id="sub-def"
+                                        value="sub-def"
+                                        defaultChecked
+                                        onChange={this.handleSubstructureSearchTypeSelect}
+                                    />
+
+                                    <Form.Check
+                                        name='sub-radios'
+                                        type="radio"
+                                        label="Substructure search with depth-first (DF) pattern"
+                                        id="df"
+                                        value="df"
+                                        onChange={this.handleSubstructureSearchTypeSelect}
+                                    />
+
+                                    <Form.Check
+                                        name='sub-radios'
+                                        type="radio"
+                                        label="Substructure search with Vento-Foggia algorithm"
+                                        id="vf"
+                                        value="vf"
+                                        onChange={this.handleSubstructureSearchTypeSelect}
+                                    />
+
+
+
+                                </div>
+                            </Form.Group>
+                        </Form>
+
+
+
                     </Tab>
                     <Tab eventKey="similarity-search" title="Similarity search" disabled>
                         <p>Here will be radio buttons for similarity search params</p>
@@ -260,10 +425,27 @@ export default class StructureSearch extends React.Component {
 
                 <Container>
                     <Row>
-                    <Button id="structureSearchButton" variant="primary" type="submit" size="lg" block onClick={this.handleStructureSubmit}>
-                        <FontAwesomeIcon icon="search" fixedWidth/>
-                        &nbsp;Submit search
-                    </Button>
+                        <Form>
+                            <Form.Group controlId="search-hits-limit">
+                                <br/>
+                                <Form.Control as="select" size="lg" name="control-hits-limit" onChange={this.handleSearchHitsLimit}  >
+                                    <option value="100">100</option>
+                                    <option value="250">250</option>
+                                    <option value="1000">1000</option>
+                                    <option value="10000">10000 (can be long)</option>
+                                </Form.Control>
+                            </Form.Group>
+                        </Form>
+                    </Row>
+
+                    {searchSubmittedButIncorrect}
+                    {alertMessage}
+
+                    <Row>
+                        <Button id="structureSearchButton" variant="primary" type="submit" size="lg" block onClick={this.handleStructureSubmit}>
+                            <FontAwesomeIcon icon="search" fixedWidth/>
+                            &nbsp;Submit search
+                        </Button>
                     </Row>
                 </Container>
                 <br/>
@@ -272,4 +454,5 @@ export default class StructureSearch extends React.Component {
             </Container>
         );
     }
+
 }
