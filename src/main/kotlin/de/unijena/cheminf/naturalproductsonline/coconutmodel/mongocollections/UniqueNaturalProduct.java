@@ -70,6 +70,9 @@ public class UniqueNaturalProduct {
 
     public Integer nameTrustLevel=0;
 
+    public Integer annotationLevel=0;
+
+
     public HashSet<String> synonyms;
 
 
@@ -914,5 +917,13 @@ public class UniqueNaturalProduct {
 
     public void setNumber_of_rings(Integer number_of_rings) {
         this.number_of_rings = number_of_rings;
+    }
+
+    public Integer getAnnotationLevel() {
+        return annotationLevel;
+    }
+
+    public void setAnnotationLevel(Integer annotationLevel) {
+        this.annotationLevel = annotationLevel;
     }
 }

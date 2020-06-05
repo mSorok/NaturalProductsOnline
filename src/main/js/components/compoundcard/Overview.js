@@ -66,8 +66,9 @@ export default class Overview extends React.Component {
                                 {cas_registry_num}
                                 <tr>
                                     <td>Mol. weight</td>
-                                    <td>{naturalProduct.molecular_weight || naturalProduct.molecularWeight}</td>
+                                    <td>{ Math.round((naturalProduct.molecular_weight + Number.EPSILON) * 10000) / 10000 || Math.round((naturalProduct.molecular_weight + Number.EPSILON) * 10000) / 10000}</td>
                                 </tr>
+                                {/*Add annotation level*/}
                                 </tbody>
                             </Table>
                             <Button id="downloadMolfile" variant="outline-primary" size="sm" onClick={(e) => this.handleMolfileDownload(e, naturalProduct.smiles, naturalProduct.coconut_id)}>

@@ -32,16 +32,8 @@ export default class Representations extends React.Component {
                             <td>{naturalProduct.inchikey}</td>
                         </tr>
                         <tr>
-                            <td>SMILES</td>
-                            <td>{naturalProduct.smiles}</td>
-                        </tr>
-                        <tr>
-                            <td>Canonical SMILES</td>
+                            <td>Canonical SMILES (CDK)</td>
                             <td>{naturalProduct.clean_smiles}</td>
-                        </tr>
-                        <tr>
-                            <td>Mol. formula</td>
-                            <td>{naturalProduct.molecular_formula || naturalProduct.molecularFormula}</td>
                         </tr>
                         </tbody>
                     </Table>

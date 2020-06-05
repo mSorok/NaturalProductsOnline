@@ -32,29 +32,14 @@ export default class MolecularProperties extends React.Component {
                             <td>{naturalProduct.number_of_carbons}</td>
                         </tr>
                         <tr>
-                            <td>Number of nitrogens</td>
-                            <td>{naturalProduct.number_of_nitrogens}</td>
+                            <td>Minimal number of rings</td>
+                            <td>{naturalProduct.min_number_of_rings}</td>
                         </tr>
                         <tr>
-                            <td>Number of oxygens</td>
-                            <td>{naturalProduct.number_of_oxygens}</td>
+                            <td>Maximal number of rings</td>
+                            <td>{naturalProduct.max_number_of_rings}</td>
                         </tr>
-                        <tr>
-                            <td>Number of rings</td>
-                            <td>{naturalProduct.number_of_rings}</td>
-                        </tr>
-                        <tr>
-                            <td>Number of repeated fragments</td>
-                            <td>{naturalProduct.number_repeated_fragments}</td>
-                        </tr>
-                        <tr>
-                            <td>Sugar free total atom number</td>
-                            <td>{naturalProduct.sugar_free_total_atom_number}</td>
-                        </tr>
-                        <tr>
-                            <td>Sugar free heavy atom number</td>
-                            <td>{naturalProduct.sugar_free_heavy_atom_number}</td>
-                        </tr>
+
                         </tbody>
                     </Table>
                 </Card.Body>

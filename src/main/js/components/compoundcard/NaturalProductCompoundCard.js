@@ -64,9 +64,8 @@ export default class NaturalProductCompoundCard extends React.Component {
         } else {
             const compoundCardItems = [
                 "overview",
-                "synonyms",
                 "representations",
-                "natural_product_likeness",
+                "synonyms",
                 "molecular_properties",
                 "computed_properties",
                 "references",
@@ -94,26 +93,22 @@ export default class NaturalProductCompoundCard extends React.Component {
                             </Row>
                             <br/>
                             <Row id={compoundCardItems[1]} className="compoundCardRow">
-                                <Synonyms naturalProduct={naturalProduct}/>
-                            </Row>
-                            <br/>
-                            <Row id={compoundCardItems[2]} className="compoundCardRow">
                                 <Representations naturalProduct={naturalProduct}/>
                             </Row>
                             <br/>
-                            <Row id={compoundCardItems[3]} className="compoundCardRow">
-                                <NPlikeness naturalProduct={naturalProduct}/>
+                            <Row id={compoundCardItems[2]} className="compoundCardRow">
+                                <Synonyms naturalProduct={naturalProduct}/>
                             </Row>
                             <br/>
-                            <Row id={compoundCardItems[4]} className="compoundCardRow">
+                            <Row id={compoundCardItems[3]} className="compoundCardRow">
                                 <MolecularProperties naturalProduct={naturalProduct}/>
                             </Row>
                             <br/>
-                            <Row id={compoundCardItems[5]} className="compoundCardRow">
+                            <Row id={compoundCardItems[4]} className="compoundCardRow">
                                 <ComputedProperties naturalProduct={naturalProduct}/>
                             </Row>
                             <br/>
-                            <Row id={compoundCardItems[6]} className="compoundCardRow">
+                            <Row id={compoundCardItems[5]} className="compoundCardRow">
                                 <References naturalProduct={naturalProduct}/>
                             </Row>
                             <br/>
