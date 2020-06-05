@@ -34,6 +34,11 @@ export default class Overview extends React.Component {
         const naturalProduct = this.props.naturalProduct;
         const structure = Utils.drawMoleculeBySmiles(naturalProduct.smiles);
 
+        let cas_registry_num = "";
+        if(naturalProduct.cas != null && naturalProduct.cas != ""){
+            cas_registry_num = <tr><td>CAS registry number</td><td>{naturalProduct.cas}</td></tr>;
+        }
+
         return (
             <Card className="compoundCardItem">
                 <Card.Body>
@@ -50,14 +55,15 @@ export default class Overview extends React.Component {
                                     <td>Name</td>
                                     <td>{naturalProduct.name ? naturalProduct.name : "no name available"}</td>
                                 </tr>
-                                <tr>
+                                {/*<tr>
                                     <td>Contains sugar</td>
                                     <td>{naturalProduct.contains_sugar ? "yes" : "no"}</td>
-                                </tr>
+                                </tr>*/}
                                 <tr>
                                     <td>Mol. formula</td>
                                     <td>{naturalProduct.molecular_formula || naturalProduct.molecularFormula}</td>
                                 </tr>
+                                {cas_registry_num}
                                 <tr>
                                     <td>Mol. weight</td>
                                     <td>{naturalProduct.molecular_weight || naturalProduct.molecularWeight}</td>

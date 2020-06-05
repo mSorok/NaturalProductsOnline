@@ -11,6 +11,8 @@ import MolecularProperties from "./MolecularProperties";
 import ComputedProperties from "./ComputedProperties";
 import CrossReferences from "./CrossReferences";
 import NPlikeness from "./NPlikeness";
+import References from "./References";
+import Synonyms from "./Synonyms";
 
 const React = require("react");
 const restClient = require("../../restClient");
@@ -62,10 +64,12 @@ export default class NaturalProductCompoundCard extends React.Component {
         } else {
             const compoundCardItems = [
                 "overview",
+                "synonyms",
                 "representations",
                 "natural_product_likeness",
                 "molecular_properties",
                 "computed_properties",
+                "references",
                 "cross_references"
                 /*
                 this information is also attached to sourceNaturalProduct,
@@ -90,19 +94,27 @@ export default class NaturalProductCompoundCard extends React.Component {
                             </Row>
                             <br/>
                             <Row id={compoundCardItems[1]} className="compoundCardRow">
-                                <Representations naturalProduct={naturalProduct}/>
+                                <Synonyms naturalProduct={naturalProduct}/>
                             </Row>
                             <br/>
                             <Row id={compoundCardItems[2]} className="compoundCardRow">
-                                <NPlikeness naturalProduct={naturalProduct}/>
+                                <Representations naturalProduct={naturalProduct}/>
                             </Row>
                             <br/>
                             <Row id={compoundCardItems[3]} className="compoundCardRow">
-                                <MolecularProperties naturalProduct={naturalProduct}/>
+                                <NPlikeness naturalProduct={naturalProduct}/>
                             </Row>
                             <br/>
                             <Row id={compoundCardItems[4]} className="compoundCardRow">
+                                <MolecularProperties naturalProduct={naturalProduct}/>
+                            </Row>
+                            <br/>
+                            <Row id={compoundCardItems[5]} className="compoundCardRow">
                                 <ComputedProperties naturalProduct={naturalProduct}/>
+                            </Row>
+                            <br/>
+                            <Row id={compoundCardItems[6]} className="compoundCardRow">
+                                <References naturalProduct={naturalProduct}/>
                             </Row>
                             <br/>
                             {/* hide fragments
@@ -112,7 +124,7 @@ export default class NaturalProductCompoundCard extends React.Component {
                             </Row>
                             <br/>
                             */}
-                            <Row id={compoundCardItems[5]} className="compoundCardRow">
+                            <Row id={compoundCardItems[6]} className="compoundCardRow">
                                 <CrossReferences naturalProduct={naturalProduct}/>
                             </Row>
                             <br/>

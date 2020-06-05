@@ -149,7 +149,7 @@ export default class StructureSearch extends React.Component {
 
 
         //TODO test if SMILES (or other Inchi and co)
-        
+
         if (structureAsSmiles != null && structureAsSmiles != "" && structureAsSmiles != " ") {
 
 
@@ -364,7 +364,7 @@ export default class StructureSearch extends React.Component {
                             <Form.Group controlId="molecularStructureString">
                                 <Form.Label>Paste molecule</Form.Label>
                                 <Form.Control onChange={this.handleStringInput} />
-                                <Form.Text className="text-muted">SMILES, InChI, COCONUT id, name</Form.Text>
+                                <Form.Text className="text-muted">SMILES</Form.Text> {/*in the future: , InChI, COCONUT id, name*/}
                             </Form.Group>
                         </Form>
 

@@ -1,6 +1,5 @@
 package de.unijena.cheminf.naturalproductsonline.coconutmodel.mongocollections;
 
-
 import org.javatuples.Pair;
 import org.openscience.cdk.fingerprint.IBitFingerprint;
 import org.openscience.cdk.fingerprint.ICountFingerprint;
@@ -68,6 +67,8 @@ public class UniqueNaturalProduct {
 
     //@Indexed(name = "name_index")
     public String name;
+
+    public Integer nameTrustLevel=0;
 
     public HashSet<String> synonyms;
 
@@ -889,5 +890,29 @@ public class UniqueNaturalProduct {
 
     public void setCircularFingerprint(ArrayList<Integer> circularFingerprint) {
         this.circularFingerprint = circularFingerprint;
+    }
+
+    public boolean isContains_ring_sugars() {
+        return contains_ring_sugars;
+    }
+
+    public boolean isContains_linear_sugars() {
+        return contains_linear_sugars;
+    }
+
+    public Integer getNameTrustLevel() {
+        return nameTrustLevel;
+    }
+
+    public void setNameTrustLevel(Integer nameTrustLevel) {
+        this.nameTrustLevel = nameTrustLevel;
+    }
+
+    public Integer getNumber_of_rings() {
+        return number_of_rings;
+    }
+
+    public void setNumber_of_rings(Integer number_of_rings) {
+        this.number_of_rings = number_of_rings;
     }
 }
