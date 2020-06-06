@@ -51,7 +51,16 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
     @Autowired
     lateinit var atomContainerToUniqueNaturalProductService: AtomContainerToUniqueNaturalProductService
 
+/*
+    /**
+     * Advanced structure handling
+     */
 
+    @RequestMapping("/search/advanced")
+    fun advancedSearch(): Map<String, Any>{
+
+    }
+*/
     /**
      *  Exact structure handling
      */
@@ -91,7 +100,7 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
 
     /**
      *  ************************************************************************************************
-     *  Seatch functions
+     *  Search functions
      */
 
     fun doExactStructureSearchByInchi(smiles: String, maxHitsSubmitted: Int?): Map<String, Any> {

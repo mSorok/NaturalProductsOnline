@@ -18,6 +18,7 @@ export default class HeaderSearchBar extends React.Component {
             queryString: null
         };
         this.handleSearchSubmit = this.handleSearchSubmit.bind(this);
+        this.handleSearchSubmitKey = this.handleSearchSubmitKey.bind(this);
     }
 
     handleSearchSubmit(e) {
@@ -25,6 +26,16 @@ export default class HeaderSearchBar extends React.Component {
             searchSubmitted: true,
             queryString: document.getElementById("searchInput").value
         });
+    }
+
+    handleSearchSubmitKey(e){
+        if (e.key === "Enter") {
+            this.setState({
+                searchSubmitted: true,
+                queryString: document.getElementById("searchInput").value
+            });
+        }
+
     }
 
     render() {
@@ -36,6 +47,7 @@ export default class HeaderSearchBar extends React.Component {
                         <Form.Control id="searchInput"
                                       type="text"
                                       placeholder="Molecule name, InChI, InChIKey, formula, COCONUT id"
+                                      onKeyPress={this.handleSearchSubmitKey}
                         />
                         <InputGroup.Append>
                             <Button id="searchButton" variant="primary" type="submit" onClick={this.handleSearchSubmit}>
