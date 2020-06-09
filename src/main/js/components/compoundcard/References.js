@@ -50,7 +50,7 @@ export default class  References  extends React.Component {
                 }
 
                 refTable.push(
-                    <tr >
+                    <tr key={i+"_refs"}>
                         <td>{ref_link}</td>
                     </tr>
                 );

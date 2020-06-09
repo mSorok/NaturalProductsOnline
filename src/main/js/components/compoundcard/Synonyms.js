@@ -27,7 +27,7 @@ export default class  Synonyms  extends React.Component {
             for(let i=0; i<naturalProduct.synonyms.length; i++) {
 
                 synonymsList.push(
-                    <tr >
+                    <tr key={i+"_synonyms"}>
                         <td>{naturalProduct.synonyms[i]}</td>
                     </tr>
                 );

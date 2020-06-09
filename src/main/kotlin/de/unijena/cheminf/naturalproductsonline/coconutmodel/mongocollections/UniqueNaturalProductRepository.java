@@ -15,6 +15,8 @@ public interface UniqueNaturalProductRepository  extends MongoRepository<UniqueN
 
     public List<UniqueNaturalProduct> findByInchikey(String inchikey);
 
+    public List<UniqueNaturalProduct> findAllByOrderByAnnotationLevelDesc();
+
     @Query("{ coconut_id : ?0}")
     public List<UniqueNaturalProduct> findByCoconut_id(String coconut_id);
 

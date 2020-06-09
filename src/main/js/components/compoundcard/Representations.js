@@ -35,6 +35,10 @@ export default class Representations extends React.Component {
                             <td>Canonical SMILES (CDK)</td>
                             <td>{naturalProduct.clean_smiles}</td>
                         </tr>
+                        <tr>
+                            <td>Murcko Framework</td>
+                            <td>{naturalProduct.murko_framework || "not applicable"}</td>
+                        </tr>
                         </tbody>
                     </Table>
                 </Card.Body>

@@ -6,6 +6,9 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import Utils from "../../Utils";
+import Tooltip from "react-bootstrap/Tooltip";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+
 
 const React = require("react");
 
@@ -39,6 +42,17 @@ export default class Overview extends React.Component {
             cas_registry_num = <tr><td>CAS registry number</td><td>{naturalProduct.cas}</td></tr>;
         }
 
+        let starsAnnotation = "";
+
+        if(naturalProduct.annotationLevel==0){
+            starsAnnotation="not annotated yet";
+        }else {
+
+            for (let i = 0; i < naturalProduct.annotationLevel; i++) {
+                starsAnnotation += <FontAwesomeIcon icon="fa-star" fixedWidth/>;
+            }
+        }
+
         return (
             <Card className="compoundCardItem">
                 <Card.Body>
@@ -55,10 +69,10 @@ export default class Overview extends React.Component {
                                     <td>Name</td>
                                     <td>{naturalProduct.name ? naturalProduct.name : "no name available"}</td>
                                 </tr>
-                                {/*<tr>
-                                    <td>Contains sugar</td>
-                                    <td>{naturalProduct.contains_sugar ? "yes" : "no"}</td>
-                                </tr>*/}
+                                <tr>
+                                    <td>Annotation level</td>
+                                    <td>{naturalProduct.annotationLevel}</td>
+                                </tr>
                                 <tr>
                                     <td>Mol. formula</td>
                                     <td>{naturalProduct.molecular_formula || naturalProduct.molecularFormula}</td>
@@ -68,7 +82,21 @@ export default class Overview extends React.Component {
                                     <td>Mol. weight</td>
                                     <td>{ Math.round((naturalProduct.molecular_weight + Number.EPSILON) * 10000) / 10000 || Math.round((naturalProduct.molecular_weight + Number.EPSILON) * 10000) / 10000}</td>
                                 </tr>
-                                {/*Add annotation level*/}
+                                <tr>
+                                    <td>
+                                        Annotation level
+                                        <OverlayTrigger key={"annot_level"} placement="bottom" overlay={
+                                            <Tooltip id={"annot_level_tooltip"}>
+                                                <p>Annotation level of this natural product</p>p>
+                                                <p>1 star: no verified name, no organism that produces the entry, no literature reference, no trusted resource;</p>
+                                                <p>2 stars: one of the above; 3 stars: two of the above; 4 stars: three of the above; 5 stars: full annotation </p>
+                                            </Tooltip>
+                                        }>
+                                            <FontAwesomeIcon icon="question-circle" fixedWidth/>
+                                        </OverlayTrigger>
+                                    </td>
+                                    <td>{starsAnnotation}</td>
+                                </tr>
                                 </tbody>
                             </Table>
                             <Button id="downloadMolfile" variant="outline-primary" size="sm" onClick={(e) => this.handleMolfileDownload(e, naturalProduct.smiles, naturalProduct.coconut_id)}>
