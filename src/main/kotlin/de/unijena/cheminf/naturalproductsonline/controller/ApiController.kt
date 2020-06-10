@@ -24,8 +24,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.net.URLDecoder
-import org.springframework.data.mongodb.core.query.Query.query
-import java.util.ArrayList
 
 
 @RestController
@@ -216,6 +214,8 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
             }
             determinedInputType = "name"
         }
+
+        println("returning")
 
 
 

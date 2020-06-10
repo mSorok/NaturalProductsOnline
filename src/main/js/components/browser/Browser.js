@@ -53,7 +53,7 @@ export default class Browser extends React.Component {
                 this.fetchNaturalProducts();
             }
 
-            fetchNaturalProducts(link = "/api/compound/findAllByOrderByAnnotationLevelDesc?page=" + pageNumber) {
+            fetchNaturalProducts(link = "/api/compound?sort=annotationLevel,desc&page=" + pageNumber) {
                 restClient({
                     method: "GET",
                     path: link

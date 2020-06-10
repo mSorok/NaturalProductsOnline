@@ -6,7 +6,10 @@
     "type": "git",
     "url": "git+https://github.com/mSorok/NaturalProductsOnline.git"
   },
-  "keywords": ["natural products", "database"],
+  "keywords": [
+    "natural products",
+    "database"
+  ],
   "author": "Peter Merseburger, Maria Sorokina",
   "license": "MIT",
   "dependencies": {

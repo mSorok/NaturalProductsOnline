@@ -40,16 +40,19 @@ export default class Overview extends React.Component {
         let cas_registry_num = "";
         if(naturalProduct.cas != null && naturalProduct.cas != ""){
             cas_registry_num = <tr><td>CAS registry number</td><td>{naturalProduct.cas}</td></tr>;
+        }else{
+            cas_registry_num = <tr><td>CAS registry number</td><td>-</td></tr>;
         }
 
-        let starsAnnotation = "";
+        let starsAnnotation = [];
 
         if(naturalProduct.annotationLevel==0){
-            starsAnnotation="not annotated yet";
+            starsAnnotation.push("not annotated yet");
         }else {
-
+            //starsAnnotation = "";
             for (let i = 0; i < naturalProduct.annotationLevel; i++) {
-                starsAnnotation += <FontAwesomeIcon icon="fa-star" fixedWidth/>;
+                //starsAnnotation += "*";
+                starsAnnotation.push(<td key={"star"+i} style={{width:22}} ><FontAwesomeIcon icon={"star"} fixedWidth color="#f29a1f"/></td> );
             }
         }
 
@@ -70,10 +73,6 @@ export default class Overview extends React.Component {
                                     <td>{naturalProduct.name ? naturalProduct.name : "no name available"}</td>
                                 </tr>
                                 <tr>
-                                    <td>Annotation level</td>
-                                    <td>{naturalProduct.annotationLevel}</td>
-                                </tr>
-                                <tr>
                                     <td>Mol. formula</td>
                                     <td>{naturalProduct.molecular_formula || naturalProduct.molecularFormula}</td>
                                 </tr>
@@ -87,7 +86,7 @@ export default class Overview extends React.Component {
                                         Annotation level
                                         <OverlayTrigger key={"annot_level"} placement="bottom" overlay={
                                             <Tooltip id={"annot_level_tooltip"}>
-                                                <p>Annotation level of this natural product</p>p>
+                                                <p>Annotation level of this natural product</p>
                                                 <p>1 star: no verified name, no organism that produces the entry, no literature reference, no trusted resource;</p>
                                                 <p>2 stars: one of the above; 3 stars: two of the above; 4 stars: three of the above; 5 stars: full annotation </p>
                                             </Tooltip>
@@ -95,7 +94,7 @@ export default class Overview extends React.Component {
                                             <FontAwesomeIcon icon="question-circle" fixedWidth/>
                                         </OverlayTrigger>
                                     </td>
-                                    <td>{starsAnnotation}</td>
+                                    <td><table><tbody><tr>{starsAnnotation}</tr></tbody></table></td>
                                 </tr>
                                 </tbody>
                             </Table>

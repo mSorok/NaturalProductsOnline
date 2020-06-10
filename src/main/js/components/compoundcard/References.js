@@ -28,7 +28,7 @@ export default class  References  extends React.Component {
                 if (RegExp(/^\d+$/).test(naturalProduct.citationDOI[i])) {
                     //only numbers = PubMed id
 
-                    let ra = "https://pubmed.ncbi.nlm.nih.gov/14521986/?from_single_result="+ naturalProduct.citationDOI[i] ;
+                    let ra = "https://pubmed.ncbi.nlm.nih.gov/"+ naturalProduct.citationDOI[i] ;
                     ref_link = <a href= {ra}>PubMed </a> ;
 
                 } else if (RegExp(/\b(10[.][0-9]{4,}(?:[.][0-9]+)*\/(?:(?!["&\'<>])\S)+)\b/g).test(naturalProduct.citationDOI[i])) {
@@ -65,7 +65,9 @@ export default class  References  extends React.Component {
                     <Card.Title className="text-primary">References</Card.Title>
                     <br />
                     <Table size="sm">
+                        <tbody>
                         {refTable}
+                        </tbody>
                     </Table>
                 </Card.Body>
             </Card>
