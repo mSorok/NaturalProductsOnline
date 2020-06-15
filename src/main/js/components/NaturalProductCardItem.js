@@ -29,11 +29,11 @@ export default class NaturalProductCardItem extends React.Component {
                             <td>{this.props.naturalProduct.molecular_formula || this.props.naturalProduct.molecularFormula}</td>
                         </tr>
                         <tr>
-                            <td>Molecular weight</td>
+                            <td>Mol. weight</td>
                             <td>{ Math.round((this.props.naturalProduct.molecular_weight + Number.EPSILON)  * 100) / 100 }</td>
                         </tr>
                         <tr>
-                            <td>NPL score</td>
+                            <td>NP-likeness</td>
                             <td>{ Math.round((this.props.naturalProduct.npl_score + Number.EPSILON)  * 100) / 100 }</td>
                         </tr>
                         </tbody>

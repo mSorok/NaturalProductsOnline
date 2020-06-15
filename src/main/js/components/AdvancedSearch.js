@@ -84,6 +84,11 @@ export default class AdvancedSearch extends React.Component {
             containSugars :"indifferent",
             containSugarsLogic: "AND",
 
+            nplScoreSubmitted: false,
+            nplScore : 0,
+            nplScoreRange: 0,
+            nplScoreLogic: "AND",
+
 
 
         };
@@ -207,6 +212,7 @@ export default class AdvancedSearch extends React.Component {
             }
 
             if(this.state.numberOfNitrogensSubmitted){
+                console.log("entered nitrogens");
                 let advancedSearchItem = {
                     itemType: "number_of_nitrogens",
                     itemValue : this.state.numberOfNitrogens,
@@ -216,7 +222,7 @@ export default class AdvancedSearch extends React.Component {
                 this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
             }
 
-            if(this.numberOfRingsSubmitted){
+            if(this.state.numberOfRingsSubmitted){
                 let advancedSearchItem = {
                     itemType: "number_of_rings",
                     itemValue : this.state.numberOfRings,
@@ -227,7 +233,7 @@ export default class AdvancedSearch extends React.Component {
 
             }
 
-            if(this.containSugarsSubmitted){
+            if(this.state.containSugarsSubmitted){
                 let advancedSearchItem = {
                     itemType: "contains_sugars",
                     itemValue : this.state.containSugars,
@@ -236,7 +242,11 @@ export default class AdvancedSearch extends React.Component {
                 this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
             }
 
+            //TODO problem with sugars and rings
+
             //todo more ifs...
+
+            console.log(this.state.advancedSearchModel.listOfSearchItems);
 
 
             this.doSearch(uriString);
@@ -422,7 +432,7 @@ export default class AdvancedSearch extends React.Component {
 
     handleContainsSugars(e){
         this.state.containSugars = e.target.value;
-        if(this.state.containSugars != "" && this.state.containSugars != null && this.state.containSugars != 0) {
+        if(this.state.containSugars != "" && this.state.containSugars != null && this.state.containSugars != "Indifferent") {
             this.state.containSugarsSubmitted = true;
 
         }else{

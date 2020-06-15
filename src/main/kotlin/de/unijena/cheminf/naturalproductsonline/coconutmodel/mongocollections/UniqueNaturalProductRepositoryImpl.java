@@ -32,7 +32,10 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
         ArrayList<Criteria> orCriterias = new ArrayList<>();
 
 
+
         for(int i=0; i< criterias.getListOfSearchItems().length; i++) {
+
+
 
             String itemType = criterias.getListOfSearchItems()[i].getAsString("itemType");
             String itemLogic = criterias.getListOfSearchItems()[i].getAsString("itemLogic");
@@ -140,22 +143,18 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
             }
         }
 
-        if(criterias.getListOfSearchItems().length == 1){
-            if (!andCriterias.isEmpty()) {
-                advancedQuery.addCriteria(andCriterias.get(0));
-            }else if(!orCriterias.isEmpty()){
-                advancedQuery.addCriteria(orCriterias.get(0));
-            }
-        }else {
-            if (!andCriterias.isEmpty()) {
-                bigCriteria.andOperator(andCriterias.toArray(new Criteria[andCriterias.size()]));
-            }
 
-            if (!orCriterias.isEmpty()) {
-                bigCriteria.orOperator(orCriterias.toArray(new Criteria[orCriterias.size()]));
-            }
-            advancedQuery.addCriteria(bigCriteria);
+        if (!andCriterias.isEmpty()) {
+            bigCriteria.andOperator(andCriterias.toArray(new Criteria[andCriterias.size()]));
         }
+
+        if (!orCriterias.isEmpty()) {
+            bigCriteria.orOperator(orCriterias.toArray(new Criteria[orCriterias.size()]));
+        }
+        advancedQuery.addCriteria(bigCriteria);
+
+
+        System.out.println(advancedQuery);
 
         result = mongoTemplate.find(advancedQuery, UniqueNaturalProduct.class);
 
