@@ -7,7 +7,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import java.util.List;
 
 @RepositoryRestResource(path="compound")
-public interface UniqueNaturalProductRepository  extends MongoRepository<UniqueNaturalProduct, String> {
+public interface UniqueNaturalProductRepository  extends MongoRepository<UniqueNaturalProduct, String>, UniqueNaturalProductRepositoryCustom{
 
     public List<UniqueNaturalProduct> findBySmiles(String smiles);
 

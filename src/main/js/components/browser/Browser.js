@@ -32,6 +32,7 @@ export default class Browser extends React.Component {
         });
     }
 
+
     withSubscription(ViewComponent, pageNumber, pageRequestHandler) {
         return class extends React.Component {
             constructor(props) {
@@ -128,7 +129,7 @@ export default class Browser extends React.Component {
                             </Row>
                             <br/>
                             <Row>
-                                <p>There are {this.state.stats.totalCompoundCount} unique natural products in the database.</p>
+                                <p>There are {this.state.stats.totalCompoundCount.toLocaleString()} unique natural products in the database. They are sorted by their annotation level, from best annotated to worst.</p>
                             </Row>
                             <Row>
                                 <Pagination>

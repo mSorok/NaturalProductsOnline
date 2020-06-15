@@ -41,22 +41,22 @@ export default class ComputedProperties extends React.Component {
         return (
             <Card  className="compoundCardItem">
                 <Card.Body>
-                    <Card.Title className="text-primary">Computed Properties</Card.Title>
+                    <Card.Title className="text-primary">Molecular Descriptors</Card.Title>
                     <br />
                     <Table size="sm">
                         <tbody>
-                        {this.createRowWithOverlayTooltip("NP-likeness score", naturalProduct.npl_score, "The likelihood of the compound to be a natural product, ranges from -5 (less likely) to 5 (very likely.")}
+                        {this.createRowWithOverlayTooltip("NP-likeness score",  Math.round((naturalProduct.npl_score + Number.EPSILON) * 100) / 100 , "The likelihood of the compound to be a natural product, ranges from -5 (less likely) to 5 (very likely.")}
 
-                        {this.createSimpleRow("alogp", naturalProduct.alogp)}
-                        {this.createSimpleRow("alogp2", naturalProduct.alogp2)}
+                        {this.createSimpleRow("alogp", Math.round((naturalProduct.alogp + Number.EPSILON) * 100) / 100 )}
+                        {this.createSimpleRow("alogp2", Math.round((naturalProduct.alogp2 + Number.EPSILON) * 100) / 100 ) }
                         {/*{this.createSimpleRow("amralogp", naturalProduct.amralogp)}*/}
-                        {this.createRowWithOverlayTooltip("apol", naturalProduct.apol, "Sum of the atomic polarizabilities (including implicit hydrogens).")}
-                        {this.createRowWithOverlayTooltip("bpol", naturalProduct.bpol, "Sum of the absolute value of the difference between atomic polarizabilities of all bonded atoms in the molecule (including implicit hydrogens) with polarizabilities taken from http://www.sunysccc.edu/academic/mst/ptable/p-table2.htm This descriptor assumes 2-centered bonds.")}
+                        {this.createRowWithOverlayTooltip("apol", Math.round((naturalProduct.apol + Number.EPSILON) * 10000) / 10000  , "Sum of the atomic polarizabilities (including implicit hydrogens).")}
+                        {this.createRowWithOverlayTooltip("bpol", Math.round((naturalProduct.bpol + Number.EPSILON) * 10000) / 10000 , "Sum of the absolute value of the difference between atomic polarizabilities of all bonded atoms in the molecule (including implicit hydrogens) with polarizabilities taken from http://www.sunysccc.edu/academic/mst/ptable/p-table2.htm This descriptor assumes 2-centered bonds.")}
                         {/*{this.createRowWithOverlayTooltip("bcutDescriptor", <ul className="list-unstyled">{bcutDescriptor}</ul>, "Eigenvalue based descriptor noted for its utility in chemical diversity.")}*/}
-                        {this.createRowWithOverlayTooltip("eccentricConnectivityIndexDescriptor", naturalProduct.eccentricConnectivityIndexDescriptor, "A topological descriptor combining distance and adjacency information.")}
-                        {this.createRowWithOverlayTooltip("fmfDescriptor", naturalProduct.fmfDescriptor, "FMF descriptor characterizing complexity of a molecule. The descriptor is described in (Yang, Y. et. al.. J. Med. Chem.. 2010. ASAP) and is an approach to characterizing molecular complexity based on the Murcko framework present in the molecule.")}
-                        {this.createRowWithOverlayTooltip("fsp3", naturalProduct.fsp3, "This descriptor is characterizing non-flatness of a molecule.")}
-                        {this.createRowWithOverlayTooltip("fragmentComplexityDescriptor", naturalProduct.fragmentComplexityDescriptor, "Class that returns the complexity of a system. The complexity is defined as (Nilakantan, R. et. al.. Journal of chemical information and modeling. 2006. 46)")}
+                        {this.createRowWithOverlayTooltip("eccentricConnectivityIndexDescriptor", Math.round((naturalProduct.eccentricConnectivityIndexDescriptor + Number.EPSILON) * 10000) / 10000 , "A topological descriptor combining distance and adjacency information.")}
+                        {this.createRowWithOverlayTooltip("fmfDescriptor", Math.round((naturalProduct.fmfDescriptor + Number.EPSILON) * 10000) / 10000 , "FMF descriptor characterizing complexity of a molecule. The descriptor is described in (Yang, Y. et. al.. J. Med. Chem.. 2010. ASAP) and is an approach to characterizing molecular complexity based on the Murcko framework present in the molecule.")}
+                        {this.createRowWithOverlayTooltip("fsp3", Math.round((naturalProduct.fsp3 + Number.EPSILON) * 10000) / 10000 , "This descriptor is characterizing non-flatness of a molecule.")}
+                        {this.createRowWithOverlayTooltip("fragmentComplexityDescriptor", Math.round((naturalProduct.fragmentComplexityDescriptor + Number.EPSILON) * 10000) / 10000 , "Class that returns the complexity of a system. The complexity is defined as (Nilakantan, R. et. al.. Journal of chemical information and modeling. 2006. 46)")}
                         {/*{this.createSimpleRow("gravitationalIndexHeavyAtoms", naturalProduct.gravitationalIndexHeavyAtoms)}*/}
                         {/*{this.createRowWithOverlayTooltip("hBondAcceptorCount", naturalProduct.hBondAcceptorCount, "This descriptor calculates the number of hydrogen bond acceptors using a slightly simplified version of the PHACIR atom types.")}*/}
                         {/*{this.createRowWithOverlayTooltip("hBondDonorCount", naturalProduct.hBondDonorCount, "This descriptor calculates the number of hydrogen bond donors using a slightly simplified version of the PHACIR atom types.")}*/}
@@ -65,18 +65,18 @@ export default class ComputedProperties extends React.Component {
                         {/*{this.createSimpleRow("kappaShapeIndex2", naturalProduct.kappaShapeIndex2)}*/}
                         {/*{this.createSimpleRow("kappaShapeIndex3", naturalProduct.kappaShapeIndex3)}*/}
                         {/*{this.createRowWithOverlayTooltip("manholdlogp", naturalProduct.manholdlogp, "Prediction of logP based on the number of carbon and hetero atoms. The implemented equation was proposed in (Mannhold, R. et. al.. J.Pharm.Sci.. 2009. 98).")}*/}
-                        {this.createRowWithOverlayTooltip("petitjeanNumber", naturalProduct.petitjeanNumber, "According to the Petitjean definition, the eccentricity of a vertex corresponds to the distance from that vertex to the most remote vertex in the graph. The distance is obtained from the distance matrix as the count of edges between the two vertices.")}
+                        {this.createRowWithOverlayTooltip("petitjeanNumber", Math.round((naturalProduct.petitjeanNumber + Number.EPSILON) * 10000) / 10000 , "According to the Petitjean definition, the eccentricity of a vertex corresponds to the distance from that vertex to the most remote vertex in the graph. The distance is obtained from the distance matrix as the count of edges between the two vertices.")}
                         {/*{this.createRowWithOverlayTooltip("petitjeanShapeTopo", naturalProduct.petitjeanShapeTopo, "Evaluates the Petitjean shape indices, These original Petitjean number was described by Petitjean (( Petitjean, M. . Journal of Chemical Information and Computer Science. 1992. 32)) and considered the molecular graph. This class also implements the geometric analog of the topological shape index described by Bath et al (( Bath, P.A. et. al.. Journal of Chemical Information and Computer Science. 1995. 35)).")}*/}
                         {/*{this.createSimpleRow("petitjeanShapeGeom", naturalProduct.petitjeanShapeGeom)}*/}
-                        {this.createRowWithOverlayTooltip("lipinskiRuleOf5Failures", naturalProduct.lipinskiRuleOf5Failures, "Number of failures in the lipinski rule of 5")}
+                        {this.createRowWithOverlayTooltip("lipinskiRuleOf5Failures", Math.round((naturalProduct.lipinskiRuleOf5Failures + Number.EPSILON) * 10000) / 10000 , "Number of failures in the lipinski rule of 5")}
                         {/*{this.createSimpleRow("numberSpiroAtoms", naturalProduct.numberSpiroAtoms)}*/}
                         {/*{this.createRowWithOverlayTooltip("vabcDescriptor", naturalProduct.vabcDescriptor, "Volume descriptor using the method implemented in the VABCVolume class.")}*/}
                         {/*{this.createRowWithOverlayTooltip("vertexAdjMagnitude", naturalProduct.vertexAdjMagnitude, "Vertex adjacency information (magnitude): 1 + log2 m where m is the number of heavy-heavy bonds. If m is zero, then zero is returned. (definition from MOE tutorial on line)")}*/}
-                        {this.createSimpleRow("weinerPathNumber", naturalProduct.weinerPathNumber)}
+                        {this.createSimpleRow("WienerPathNumber", Math.round((naturalProduct.weinerPathNumber + Number.EPSILON) * 10000) / 10000 )}
                         {/*{this.createSimpleRow("weinerPolarityNumber", naturalProduct.weinerPolarityNumber)}*/}
-                        {this.createRowWithOverlayTooltip("xlogp", naturalProduct.xlogp, "Prediction of logP based on the atom-type method called XLogP. Requires all hydrogens to be explicit.")}
-                        {this.createRowWithOverlayTooltip("zagrebIndex", naturalProduct.zagrebIndex, "The sum of the squares of atom degree over all heavy atoms i.")}
-                        {this.createRowWithOverlayTooltip("topoPSA", naturalProduct.topoPSA, "Calculation of topological polar surface area based on fragment contributions (TPSA) (Ertl, P. et. al.. J. Med. Chem.. 2000. 43).")}
+                        {this.createRowWithOverlayTooltip("xlogp", Math.round((naturalProduct.xlogp + Number.EPSILON) * 10000) / 10000 , "Prediction of logP based on the atom-type method called XLogP. Requires all hydrogens to be explicit.")}
+                        {this.createRowWithOverlayTooltip("zagrebIndex", Math.round((naturalProduct.zagrebIndex + Number.EPSILON) * 10000) / 10000 , "The sum of the squares of atom degree over all heavy atoms i.")}
+                        {this.createRowWithOverlayTooltip("topoPSA", Math.round((naturalProduct.topoPSA + Number.EPSILON) * 10000) / 10000 , "Calculation of topological polar surface area based on fragment contributions (TPSA) (Ertl, P. et. al.. J. Med. Chem.. 2000. 43).")}
                         {/*{this.createRowWithOverlayTooltip("tpsaEfficiency", naturalProduct.tpsaEfficiency, "Polar surface area expressed as a ratio to molecular size. Calculates tpsaEfficiency, which is to TPSADescriptor / molecular weight, in units of square Angstroms per Dalton. Other related descriptors may also be useful to add, e.g. ratio of polar to hydrophobic surface area.")}*/}
                         </tbody>
                     </Table>

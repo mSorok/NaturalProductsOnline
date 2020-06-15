@@ -162,9 +162,9 @@ export default class StructureSearch extends React.Component {
 
             if (this.state.exactMatch) {
                 if (this.state.exactMatchType == "inchi") {
-                    this.doSearch("/api/search/exact-structure?type=inchi&max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
+                    this.doSearch("/api/search/exact-structure?type=inchi&smiles=", encodeURIComponent(structureAsSmiles));
                 } else {
-                    this.doSearch("/api/search/exact-structure?type=smi&max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
+                    this.doSearch("/api/search/exact-structure?type=smi&smiles=", encodeURIComponent(structureAsSmiles));
                 }
 
             } else if (this.state.substructureSearch) {
@@ -303,7 +303,7 @@ export default class StructureSearch extends React.Component {
                                 </Row>
                             </>
                     } else {
-                        resultRow = <Row><p>There are no results that exactly match your structure.</p></Row>;
+                        resultRow = <Row><p>There are no results that match your structure.</p></Row>;
                     }
                 }
             }

@@ -3,7 +3,9 @@ package de.unijena.cheminf.naturalproductsonline.controller
 
 import de.unijena.cheminf.naturalproductsonline.coconutmodel.mongocollections.UniqueNaturalProduct
 import de.unijena.cheminf.naturalproductsonline.coconutmodel.mongocollections.UniqueNaturalProductRepository
+import de.unijena.cheminf.naturalproductsonline.model.AdvancedSearchModel
 import de.unijena.cheminf.naturalproductsonline.utils.AtomContainerToUniqueNaturalProductService
+import net.minidev.json.JSONObject
 import net.sf.jniinchi.INCHI_OPTION
 import org.openscience.cdk.exception.CDKException
 import org.openscience.cdk.exception.InvalidSmilesException
@@ -20,9 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Slice
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.MediaType
+import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
+import org.springframework.web.bind.annotation.*
 import java.net.URLDecoder
 
 
@@ -49,26 +51,31 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
     @Autowired
     lateinit var atomContainerToUniqueNaturalProductService: AtomContainerToUniqueNaturalProductService
 
-/*
+
     /**
      * Advanced structure handling
      */
 
-    @RequestMapping("/search/advanced")
-    fun advancedSearch(): Map<String, Any>{
+    @RequestMapping("/search/advanced" )
+    @ResponseBody
+    fun advancedSearch(@RequestParam("max-hits", required = false) maxHits:String, @RequestBody advancedSearchModel: AdvancedSearchModel): Map<String, Any>{
+
+        println("catched advanced search")
+        println(advancedSearchModel.listOfSearchItems[0])
+        return this.doAdvancedSearch(maxHits.toIntOrNull(),advancedSearchModel )
 
     }
-*/
+
     /**
      *  Exact structure handling
      */
     @RequestMapping("/search/exact-structure")
-    fun structureSearchBySmiles(@RequestParam("smiles") smiles: String, @RequestParam("type") type: String, @RequestParam("max-hits") maxHits:String): Map<String, Any> {
+    fun structureSearchBySmiles(@RequestParam("smiles") smiles: String, @RequestParam("type") type: String): Map<String, Any> {
 
         if(type=="smi") {
-            return this.doExactStructureSearchBySmiles(URLDecoder.decode(smiles.trim(), "UTF-8"), maxHits.toIntOrNull())
+            return this.doExactStructureSearchBySmiles(URLDecoder.decode(smiles.trim(), "UTF-8"))
         }else{
-            return this.doExactStructureSearchByInchi(URLDecoder.decode(smiles.trim(), "UTF-8"), maxHits.toIntOrNull())
+            return this.doExactStructureSearchByInchi(URLDecoder.decode(smiles.trim(), "UTF-8"))
         }
     }
 
@@ -101,9 +108,42 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
      *  Search functions
      */
 
-    fun doExactStructureSearchByInchi(smiles: String, maxHitsSubmitted: Int?): Map<String, Any> {
 
-        //TODO do something with maxHits
+    fun doAdvancedSearch(maxHits:Int?, advancedSearchModel: AdvancedSearchModel) : Map<String, Any>{
+
+        var maxResults = 1000
+
+        if(maxHits != null ){
+            maxResults = maxHits
+        }
+
+        val results = this.uniqueNaturalProductRepository.advancedSearchWithCriteria(advancedSearchModel)
+
+        results.shuffle()
+
+
+
+        //println(results[0].coconut_id)
+
+        val resultsPart = results.subList(0, minOf(results.size , maxResults))
+
+        resultsPart.sortBy { it.heavy_atom_number }
+
+        return mapOf(
+                "originalQuery" to "advanced",
+                "count" to resultsPart.size,
+                "naturalProducts" to resultsPart
+        )
+
+    }
+
+
+
+
+
+
+    fun doExactStructureSearchByInchi(smiles: String): Map<String, Any> {
+
         try {
             val queryAC: IAtomContainer = this.smilesParser.parseSmiles(smiles)
             val gen = InChIGeneratorFactory.getInstance().getInChIGenerator(queryAC, options)
@@ -125,9 +165,8 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
         }
     }
 
-    fun doExactStructureSearchBySmiles(smiles: String , maxHitsSubmitted: Int?) : Map<String, Any>{
+    fun doExactStructureSearchBySmiles(smiles: String) : Map<String, Any>{
 
-        //TODO do something with maxHits
 
         try {
             val queryAC: IAtomContainer = this.smilesParser.parseSmiles(smiles)
@@ -152,21 +191,7 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
 
 
 
-    fun doSimpleSearch(query: String): Map<String, Any> {
-        val naturalProducts = mutableSetOf<UniqueNaturalProduct>()
 
-        naturalProducts += this.uniqueNaturalProductRepository.findBySmiles(query)
-        naturalProducts += this.uniqueNaturalProductRepository.findByClean_smiles(query)
-        naturalProducts += this.uniqueNaturalProductRepository.findByInchi(query)
-        naturalProducts += this.uniqueNaturalProductRepository.findByInchikey(query)
-        naturalProducts += this.uniqueNaturalProductRepository.findByMolecular_formula(query)
-        naturalProducts += this.uniqueNaturalProductRepository.findByCoconut_id(query)
-
-        return mapOf(
-                "originalQuery" to query,
-                "naturalProducts" to naturalProducts
-        )
-    }
 
     fun doSimpleSearchWithHeuristic(query: String): Map<String, Any> {
         // determine type of input on very basic principles without validation
@@ -254,13 +279,15 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
             // run $allBitsSet in mongo
             val matchedList = this.uniqueNaturalProductRepository.findAllPubchemBitsSet(pubchemFingerprinter.getBitFingerprint(queryAC).asBitSet().toByteArray())
 
+            //TODO get the exact bitset also?
+
             println("found molecules with bits set")
             val pattern: Pattern
             // return a list of UNP:
             if(type=="default") {
                 // for each UNP - convert to IAC and run the Ullmann
                 pattern = Ullmann.findSubstructure(queryAC)
-                loop@ for(unp in matchedList){
+                for(unp in matchedList){//loop@
 
                     var targetAC : IAtomContainer = this.atomContainerToUniqueNaturalProductService.createAtomContainer(unp)
 
@@ -269,11 +296,11 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
                     if (match.isNotEmpty()) {
                         hits.add(unp)
 
-                        println(unp.coconut_id)
+                        //println(unp.coconut_id)
 
                         counter++
 
-                        if (counter==maxResults) break@loop
+                        //if (counter==maxResults) break@loop
 
                     }
                 }
@@ -281,14 +308,14 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
             }else if(type=="df"){
                 pattern = DfPattern.findSubstructure(queryAC)
 
-                loop@ for(unp in matchedList){
+                for(unp in matchedList){//loop@
 
                     var targetAC : IAtomContainer = this.atomContainerToUniqueNaturalProductService.createAtomContainer(unp)
                     if (pattern.matches(targetAC)) {
                         hits.add(unp)
-                        println(unp.coconut_id)
+                        //println(unp.coconut_id)
                         counter++
-                        if (counter==maxResults) break@loop
+                        //if (counter==maxResults) break@loop
 
                     }
                 }
@@ -297,7 +324,7 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
             }else{
                 //Vento-Foggia
                  pattern = VentoFoggia.findSubstructure(queryAC)
-                loop@ for(unp in matchedList){
+                 for(unp in matchedList){ //loop@
 
                     var targetAC : IAtomContainer = this.atomContainerToUniqueNaturalProductService.createAtomContainer(unp)
 
@@ -308,9 +335,9 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
 
                         println(unp.coconut_id)
 
-                        counter++
+                        //counter++
 
-                        if (counter==maxResults) break@loop
+                        //if (counter==maxResults) break@loop
 
                     }
                 }
@@ -319,13 +346,14 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
 
 
             hits.sortBy { it.heavy_atom_number }
+            val hitsToReturn = hits.subList(0, maxResults)
 
             println("ready to return results!")
 
             return mapOf(
                     "originalQuery" to smiles,
-                    "count" to  hits.size,
-                    "naturalProducts" to hits
+                    "count" to  hitsToReturn.size,
+                    "naturalProducts" to hitsToReturn
             )
 
         } catch (e: InvalidSmilesException) {

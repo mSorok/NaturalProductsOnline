@@ -30,7 +30,7 @@ export default class NaturalProductCardItem extends React.Component {
                         </tr>
                         <tr>
                             <td>NPL score</td>
-                            <td>{ Math.round((this.props.naturalProduct.npl_score + Number.EPSILON) * 100) / 100 }</td>
+                            <td>{ Math.round((this.props.naturalProduct.npl_score + Number.EPSILON)  * 100) / 100 }</td>
                         </tr>
                         </tbody>
                     </Table>
