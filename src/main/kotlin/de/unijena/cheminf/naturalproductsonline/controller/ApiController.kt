@@ -61,7 +61,7 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
     fun advancedSearch(@RequestParam("max-hits", required = false) maxHits:String, @RequestBody advancedSearchModel: AdvancedSearchModel): Map<String, Any>{
 
         println("catched advanced search")
-        println(advancedSearchModel.listOfSearchItems[0])
+        //println(advancedSearchModel.listOfSearchItems[1])
         return this.doAdvancedSearch(maxHits.toIntOrNull(),advancedSearchModel )
 
     }
@@ -120,10 +120,6 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
         val results = this.uniqueNaturalProductRepository.advancedSearchWithCriteria(advancedSearchModel)
 
         results.shuffle()
-
-
-
-        //println(results[0].coconut_id)
 
         val resultsPart = results.subList(0, minOf(results.size , maxResults))
 

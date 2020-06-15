@@ -28,49 +28,138 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
 
         Criteria bigCriteria = new Criteria();
 
+        ArrayList<Criteria> andCriterias = new ArrayList<>();
+        ArrayList<Criteria> orCriterias = new ArrayList<>();
 
 
-        //TODO stuff with triplets from criteria (hashtable like: {"itemType":"molecular_formula","itemValue":"C8H10N4O2","itemLogic":"AND"}
-
-        for(int i=0; i< criterias.getListOfSearchItems().length; i++){
+        for(int i=0; i< criterias.getListOfSearchItems().length; i++) {
 
             String itemType = criterias.getListOfSearchItems()[i].getAsString("itemType");
             String itemLogic = criterias.getListOfSearchItems()[i].getAsString("itemLogic");
-            String totalItemValue = criterias.getListOfSearchItems()[i].getAsString("itemValue");
+
 
             if (itemType.equals("molecular_formula")) {
                 //leave value as string
+                String totalItemValue = criterias.getListOfSearchItems()[i].getAsString("itemValue");
 
                 Criteria c = Criteria.where(itemType).is(totalItemValue);
 
-                if(itemLogic.equals("AND")){
-                    bigCriteria.andOperator(c);
-                }else{
-                    bigCriteria.orOperator(c);
+                if (itemLogic.equals("AND")) {
+                    andCriterias.add(c);
+                    //bigCriteria.andOperator(c);
+                } else {
+                    orCriterias.add(c);
+                    //bigCriteria.orOperator(c);
                 }
 
 
-            }//else: do splits and to Float
+            }else if(itemType.equals("number_of_rings")){
+                Integer totalItemValue = Integer.parseInt( criterias.getListOfSearchItems()[i].getAsString("itemValue") );
+                Integer itemRange = Integer.parseInt(criterias.getListOfSearchItems()[i].getAsString("itemRange") );
+
+                Integer minVal = totalItemValue-itemRange;
+                Integer maxVal = totalItemValue+itemRange;
+
+                Criteria c1 = Criteria.where("min_number_of_rings").gte(minVal);
+                Criteria c2 = Criteria.where("max_number_of_rings").lte(maxVal);
+                ArrayList<Criteria> cl = new ArrayList<Criteria>();
+                cl.add(c1); cl.add(c2);
+                Criteria c = new Criteria().andOperator( cl.toArray(new Criteria[cl.size()]) );
+
+                if(itemLogic.equals("AND")){
+                    andCriterias.add(c);
+                    //bigCriteria.andOperator(c);
+                }else{
+                    orCriterias.add(c);
+                    //bigCriteria.orOperator(c);
+                }
+
+
+            }else if(itemType.equals("contains_sugars")){
+                Criteria c = new Criteria();
+                Criteria cbis = null;
+
+                if(criterias.getListOfSearchItems()[i].getAsString("itemValue").equals("any_sugar")){
+                    c = Criteria.where("contains_sugar").gt(1);
+
+                }else if(criterias.getListOfSearchItems()[i].getAsString("itemValue").equals("ring_sugar")){
+                    c = Criteria.where("contains_ring_sugars").is(true);
+
+                }else if(criterias.getListOfSearchItems()[i].getAsString("itemValue").equals("only_ring_sugar")){
+                    Criteria c1 = Criteria.where("contains_ring_sugars").is(true);
+                    Criteria c2 = Criteria.where("contains_linear_sugars").is(false);
+
+                    ArrayList<Criteria> cl = new ArrayList<Criteria>();
+                    cl.add(c1); cl.add(c2);
+                    c = new Criteria().andOperator( cl.toArray(new Criteria[cl.size()]) );
+
+                }else if(criterias.getListOfSearchItems()[i].getAsString("itemValue").equals("linear_sugar")){
+                    c = Criteria.where("contains_linear_sugars").is(true);
+
+                }else if(criterias.getListOfSearchItems()[i].getAsString("itemValue").equals("only_linear_sugar")){
+                    Criteria c1 = Criteria.where("contains_ring_sugars").is(false);
+                    Criteria c2 = Criteria.where("contains_linear_sugars").is(true);
+
+                    ArrayList<Criteria> cl = new ArrayList<Criteria>();
+                    cl.add(c1); cl.add(c2);
+                    c = new Criteria().andOperator( cl.toArray(new Criteria[cl.size()]) );
+
+                }else if(criterias.getListOfSearchItems()[i].getAsString("itemValue").equals("no_sugar")){
+                    c = Criteria.where("contains_sugar").is(0);
+                }
+
+                if(itemLogic.equals("AND")){
+                    andCriterias.add(c);
+                    if(cbis != null){
+                        andCriterias.add(cbis);
+                    }
+                    //bigCriteria.andOperator(c);
+                }else{
+                    orCriterias.add(c);
+                    if(cbis != null){
+                        orCriterias.add(cbis);
+                    }
+                    //bigCriteria.orOperator(c);
+                }
+
+            }else{
+                Double totalItemValue = Double.parseDouble( criterias.getListOfSearchItems()[i].getAsString("itemValue") );
+                Double itemRange = Double.parseDouble(criterias.getListOfSearchItems()[i].getAsString("itemRange") );
+                Double minVal = totalItemValue-itemRange;
+                Double maxVal = totalItemValue+itemRange;
+                Criteria c = Criteria.where(itemType).lte(maxVal).gte(minVal) ;
+
+                if(itemLogic.equals("AND")){
+                    andCriterias.add(c);
+                    //bigCriteria.andOperator(c);
+                }else{
+                    orCriterias.add(c);
+                    //bigCriteria.orOperator(c);
+                }
+
+            }
         }
 
-        advancedQuery.addCriteria(bigCriteria);
+        if(criterias.getListOfSearchItems().length == 1){
+            if (!andCriterias.isEmpty()) {
+                advancedQuery.addCriteria(andCriterias.get(0));
+            }else if(!orCriterias.isEmpty()){
+                advancedQuery.addCriteria(orCriterias.get(0));
+            }
+        }else {
+            if (!andCriterias.isEmpty()) {
+                bigCriteria.andOperator(andCriterias.toArray(new Criteria[andCriterias.size()]));
+            }
 
+            if (!orCriterias.isEmpty()) {
+                bigCriteria.orOperator(orCriterias.toArray(new Criteria[orCriterias.size()]));
+            }
+            advancedQuery.addCriteria(bigCriteria);
+        }
 
         result = mongoTemplate.find(advancedQuery, UniqueNaturalProduct.class);
 
         return result;
     }
 
-
-/*
-    @Override
-    public List<UniqueNaturalProduct> fuzzyNameSearch(String name) {
-
-//TODO aggegation + $text
-
-        List<UniqueNaturalProduct> result =  null;
-
-        return result;
-    }
-    */
 }
