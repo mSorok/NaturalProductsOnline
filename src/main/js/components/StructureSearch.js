@@ -79,6 +79,7 @@ export default class StructureSearch extends React.Component {
 
 
         this.searchResultHeadline = React.createRef();
+        this.spinnerRef = React.createRef();
     }
 
     componentDidMount() {
@@ -88,6 +89,10 @@ export default class StructureSearch extends React.Component {
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.state.ajaxIsLoaded) {
             this.scrollToRef(this.searchResultHeadline);
+        }
+
+        if(this.state.searchSubmitted){
+            this.scrollToRef(this.spinnerRef);
         }
     }
 
@@ -285,7 +290,7 @@ export default class StructureSearch extends React.Component {
                     resultRow = <Error/>;
                 } else if (!ajaxIsLoaded) {
                     resultRow =
-                        <Row className="justify-content-center">
+                        <Row className="justify-content-center" ref={this.spinnerRef}>
                             <Spinner/>
                             {substructureSearch &&
                             <p>Note: The substructure search might be long if the input molecule is small.</p>}

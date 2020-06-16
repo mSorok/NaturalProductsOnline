@@ -57,14 +57,22 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
 
 
             }else if(itemType.equals("number_of_rings")){
-                Integer totalItemValue = Integer.parseInt( criterias.getListOfSearchItems()[i].getAsString("itemValue") );
-                Integer itemRange = Integer.parseInt(criterias.getListOfSearchItems()[i].getAsString("itemRange") );
 
-                Integer minVal = totalItemValue-itemRange;
-                Integer maxVal = totalItemValue+itemRange;
 
-                Criteria c1 = Criteria.where("min_number_of_rings").gte(minVal);
-                Criteria c2 = Criteria.where("max_number_of_rings").lte(maxVal);
+                Double itemValueMin = 0.0;
+                if(!criterias.getListOfSearchItems()[i].getAsString("itemValueMin").equals("")){
+                    itemValueMin = Double.parseDouble( criterias.getListOfSearchItems()[i].getAsString("itemValueMin") );
+                }
+
+                Double itemValueMax = 0.0;
+                if(!criterias.getListOfSearchItems()[i].getAsString("itemValueMax").equals("")){
+                    itemValueMax = Double.parseDouble( criterias.getListOfSearchItems()[i].getAsString("itemValueMax") );
+                }
+
+
+
+                Criteria c1 = Criteria.where("min_number_of_rings").gte(itemValueMin);
+                Criteria c2 = Criteria.where("max_number_of_rings").lte(itemValueMax);
                 ArrayList<Criteria> cl = new ArrayList<Criteria>();
                 cl.add(c1); cl.add(c2);
                 Criteria c = new Criteria().andOperator( cl.toArray(new Criteria[cl.size()]) );
@@ -126,11 +134,27 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
                 }
 
             }else{
-                Double totalItemValue = Double.parseDouble( criterias.getListOfSearchItems()[i].getAsString("itemValue") );
-                Double itemRange = Double.parseDouble(criterias.getListOfSearchItems()[i].getAsString("itemRange") );
-                Double minVal = totalItemValue-itemRange;
-                Double maxVal = totalItemValue+itemRange;
-                Criteria c = Criteria.where(itemType).lte(maxVal).gte(minVal) ;
+                Double itemValueMin = 0.0;
+                if(!criterias.getListOfSearchItems()[i].getAsString("itemValueMin").equals("")){
+                    itemValueMin = Double.parseDouble( criterias.getListOfSearchItems()[i].getAsString("itemValueMin") );
+                }
+
+                Double itemValueMax = 0.0;
+                if(!criterias.getListOfSearchItems()[i].getAsString("itemValueMax").equals("")){
+                    itemValueMax = Double.parseDouble( criterias.getListOfSearchItems()[i].getAsString("itemValueMax") );
+                }
+
+                Criteria c;
+
+                if(itemValueMin==0 || itemValueMin == null || itemValueMin.isNaN()){
+                    c = Criteria.where(itemType).lte(itemValueMax);
+
+                }else if(itemValueMax==0 || itemValueMax == null || itemValueMax.isNaN()){
+                    c = Criteria.where(itemType).gte(itemValueMin);
+                }else {
+
+                    c = Criteria.where(itemType).lte(itemValueMax).gte(itemValueMin);
+                }
 
                 if(itemLogic.equals("AND")){
                     andCriterias.add(c);
@@ -154,7 +178,6 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
         advancedQuery.addCriteria(bigCriteria);
 
 
-        System.out.println(advancedQuery);
 
         result = mongoTemplate.find(advancedQuery, UniqueNaturalProduct.class);
 

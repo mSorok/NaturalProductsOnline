@@ -11,8 +11,7 @@ export default class NaturalProductCardItem extends React.Component {
     render() {
         const linkToCompoundPage = "/compound/coconut_id/" + this.props.naturalProduct.coconut_id;
         const structure = Utils.drawMoleculeBySmiles(this.props.naturalProduct.smiles);
-        //console.log(this.props.naturalProduct.smiles);
-        // console.log(this.props.naturalProduct.coconut_id)
+
 
         return (
             <Card className="cardBrowserItem">

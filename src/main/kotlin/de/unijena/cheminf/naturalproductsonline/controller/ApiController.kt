@@ -125,6 +125,8 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
 
         resultsPart.sortBy { it.heavy_atom_number }
 
+
+
         return mapOf(
                 "originalQuery" to "advanced",
                 "count" to resultsPart.size,

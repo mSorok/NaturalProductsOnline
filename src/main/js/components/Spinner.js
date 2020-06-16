@@ -5,10 +5,17 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 const React = require("react");
 
 
+
+
+
 export default class Spinner extends React.Component {
+
+
+
+
     constructor(props) {
         super(props);
-        this.size = this.props.size || "3x";
+        this.size = this.props.size || "5x";
     }
 
     render() {

@@ -10,11 +10,13 @@ import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import Col from "react-bootstrap/Col";
 import Alert from "react-bootstrap/Alert";
+import { useRef } from 'react';
 
 
 const React = require("react");
 const OpenChemLib = require("openchemlib/full");
 const restClient = require("../restClient");
+
 
 const ColoredLine = ({ color}) => (
     <hr
@@ -51,33 +53,38 @@ export default class AdvancedSearch extends React.Component {
             molecularFormulaLogic: "AND",
 
             molecularWeightSubmitted: false,
-            molecularWeight : 0,
-            molecularWeightRange: 0,
+            molecularWeightMin : "",
+            molecularWeightMax: "",
             molecularWeightLogic: "AND",
 
             heavyAtomsSubmitted:false,
-            heavyAtoms: 0,
-            heavyAtomsRange:0,
+            heavyAtomsMin: "",
+            heavyAtomsMax: "",
             heavyAtomsLogic:"AND",
 
             numberOfCarbonsSubmitted: false,
-            numberOfCarbons: 0,
-            numberOfCarbonsRange: 0,
+            numberOfCarbonsMin: "",
+            numberOfCarbonsMax: "",
             numberOfCarbonsLogic: "AND",
 
             numberOfOxygensSubmitted: false,
-            numberOfOxygens: 0,
-            numberOfOxygensRange: 0,
+            numberOfOxygensMin: "",
+            numberOfOxygensMax: "",
             numberOfOxygensLogic: "AND",
 
             numberOfNitrogensSubmitted: false,
-            numberOfNitrogens: 0,
-            numberOfNitrogensRange: 0,
+            numberOfNitrogensMin: "",
+            numberOfNitrogensMax: "",
             numberOfNitrogensLogic: "AND",
 
+            bondCountSubmitted: false,
+            bondCountMin: "",
+            bondCountMax: "",
+            bondCountLogic: "AND",
+
             numberOfRingsSubmitted: false,
-            numberOfRings : 0,
-            numberOfRingsRange: 0,
+            numberOfRingsMin : "",
+            numberOfRingsMax: "",
             numberOfRingsLogic: "AND",
 
             containSugarsSubmitted : false,
@@ -85,9 +92,35 @@ export default class AdvancedSearch extends React.Component {
             containSugarsLogic: "AND",
 
             nplScoreSubmitted: false,
-            nplScore : 0,
-            nplScoreRange: 0,
+            nplScoreMin : "",
+            nplScoreMax: "",
             nplScoreLogic: "AND",
+
+            apolSubmitted: false,
+            apolMin: "",
+            apolMax: "",
+            apolLogic: "AND",
+
+            alogpSubmitted: false,
+            alogpMin: "",
+            alogpMax: "",
+            alogpLogic: "AND",
+
+            fsp3Submitted: false,
+            fsp3Min : "",
+            fsp3Max: "",
+            fsp3Logic: "AND",
+
+            lipinskiSubmitted: false,
+            lipinskiMin: "",
+            lipinskiMax: "",
+            lipinskiLogic: "AND",
+
+            spiroSubmitted: false,
+            spiroMin: "",
+            spiroMax: "",
+            spiroLogic: "AND",
+
 
 
 
@@ -102,38 +135,73 @@ export default class AdvancedSearch extends React.Component {
         this.handleMolecularFormulaInput = this.handleMolecularFormulaInput.bind(this);
         this.handleMolecularFormulaLogic = this.handleMolecularFormulaLogic.bind(this);
 
-        this.handleMolecularWeightInput = this.handleMolecularWeightInput.bind(this);
-        this.handleMolecularWeightRangeInput = this.handleMolecularWeightRangeInput.bind(this);
+        this.handleMolecularWeightMin = this.handleMolecularWeightMin.bind(this);
+        this.handleMolecularWeightMax = this.handleMolecularWeightMax.bind(this);
         this.handleMolecularWeightLogic = this.handleMolecularWeightLogic.bind(this);
 
-        this.handleNumberHeavyAtomsInput = this.handleNumberHeavyAtomsInput.bind(this);
-        this.handleNumberHeavyAtomsRangeInput = this.handleNumberHeavyAtomsRangeInput.bind(this);
+        this.handleNumberHeavyAtomsMin = this.handleNumberHeavyAtomsMin.bind(this);
+        this.handleNumberHeavyAtomsMax = this.handleNumberHeavyAtomsMax.bind(this);
         this.handleNumberHeavyAtomsLogic = this.handleNumberHeavyAtomsLogic.bind(this);
 
 
-        this.handleNumberOfCarbonsInput = this.handleNumberOfCarbonsInput.bind(this);
-        this.handleNumberOfCarbonsRangeInput = this.handleNumberOfCarbonsRangeInput.bind(this);
+        this.handleNumberOfCarbonsMin = this.handleNumberOfCarbonsMin.bind(this);
+        this.handleNumberOfCarbonsMax = this.handleNumberOfCarbonsMax.bind(this);
         this.handleNumberOfCarbonsLogic = this.handleNumberOfCarbonsLogic.bind(this);
 
-        this.handleNumberOfOxygensInput = this.handleNumberOfOxygensInput.bind(this);
-        this.handleNumberOfOxygensRangeInput = this.handleNumberOfOxygensRangeInput.bind(this);
+        this.handleNumberOfOxygensMin = this.handleNumberOfOxygensMin.bind(this);
+        this.handleNumberOfOxygensMax = this.handleNumberOfOxygensMax.bind(this);
         this.handleNumberOfOxygensLogic = this.handleNumberOfOxygensLogic.bind(this);
 
-        this.handleNumberOfNitrogensInput = this.handleNumberOfNitrogensInput.bind(this);
-        this.handleNumberOfNitrogensRangeInput = this.handleNumberOfNitrogensRangeInput.bind(this);
+        this.handleNumberOfNitrogensMin = this.handleNumberOfNitrogensMin.bind(this);
+        this.handleNumberOfNitrogensMax = this.handleNumberOfNitrogensMax.bind(this);
         this.handleNumberOfNitrogensLogic = this.handleNumberOfNitrogensLogic.bind(this);
+
+        this.handleBondCountMin = this.handleBondCountMin.bind(this);
+        this.handleBondCountMax = this.handleBondCountMax.bind(this);
+        this.handleBondCountLogic = this.handleBondCountLogic.bind(this);
 
         this.handleContainsSugars = this.handleContainsSugars.bind(this);
         this.handleContainSugarsLogic = this.handleContainSugarsLogic.bind(this);
 
 
-        this.handleNumberOfRingsInput = this.handleNumberOfRingsInput.bind(this);
-        this.handleNumberOfRingsRangeInput = this.handleNumberOfRingsRangeInput.bind(this);
+        this.handleNumberOfRingsMin = this.handleNumberOfRingsMin.bind(this);
+        this.handleNumberOfRingsMax = this.handleNumberOfRingsMax.bind(this);
         this.handleNumberOfRingsLogic = this.handleNumberOfRingsLogic.bind(this);
+
+        this.handleNPLScoreMin = this.handleNPLScoreMin.bind(this);
+        this.handleNPLScoreMax = this.handleNPLScoreMax.bind(this);
+        this.handleNPLScoreLogic = this.handleNPLScoreLogic.bind(this);
+
+        this.handleApolMin = this.handleApolMin.bind(this);
+        this.handleApolMax = this.handleApolMax.bind(this);
+        this.handleApolLogic = this.handleApolLogic.bind(this);
+
+        this.handleAlogpMin = this.handleAlogpMin.bind(this);
+        this.handleAlogpMax = this.handleAlogpMax.bind(this);
+        this.handleAlogpLogic = this.handleAlogpLogic.bind(this);
+
+        this.handleFsp3Min = this.handleFsp3Min.bind(this);
+        this.handleFsp3Max = this.handleFsp3Max.bind(this);
+        this.handleFsp3Logic = this.handleFsp3Logic.bind(this);
+
+        this.handleLipinskiMin = this.handleLipinskiMin.bind(this);
+        this.handleLipinskiMax = this.handleLipinskiMax.bind(this);
+        this.handleLipinskiLogic = this.handleLipinskiLogic.bind(this);
+
+        this.handleSpiroMin = this.handleSpiroMin.bind(this);
+        this.handleSpiroMax = this.handleSpiroMax.bind(this);
+        this.handleSpiroLogic =  this.handleSpiroLogic.bind(this);
+
 
 
         this.searchResultHeadline = React.createRef();
+
+        this.spinnerRef = React.createRef();
+
+
     }
+
+
 
     componentDidMount() {
     }
@@ -142,15 +210,23 @@ export default class AdvancedSearch extends React.Component {
         if (this.state.ajaxIsLoaded) {
             this.scrollToRef(this.searchResultHeadline);
         }
+
+        if(this.state.searchSubmitted && !this.state.ajaxIsLoaded){
+            this.scrollToRef(this.spinnerRef);
+        }
     }
 
     handleAdvancedSearchSubmit(){
 
-        console.log("ready for the search!");
+
+
 
         //check if at least one of the fields is set
         if(this.state.molecularFormulaSubmitted || this.state.molecularWeightSubmitted || this.state.heavyAtomsSubmitted || this.state.numberOfCarbonsSubmitted
-        || this.state.numberOfOxygensSubmitted || this.state.numberOfNitrogensSubmitted || this.state.numberOfRingsSubmitted || this.state.containSugarsSubmitted){
+            || this.state.numberOfOxygensSubmitted || this.state.numberOfNitrogensSubmitted || this.state.numberOfRingsSubmitted || this.state.containSugarsSubmitted
+            || this.state.bondCountSubmitted || this.state.nplScoreSubmitted || this.state.apolSubmitted || this.state.alogpSubmitted || this.state.fsp3Submitted
+            || this.state.lipinskiSubmitted || this.state.spiroSubmitted){
+
             this.setState({
                 searchSubmitted: true
             });
@@ -174,8 +250,8 @@ export default class AdvancedSearch extends React.Component {
             if(this.state.molecularWeightSubmitted){
                 let advancedSearchItem = {
                     itemType: "molecular_weight",
-                    itemValue : this.state.molecularWeight,
-                    itemRange: this.state.molecularWeightRange,
+                    itemValueMin: this.state.molecularWeightMin,
+                    itemValueMax: this.state.molecularWeightMax,
                     itemLogic: this.state.molecularWeightLogic
                 };
                 this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
@@ -184,8 +260,8 @@ export default class AdvancedSearch extends React.Component {
             if(this.state.heavyAtomsSubmitted){
                 let advancedSearchItem = {
                     itemType: "heavy_atom_number",
-                    itemValue : this.state.heavyAtoms,
-                    itemRange: this.state.heavyAtomsRange,
+                    itemValueMin : this.state.heavyAtomsMin,
+                    itemValueMax: this.state.heavyAtomsMax,
                     itemLogic: this.state.heavyAtomsLogic
                 };
                 this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
@@ -194,8 +270,8 @@ export default class AdvancedSearch extends React.Component {
             if(this.state.numberOfCarbonsSubmitted){
                 let advancedSearchItem = {
                     itemType: "number_of_carbons",
-                    itemValue : this.state.numberOfCarbons,
-                    itemRange: this.state.numberOfCarbonsRange,
+                    itemValueMin : this.state.numberOfCarbonsMin,
+                    itemValueMax: this.state.numberOfCarbonsMax,
                     itemLogic: this.state.numberOfCarbonsLogic
                 };
                 this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
@@ -204,29 +280,41 @@ export default class AdvancedSearch extends React.Component {
             if(this.state.numberOfOxygensSubmitted){
                 let advancedSearchItem = {
                     itemType: "number_of_oxygens",
-                    itemValue : this.state.numberOfOxygens,
-                    itemRange: this.state.numberOfOxygensRange,
+                    itemValueMin : this.state.numberOfOxygensMin,
+                    itemValueMax: this.state.numberOfOxygensMax,
                     itemLogic: this.state.numberOfOxygensLogic
                 };
                 this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
             }
 
             if(this.state.numberOfNitrogensSubmitted){
-                console.log("entered nitrogens");
+
                 let advancedSearchItem = {
                     itemType: "number_of_nitrogens",
-                    itemValue : this.state.numberOfNitrogens,
-                    itemRange: this.state.numberOfNitrogensRange,
+                    itemValueMin : this.state.numberOfNitrogensMin,
+                    itemValueMax: this.state.numberOfNitrogensMax,
                     itemLogic: this.state.numberOfNitrogensLogic
                 };
                 this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
             }
 
+            if(this.state.bondCountSubmitted){
+                let advancedSearchItem = {
+                    itemType: "bond_count",
+                    itemValueMin : this.state.bondCountMin,
+                    itemValueMax: this.state.bondCountMax,
+                    itemLogic: this.state.bondCountLogic
+                };
+                this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
+
+            }
+
+
             if(this.state.numberOfRingsSubmitted){
                 let advancedSearchItem = {
                     itemType: "number_of_rings",
-                    itemValue : this.state.numberOfRings,
-                    itemRange: this.state.numberOfRingsRange,
+                    itemValueMin : this.state.numberOfRingsMin,
+                    itemValueMax: this.state.numberOfRingsMax,
                     itemLogic: this.state.numberOfRingsLogic
                 };
                 this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
@@ -242,11 +330,66 @@ export default class AdvancedSearch extends React.Component {
                 this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
             }
 
-            //TODO problem with sugars and rings
+            if(this.state.nplScoreSubmitted){
+                let advancedSearchItem = {
+                    itemType: "npl_score",
+                    itemValueMin : this.state.nplScoreMin,
+                    itemValueMax: this.state.nplScoreMax,
+                    itemLogic: this.state.nplScoreLogic
+                };
+                this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
+            }
 
-            //todo more ifs...
+            if(this.state.apolSubmitted){
+                let advancedSearchItem = {
+                    itemType: "apol",
+                    itemValueMin : this.state.apolMin,
+                    itemValueMax: this.state.apolMax,
+                    itemLogic: this.state.apolLogic
+                };
+                this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
+            }
 
-            console.log(this.state.advancedSearchModel.listOfSearchItems);
+
+            if(this.state.alogpSubmitted){
+                let advancedSearchItem = {
+                    itemType: "alogp",
+                    itemValueMin : this.state.alogpMin,
+                    itemValueMax: this.state.alogpMax,
+                    itemLogic: this.state.alogpLogic
+                };
+                this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
+            }
+
+            if(this.state.fsp3Submitted){
+                let advancedSearchItem = {
+                    itemType: "fsp3",
+                    itemValueMin : this.state.fsp3Min ,
+                    itemValueMax: this.state.fsp3Max,
+                    itemLogic: this.state.fsp3Logic
+                };
+                this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
+            }
+
+            if(this.state.lipinskiSubmitted){
+                let advancedSearchItem = {
+                    itemType: "lipinskiRuleOf5Failures",
+                    itemValueMin : this.state.lipinskiMin ,
+                    itemValueMax: this.state.lipinskiMax,
+                    itemLogic: this.state.lipinskiLogic
+                };
+                this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
+            }
+
+            if(this.state.spiroSubmitted){
+                let advancedSearchItem = {
+                    itemType: "numberSpiroAtoms",
+                    itemValueMin : this.state.spiroMin ,
+                    itemValueMax: this.state.spiroMax,
+                    itemLogic: this.state.spiroLogic
+                };
+                this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
+            }
 
 
             this.doSearch(uriString);
@@ -262,9 +405,9 @@ export default class AdvancedSearch extends React.Component {
      * CARBONS, OXYGENS, NITROGENS
      * @param e
      */
-    handleNumberOfCarbonsInput(e){
-        this.state.numberOfCarbons = e.target.value;
-        if(this.state.numberOfCarbons != "" && this.state.numberOfCarbons != null && this.state.numberOfCarbons != 0) {
+    handleNumberOfCarbonsMin(e){
+        this.state.numberOfCarbonsMin = e.target.value;
+        if(  (this.state.numberOfCarbonsMin != "" && this.state.numberOfCarbonsMin != null) || (this.state.numberOfCarbonsMax != "" && this.state.numberOfCarbonsMax != null)   ) {
             this.state.numberOfCarbonsSubmitted = true;
 
         }else{
@@ -272,11 +415,14 @@ export default class AdvancedSearch extends React.Component {
         }
     }
 
-    handleNumberOfCarbonsRangeInput(e){
-        this.state.numberOfCarbonsRange = e.target.value;
+    handleNumberOfCarbonsMax(e){
+        this.state.numberOfCarbonsMax = e.target.value;
 
-        if(this.state.numberOfCarbonsRange == "" || this.state.numberOfCarbonsRange == null){
-            this.state.numberOfCarbonsRange=0;
+        if(  (this.state.numberOfCarbonsMin != "" && this.state.numberOfCarbonsMin != null) || (this.state.numberOfCarbonsMax != "" && this.state.numberOfCarbonsMax != null)   ) {
+            this.state.numberOfCarbonsSubmitted = true;
+
+        }else{
+            this.state.numberOfCarbonsSubmitted = false;
         }
     }
 
@@ -290,9 +436,12 @@ export default class AdvancedSearch extends React.Component {
     }
 
 
-    handleNumberOfOxygensInput(e){
-        this.state.numberOfOxygens = e.target.value;
-        if(this.state.numberOfOxygens != "" && this.state.numberOfOxygens != null && this.state.numberOfOxygens != 0) {
+
+
+
+    handleNumberOfOxygensMin(e){
+        this.state.numberOfOxygensMin = e.target.value;
+        if( (this.state.numberOfOxygensMin != "" && this.state.numberOfOxygensMin != null) || (this.state.numberOfOxygensMax != "" && this.state.numberOfOxygensMax != null)  ) {
             this.state.numberOfOxygensSubmitted = true;
 
         }else{
@@ -300,11 +449,14 @@ export default class AdvancedSearch extends React.Component {
         }
     }
 
-    handleNumberOfOxygensRangeInput(e){
-        this.state.numberOfOxygensRange = e.target.value;
+    handleNumberOfOxygensMax(e){
+        this.state.numberOfOxygensMax = e.target.value;
 
-        if(this.state.numberOfOxygensRange == "" || this.state.numberOfOxygensRange == null){
-            this.state.numberOfOxygensRange=0;
+        if( (this.state.numberOfOxygensMin != "" && this.state.numberOfOxygensMin != null) || (this.state.numberOfOxygensMax != "" && this.state.numberOfOxygensMax != null)  ) {
+            this.state.numberOfOxygensSubmitted = true;
+
+        }else{
+            this.state.numberOfOxygensSubmitted = false;
         }
     }
 
@@ -316,9 +468,11 @@ export default class AdvancedSearch extends React.Component {
         );
     }
 
-    handleNumberOfNitrogensInput(e){
-        this.state.numberOfNitrogens = e.target.value;
-        if(this.state.numberOfNitrogens != "" && this.state.numberOfNitrogens != null && this.state.numberOfNitrogens != 0) {
+
+
+    handleNumberOfNitrogensMin(e){
+        this.state.numberOfNitrogensMin = e.target.value;
+        if( (this.state.numberOfNitrogensMin != "" && this.state.numberOfNitrogensMin != null) || (this.state.numberOfNitrogensMax != "" && this.state.numberOfNitrogensMax != null) ) {
             this.state.numberOfNitrogensSubmitted = true;
 
         }else{
@@ -326,11 +480,14 @@ export default class AdvancedSearch extends React.Component {
         }
     }
 
-    handleNumberOfNitrogensRangeInput(e){
-        this.state.numberOfNitrogenssRange = e.target.value;
+    handleNumberOfNitrogensMax(e){
+        this.state.numberOfNitrogensMax = e.target.value;
 
-        if(this.state.numberOfNitrogenssRange == "" || this.state.numberOfNitrogenssRange == null){
-            this.state.numberOfNitrogenssRange=0;
+        if( (this.state.numberOfNitrogensMin != "" && this.state.numberOfNitrogensMin != null) || (this.state.numberOfNitrogensMax != "" && this.state.numberOfNitrogensMax != null) ) {
+            this.state.numberOfNitrogensSubmitted = true;
+
+        }else{
+            this.state.numberOfNitrogensSubmitted = false;
         }
     }
 
@@ -342,9 +499,45 @@ export default class AdvancedSearch extends React.Component {
         );
     }
 
-    handleNumberOfRingsInput(e){
-        this.state.numberOfRings = e.target.value;
-        if(this.state.numberOfRings != "" && this.state.numberOfRings != null && this.state.numberOfRings != 0) {
+
+
+
+    handleBondCountMin(e){
+
+        this.state.bondCountMin = e.target.value;
+        if( (this.state.bondCountMin != "" && this.state.bondCountMin != null) || (this.state.bondCountMax != "" && this.state.bondCountMax != null) ) {
+            this.state.bondCountSubmitted = true;
+
+        }else{
+            this.state.bondCountSubmitted = false;
+        }
+
+    }
+
+    handleBondCountMax(e){
+        this.state.bondCountMax = e.target.value;
+        if( (this.state.bondCountMin != "" && this.state.bondCountMin != null) || (this.state.bondCountMax != "" && this.state.bondCountMax != null) ) {
+            this.state.bondCountSubmitted = true;
+
+        }else{
+            this.state.bondCountSubmitted = false;
+        }
+    }
+
+    handleBondCountLogic(e){
+        this.setState(
+            {
+                bondCountLogic:e.target.value
+            }
+        );
+    }
+
+
+
+
+    handleNumberOfRingsMin(e){
+        this.state.numberOfRingsMin = e.target.value;
+        if( (this.state.numberOfRingsMin != "" && this.state.numberOfRingsMin != null) || (this.state.numberOfRingsMax != "" && this.state.numberOfRingsMax != null) ) {
             this.state.numberOfRingsSubmitted = true;
 
         }else{
@@ -353,11 +546,14 @@ export default class AdvancedSearch extends React.Component {
 
     }
 
-    handleNumberOfRingsRangeInput(e){
-        this.state.numberOfRingsRange = e.target.value;
+    handleNumberOfRingsMax(e){
+        this.state.numberOfRingsMax = e.target.value;
 
-        if(this.state.numberOfRingsRange == "" || this.state.numberOfRingsRange == null){
-            this.state.numberOfRingsRange=0;
+        if( (this.state.numberOfRingsMin != "" && this.state.numberOfRingsMin != null) || (this.state.numberOfRingsMax != "" && this.state.numberOfRingsMax != null) ) {
+            this.state.numberOfRingsSubmitted = true;
+
+        }else{
+            this.state.numberOfRingsSubmitted = false;
         }
     }
 
@@ -377,9 +573,9 @@ export default class AdvancedSearch extends React.Component {
      * @param e
      */
 
-    handleMolecularWeightInput(e){
-        this.state.molecularWeight = e.target.value;
-        if(this.state.molecularWeight != "" && this.state.molecularWeight != null && this.state.molecularWeight != 0) {
+    handleMolecularWeightMin(e){
+        this.state.molecularWeightMin = e.target.value;
+        if( (this.state.molecularWeightMin != "" && this.state.molecularWeightMin != null) || (this.state.molecularWeightMax != "" && this.state.molecularWeightMax != null)  ) {
             this.state.molecularWeightSubmitted = true;
 
         }else{
@@ -387,11 +583,14 @@ export default class AdvancedSearch extends React.Component {
         }
     }
 
-    handleMolecularWeightRangeInput(e){
-        this.state.molecularWeightRange = e.target.value;
+    handleMolecularWeightMax(e){
+        this.state.molecularWeightMin = e.target.value;
 
-        if(this.state.molecularWeightRange == "" || this.state.molecularWeightRange == null){
-            this.state.molecularWeightRange=0;
+        if( (this.state.molecularWeightMin != "" && this.state.molecularWeightMin != null) || (this.state.molecularWeightMax != "" && this.state.molecularWeightMax != null)  ) {
+            this.state.molecularWeightSubmitted = true;
+
+        }else{
+            this.state.molecularWeightSubmitted = false;
         }
     }
 
@@ -404,9 +603,11 @@ export default class AdvancedSearch extends React.Component {
 
     }
 
-    handleNumberHeavyAtomsInput(e){
-        this.state.heavyAtoms = e.target.value;
-        if(this.state.heavyAtoms != "" && this.state.heavyAtoms != null && this.state.heavyAtoms != 0) {
+
+
+    handleNumberHeavyAtomsMin(e){
+        this.state.heavyAtomsMin = e.target.value;
+        if( (this.state.heavyAtomsMin != "" && this.state.heavyAtomsMin != null) || (this.state.heavyAtomsMax != "" && this.state.heavyAtomsMax != null) ) {
             this.state.heavyAtomsSubmitted = true;
 
         }else{
@@ -414,11 +615,14 @@ export default class AdvancedSearch extends React.Component {
         }
     }
 
-    handleNumberHeavyAtomsRangeInput(e){
-        this.state.heavyAtomsRange = e.target.value;
+    handleNumberHeavyAtomsMax(e){
+        this.state.heavyAtomsMax = e.target.value;
 
-        if(this.state.heavyAtomsRange == "" || this.state.heavyAtomsRange == null){
-            this.state.heavyAtomsRange=0;
+        if( (this.state.heavyAtomsMin != "" && this.state.heavyAtomsMin != null) || (this.state.heavyAtomsMax != "" && this.state.heavyAtomsMax != null) ) {
+            this.state.heavyAtomsSubmitted = true;
+
+        }else{
+            this.state.heavyAtomsSubmitted = false;
         }
     }
 
@@ -430,6 +634,202 @@ export default class AdvancedSearch extends React.Component {
         );
     }
 
+
+
+    /**
+     * Molecular descriptors
+     *
+     */
+    handleNPLScoreMin(e){
+
+        this.state.nplScoreMin = e.target.value;
+
+        if( (this.state.nplScoreMin != "" && this.state.nplScoreMin != null) || (this.state.nplScoreMax != "" && this.state.nplScoreMax != null) ) {
+            this.state.nplScoreSubmitted = true;
+
+        }else{
+            this.state.nplScoreSubmitted = false;
+        }
+
+    }
+
+    handleNPLScoreMax(e){
+        this.state.nplScoreMax = e.target.value;
+
+        if( (this.state.nplScoreMin != "" && this.state.nplScoreMin != null) || (this.state.nplScoreMax != "" && this.state.nplScoreMax != null) ) {
+            this.state.nplScoreSubmitted = true;
+
+        }else{
+            this.state.nplScoreSubmitted = false;
+        }
+    }
+
+    handleNPLScoreLogic(e){
+        this.setState(
+            {
+                nplScoreLogic: e.target.value
+            }
+        );
+
+    }
+
+    handleApolMin(e){
+        this.state.apolMin = e.target.value;
+
+        if( (this.state.apolMin != "" && this.state.apolMin != null) || (this.state.apolMax != "" && this.state.apolMax != null) ) {
+            this.state.apolSubmitted = true;
+
+        }else{
+            this.state.apolSubmitted = false;
+        }
+
+    }
+    handleApolMax(e){
+        this.state.apolMax = e.target.value;
+
+        if( (this.state.apolMin != "" && this.state.apolMin != null) || (this.state.apolMax != "" && this.state.apolMax != null) ) {
+            this.state.apolSubmitted = true;
+
+        }else{
+            this.state.apolSubmitted = false;
+        }
+
+    }
+    handleApolLogic(e){
+        this.setState(
+            {
+                apolLogic: e.target.value
+            }
+        );
+    }
+
+
+    handleAlogpMin(e){
+        this.state.alogpMin = e.target.value;
+
+        if( (this.state.alogpMin != "" && this.state.alogpMin != null) || (this.state.alogpMax != "" && this.state.alogpMax != null) ) {
+            this.state.alogpSubmitted = true;
+
+        }else{
+            this.state.alogpSubmitted = false;
+        }
+
+    }
+    handleAlogpMax(e){
+        this.state.alogpMax = e.target.value;
+
+        if( (this.state.alogpMin != "" && this.state.alogpMin != null) || (this.state.alogpMax != "" && this.state.alogpMax != null) ) {
+            this.state.alogpSubmitted = true;
+
+        }else{
+            this.state.alogpSubmitted = false;
+        }
+    }
+    handleAlogpLogic(e){
+        this.setState(
+            {
+                alogpLogic: e.target.value
+            }
+        );
+    }
+
+
+    handleFsp3Min(e){
+        this.state.fsp3Min = e.target.value;
+
+        if( (this.state.fsp3Min != "" && this.state.fsp3Min != null) || (this.state.fsp3Max != "" && this.state.fsp3Max != null) ) {
+            this.state.fsp3Submitted = true;
+
+        }else{
+            this.state.fsp3Submitted = false;
+        }
+
+    }
+    handleFsp3Max(e){
+        this.state.fsp3Max = e.target.value;
+
+        if( (this.state.fsp3Min != "" && this.state.fsp3Min != null) || (this.state.fsp3Max != "" && this.state.fsp3Max != null) ) {
+            this.state.fsp3Submitted = true;
+
+        }else{
+            this.state.fsp3Submitted = false;
+        }
+    }
+    handleFsp3Logic(e){
+        this.setState(
+            {
+                fsp3Logic: e.target.value
+            }
+        );
+    }
+
+
+    handleLipinskiMin(e){
+        this.state.lipinskiMin = e.target.value;
+
+        if( (this.state.lipinskiMin != "" && this.state.lipinskiMin != null) || (this.state.lipinskiMin != "" && this.state.lipinskiMin != null) ) {
+            this.state.lipinskiSubmitted = true;
+
+        }else{
+            this.state.lipinskiSubmitted = false;
+        }
+    }
+    handleLipinskiMax(e){
+        this.state.lipinskiMax = e.target.value;
+
+        if( (this.state.lipinskiMin != "" && this.state.lipinskiMin != null) || (this.state.lipinskiMin != "" && this.state.lipinskiMin != null) ) {
+            this.state.lipinskiSubmitted = true;
+
+        }else{
+            this.state.lipinskiSubmitted = false;
+        }
+    }
+    handleLipinskiLogic(e){
+        this.setState(
+            {
+                lipinskiLogic: e.target.value
+            }
+        );
+    }
+
+
+    handleSpiroMin(e){
+        this.state.spiroMin = e.target.value;
+
+        if( (this.state.spiroMin != "" && this.state.spiroMin != null) || (this.state.spiroMax != "" && this.state.spiroMax != null) ) {
+            this.state.spiroSubmitted = true;
+
+        }else{
+            this.state.spiroSubmitted = false;
+        }
+    }
+    handleSpiroMax(e){
+        this.state.spiroMax = e.target.value;
+
+        if( (this.state.spiroMin != "" && this.state.spiroMin != null) || (this.state.spiroMax != "" && this.state.spiroMax != null) ) {
+            this.state.spiroSubmitted = true;
+
+        }else{
+            this.state.spiroSubmitted = false;
+        }
+    }
+    handleSpiroLogic(e){
+        this.setState(
+            {
+                spiroLogic: e.target.value
+            }
+        );
+    }
+
+
+
+
+
+
+    /**
+     *
+     *
+     */
     handleContainsSugars(e){
         this.state.containSugars = e.target.value;
         if(this.state.containSugars != "" && this.state.containSugars != null && this.state.containSugars != "Indifferent") {
@@ -506,6 +906,7 @@ export default class AdvancedSearch extends React.Component {
                     ajaxIsLoaded: true,
                     ajaxResult: result
                 });
+                console.log(this.state.ajaxResult);
             })
             .catch(error => {
                 this.setState({
@@ -533,7 +934,7 @@ export default class AdvancedSearch extends React.Component {
                 resultRow = <Error/>;
             } else if (!ajaxIsLoaded) {
                 resultRow =
-                    <Row className="justify-content-center">
+                    <Row className="justify-content-center" ref={this.spinnerRef}>
                         <Spinner/>
                         {/*Eventually some message here*/}
                     </Row>
@@ -566,189 +967,411 @@ export default class AdvancedSearch extends React.Component {
                 <br/>
                 <h3>Structural properties</h3>
                 <br/>
-                <Form>
-                    <Form.Label>Molecular formula</Form.Label>
-                    <Form.Row>
-                        <Col xs={10}>
-                            <Form.Control onChange={this.handleMolecularFormulaInput}/>
-                            <Form.Text className="text-muted">Warning: case sensitive</Form.Text>
-                        </Col>
-                        <Col>
-                            <Form.Control name="molecular-formula-and-or" as="select" onChange={this.handleMolecularFormulaLogic}>
-                                <option value="AND">AND</option>
-                                <option value="OR">OR</option>
-                            </Form.Control>
-                        </Col>
-                    </Form.Row>
-                </Form>
-
-                <Form>
-                    <Form.Label>Molecular weight</Form.Label>
-                    <Form.Row>
-                        <Col xs={8}>
-                            <Form.Control onChange={this.handleMolecularWeightInput}/>
-                            <Form.Text className="text-muted"></Form.Text>
-                        </Col>
-                        <Col>
-                            <Form.Control onChange={this.handleMolecularWeightRangeInput}/>
-                            <Form.Text className="text-muted">Search range</Form.Text>
-                        </Col>
-                        <Col>
-                            <Form.Control name="molecular-weight-and-or" as="select" onChange={this.handleMolecularWeightLogic}>
-                                <option value="AND">AND</option>
-                                <option value="OR">OR</option>
-                            </Form.Control>
-                        </Col>
-                    </Form.Row>
-                </Form>
-
-                <Form>
-                    <Form.Label>Number of heavy atoms</Form.Label>
-                    <Form.Row>
-                        <Col xs={8}>
-                            <Form.Control onChange={this.handleNumberHeavyAtomsInput}/>
-                            <Form.Text className="text-muted"></Form.Text>
-                        </Col>
-                        <Col>
-                            <Form.Control onChange={this.handleNumberHeavyAtomsRangeInput}/>
-                            <Form.Text className="text-muted">Search range</Form.Text>
-                        </Col>
-                        <Col>
-                            <Form.Control name="heavy-atoms-and-or" as="select" onChange={this.handleNumberHeavyAtomsLogic}>
-                                <option value="AND">AND</option>
-                                <option value="OR">OR</option>
-                            </Form.Control>
-                        </Col>
-                    </Form.Row>
-                </Form>
-
-                <Form>
-                    <Form.Label>Number of carbons</Form.Label>
-                    <Form.Row>
-                        <Col xs={8}>
-                            <Form.Control onChange={this.handleNumberOfCarbonsInput}/>
-                            <Form.Text className="text-muted"></Form.Text>
-                        </Col>
-                        <Col>
-                            <Form.Control onChange={this.handleNumberOfCarbonsRangeInput}/>
-                            <Form.Text className="text-muted">Search range</Form.Text>
-                        </Col>
-                        <Col>
-                            <Form.Control name="number-carbons-and-or" as="select" onChange={this.handleNumberOfCarbonsLogic}>
-                                <option value="AND">AND</option>
-                                <option value="OR">OR</option>
-                            </Form.Control>
-                        </Col>
-                    </Form.Row>
-                </Form>
-
-                <Form>
-                    <Form.Label>Number of oxygens</Form.Label>
-                    <Form.Row>
-                        <Col xs={8}>
-                            <Form.Control onChange={this.handleNumberOfOxygensInput}/>
-                            <Form.Text className="text-muted"></Form.Text>
-                        </Col>
-                        <Col>
-                            <Form.Control onChange={this.handleNumberOfOxygensRangeInput}/>
-                            <Form.Text className="text-muted">Search range</Form.Text>
-                        </Col>
-                        <Col>
-                            <Form.Control name="number-carbons-and-or" as="select" onChange={this.handleNumberOfOxygensLogic}>
-                                <option value="AND">AND</option>
-                                <option value="OR">OR</option>
-                            </Form.Control>
-                        </Col>
-                    </Form.Row>
-                </Form>
-
-                <Form>
-                    <Form.Label>Number of nitrogens</Form.Label>
-                    <Form.Row>
-                        <Col xs={8}>
-                            <Form.Control onChange={this.handleNumberOfNitrogensInput}/>
-                            <Form.Text className="text-muted"></Form.Text>
-                        </Col>
-                        <Col>
-                            <Form.Control onChange={this.handleNumberOfNitrogensRangeInput}/>
-                            <Form.Text className="text-muted">Search range</Form.Text>
-                        </Col>
-                        <Col>
-                            <Form.Control name="number-carbons-and-or" as="select" onChange={this.handleNumberOfNitrogensLogic}>
-                                <option value="AND">AND</option>
-                                <option value="OR">OR</option>
-                            </Form.Control>
-                        </Col>
-                    </Form.Row>
-                </Form>
 
 
-                <Row>
-                    <Col>
-                        <Form>
-                            <Form.Label>Contain sugars</Form.Label>
-                            <Form.Row>
-                                <Col>
-                                    <Form.Control name="contain-sugars" as="select" onChange={this.handleContainsSugars}>
-                                        <option value="indifferent">Indifferent</option>
-                                        <option value="any_sugar">Any sugar type</option>
-                                        <option value="ring_sugar">Ring sugars</option>
-                                        <option value="only_ring_sugar">Only ring sugars</option>
-                                        <option value="linear_sugar">Linear sugars</option>
-                                        <option value="only_linear_sugar">Only linear sugars</option>
-                                        <option value="no_sugar">No sugar</option>
-                                    </Form.Control>
-                                </Col>
-                                <Col>
-                                    <Form.Control name="contain-sugars-and-or" as="select" onChange={this.handleContainSugarsLogic}>
-                                        <option value="AND">AND</option>
-                                        <option value="OR">OR</option>
-                                    </Form.Control>
-                                </Col>
-                            </Form.Row>
-                        </Form>
-                    </Col>
-                    <Col>
-                        <Form>
-                            <Form.Label>Number of rings</Form.Label>
-                            <Form.Row>
-                                <Col xs={8}>
-                                    <Form.Control onChange={this.handleNumberOfRingsInput}/>
-                                    <Form.Text className="text-muted">Min and max number of rings to search</Form.Text>
-                                </Col>
-                                <Col>
-                                    <Form.Control onChange={this.handleNumberOfRingsRangeInput}/>
-                                    <Form.Text className="text-muted">Search range</Form.Text>
-                                </Col>
-                                <Col>
-                                    <Form.Control name="number-carbons-and-or" as="select" onChange={this.handleNumberOfRingsLogic}>
-                                        <option value="AND">AND</option>
-                                        <option value="OR">OR</option>
-                                    </Form.Control>
-                                </Col>
-                            </Form.Row>
-                        </Form>
-                    </Col>
+                <Form.Group>
+                    <Form>
+                        <Form.Label>Molecular formula</Form.Label>
+                        <Form.Row>
+                            <Col xs={10}>
+                                <Form.Control onChange={this.handleMolecularFormulaInput}/>
+                                <Form.Text className="text-muted">Warning: case sensitive</Form.Text>
+                            </Col>
+                            <Col>
+                                <Form.Control name="molecular-formula-and-or" as="select" onChange={this.handleMolecularFormulaLogic}>
+                                    <option value="AND">AND</option>
+                                    <option value="OR">OR</option>
+                                </Form.Control>
+                            </Col>
+                        </Form.Row>
+                    </Form>
+                </Form.Group>
 
-                </Row>
 
-                <br/>
-                <br/>
+
+
+                <Form.Group>
+                    <Row>
+                        <Col>
+
+                            <Form>
+                                <Form.Label>Molecular weight</Form.Label>
+                                <Form.Row>
+                                    <Col>
+                                        <Form.Control onChange={this.handleMolecularWeightMin}/>
+                                        <Form.Text className="text-muted">From (ex: 74.08)</Form.Text>
+                                    </Col>
+                                    <Col>
+                                        <Form.Control onChange={this.handleMolecularWeightMax}/>
+                                        <Form.Text className="text-muted">To (ex: 3346.74)</Form.Text>
+                                    </Col>
+                                    <Col md="auto">
+                                        <Form.Control name="molecular-weight-and-or" as="select" onChange={this.handleMolecularWeightLogic}>
+                                            <option value="AND">AND</option>
+                                            <option value="OR">OR</option>
+                                        </Form.Control>
+                                    </Col>
+
+                                </Form.Row>
+                            </Form>
+                        </Col>
+
+                        <Col xs lg="1" ></Col>
+
+                        <Col>
+
+                            <Form>
+                                <Form.Label>Number of heavy atoms</Form.Label>
+                                <Form.Row>
+                                    <Col>
+                                        <Form.Control onChange={this.handleNumberHeavyAtomsMin}/>
+                                        <Form.Text className="text-muted">From (ex: 6)</Form.Text>
+                                    </Col>
+                                    <Col>
+                                        <Form.Control onChange={this.handleNumberHeavyAtomsMax}/>
+                                        <Form.Text className="text-muted">To (ex: 209)</Form.Text>
+                                    </Col>
+                                    <Col md="auto">
+                                        <Form.Control name="heavy-atoms-and-or" as="select" onChange={this.handleNumberHeavyAtomsLogic}>
+                                            <option value="AND">AND</option>
+                                            <option value="OR">OR</option>
+                                        </Form.Control>
+                                    </Col>
+                                </Form.Row>
+                            </Form>
+                        </Col>
+
+                    </Row>
+
+                </Form.Group>
+
+                <Form.Group>
+                    <Row>
+                        <Col>
+
+                            <Form>
+                                <Form.Label>Number of carbons</Form.Label>
+                                <Form.Row>
+                                    <Col>
+                                        <Form.Control onChange={this.handleNumberOfCarbonsMin}/>
+                                        <Form.Text className="text-muted">From (ex: 0)</Form.Text>
+                                    </Col>
+                                    <Col>
+                                        <Form.Control onChange={this.handleNumberOfCarbonsMax}/>
+                                        <Form.Text className="text-muted">To (ex: 156)</Form.Text>
+                                    </Col>
+                                    <Col  md="auto">
+                                        <Form.Control name="number-carbons-and-or" as="select" onChange={this.handleNumberOfCarbonsLogic}>
+                                            <option value="AND">AND</option>
+                                            <option value="OR">OR</option>
+                                        </Form.Control>
+                                    </Col>
+                                </Form.Row>
+                            </Form>
+
+                        </Col>
+                        <Col  xs lg="1" ></Col>
+                        <Col>
+                            <Form>
+                                <Form.Label>Number of oxygens</Form.Label>
+                                <Form.Row>
+                                    <Col>
+                                        <Form.Control onChange={this.handleNumberOfOxygensMin}/>
+                                        <Form.Text className="text-muted">From (ex: 0)</Form.Text>
+                                    </Col>
+                                    <Col>
+                                        <Form.Control onChange={this.handleNumberOfOxygensMax}/>
+                                        <Form.Text className="text-muted">To (ex: 109)</Form.Text>
+                                    </Col>
+                                    <Col  md="auto">
+                                        <Form.Control name="number-oxygens-and-or" as="select" onChange={this.handleNumberOfOxygensLogic}>
+                                            <option value="AND">AND</option>
+                                            <option value="OR">OR</option>
+                                        </Form.Control>
+                                    </Col>
+                                </Form.Row>
+                            </Form>
+                        </Col>
+
+                    </Row>
+                </Form.Group>
+
+
+                <Form.Group>
+                    <Row>
+                        <Col>
+
+                            <Form>
+                                <Form.Label>Number of nitrogens</Form.Label>
+                                <Form.Row>
+                                    <Col>
+                                        <Form.Control onChange={this.handleNumberOfNitrogensMin}/>
+                                        <Form.Text className="text-muted">From (ex: 0)</Form.Text>
+                                    </Col>
+                                    <Col>
+                                        <Form.Control onChange={this.handleNumberOfNitrogensMax}/>
+                                        <Form.Text className="text-muted">To (ex: 45)</Form.Text>
+                                    </Col>
+                                    <Col  md="auto">
+                                        <Form.Control name="number-carbons-and-or" as="select" onChange={this.handleNumberOfNitrogensLogic}>
+                                            <option value="AND">AND</option>
+                                            <option value="OR">OR</option>
+                                        </Form.Control>
+                                    </Col>
+                                </Form.Row>
+                            </Form>
+                        </Col>
+
+                        <Col  xs lg="1"></Col>
+
+                        <Col>
+
+                            <Form>
+                                <Form.Label>Bond count</Form.Label>
+                                <Form.Row>
+                                    <Col>
+                                        <Form.Control onChange={this.handleBondCountMin}/>
+                                        <Form.Text className="text-muted">From (ex: 5)</Form.Text>
+                                    </Col>
+                                    <Col>
+                                        <Form.Control onChange={this.handleBondCountMax}/>
+                                        <Form.Text className="text-muted">To (ex: 231)</Form.Text>
+                                    </Col>
+                                    <Col  md="auto">
+                                        <Form.Control name="bond-count-and-or" as="select" onChange={this.handleBondCountLogic}>
+                                            <option value="AND">AND</option>
+                                            <option value="OR">OR</option>
+                                        </Form.Control>
+                                    </Col>
+                                </Form.Row>
+                            </Form>
+                        </Col>
+                    </Row>
+                </Form.Group>
+
+
+                <Form.Group>
+                    <Row>
+                        <Col>
+                            <Form>
+                                <Form.Label>Contain sugars</Form.Label>
+                                <Form.Row>
+                                    <Col>
+                                        <Form.Control name="contain-sugars" as="select" onChange={this.handleContainsSugars}>
+                                            <option value="indifferent">Indifferent</option>
+                                            <option value="any_sugar">Any sugar type</option>
+                                            <option value="ring_sugar">Ring sugars</option>
+                                            <option value="only_ring_sugar">Only ring sugars</option>
+                                            <option value="linear_sugar">Linear sugars</option>
+                                            <option value="only_linear_sugar">Only linear sugars</option>
+                                            <option value="no_sugar">No sugar</option>
+                                        </Form.Control>
+                                    </Col>
+
+                                    <Col>
+                                        <Form.Control name="contain-sugars-and-or" as="select" onChange={this.handleContainSugarsLogic}>
+                                            <option value="AND">AND</option>
+                                            <option value="OR">OR</option>
+                                        </Form.Control>
+                                    </Col>
+                                </Form.Row>
+                            </Form>
+                        </Col>
+
+                        <Col  xs lg="1"></Col>
+
+                        <Col>
+                            <Form>
+                                <Form.Label>Number of rings</Form.Label>
+                                <Form.Row>
+                                    <Col>
+                                        <Form.Control onChange={this.handleNumberOfRingsMin}/>
+                                        <Form.Text className="text-muted">From (ex: 0)</Form.Text>
+                                    </Col>
+                                    <Col>
+                                        <Form.Control onChange={this.handleNumberOfRingsMax}/>
+                                        <Form.Text className="text-muted">To (ex: 1639)</Form.Text>
+                                    </Col>
+                                    <Col  md="auto">
+                                        <Form.Control name="number-rings-and-or" as="select" onChange={this.handleNumberOfRingsLogic}>
+                                            <option value="AND">AND</option>
+                                            <option value="OR">OR</option>
+                                        </Form.Control>
+                                    </Col>
+                                </Form.Row>
+                            </Form>
+                        </Col>
+                    </Row>
+                </Form.Group>
 
                 <br/>
                 <h3>Molecular descriptors</h3>
                 <br/>
 
-                NP-likeness score
-                apol
-                ..
+                <Form.Group>
+                    <Row>
+                        <Col>
+
+
+                            <Form>
+                                <Form.Label>NP-likeness score</Form.Label>
+                                <Form.Row>
+                                    <Col>
+                                        <Form.Control onChange={this.handleNPLScoreMin}/>
+                                        <Form.Text className="text-muted">From (ex: -4.5)</Form.Text>
+                                    </Col>
+                                    <Col>
+                                        <Form.Control onChange={this.handleNPLScoreMax}/>
+                                        <Form.Text className="text-muted">To (ex: 4.6)</Form.Text>
+                                    </Col>
+                                    <Col md="auto">
+                                        <Form.Control name="npl-score-and-or" as="select" onChange={this.handleNPLScoreLogic}>
+                                            <option value="AND">AND</option>
+                                            <option value="OR">OR</option>
+                                        </Form.Control>
+                                    </Col>
+                                </Form.Row>
+                            </Form>
+                        </Col>
+
+                        <Col md="auto"></Col>
+
+                        <Col>
+                            <Form>
+                                <Form.Label>Apol</Form.Label>
+                                <Form.Row>
+                                    <Col>
+                                        <Form.Control onChange={this.handleApolMin}/>
+                                        <Form.Text className="text-muted">From (ex: 6.2)</Form.Text>
+                                    </Col>
+                                    <Col>
+                                        <Form.Control onChange={this.handleApolMax}/>
+                                        <Form.Text className="text-muted">To (ex: 501.3)</Form.Text>
+                                    </Col>
+                                    <Col md="auto">
+                                        <Form.Control name="apol-and-or" as="select" onChange={this.handleApolLogic}>
+                                            <option value="AND">AND</option>
+                                            <option value="OR">OR</option>
+                                        </Form.Control>
+                                    </Col>
+                                </Form.Row>
+                            </Form>
+                        </Col>
+                    </Row>
+                </Form.Group>
+
+
+                <Form.Group>
+                    <Row>
+                        <Col>
+                            <Form>
+                                <Form.Label>AlpgP</Form.Label>
+                                <Form.Row>
+                                    <Col>
+                                        <Form.Control onChange={this.handleAlogpMin}/>
+                                        <Form.Text className="text-muted">From (ex: 1.5)</Form.Text>
+                                    </Col>
+                                    <Col>
+                                        <Form.Control onChange={this.handleAlogpMax}/>
+                                        <Form.Text className="text-muted">To (ex: 50.1)</Form.Text>
+                                    </Col>
+                                    <Col md="auto">
+                                        <Form.Control name="alogp-and-or" as="select" onChange={this.handleAlogpLogic}>
+                                            <option value="AND">AND</option>
+                                            <option value="OR">OR</option>
+                                        </Form.Control>
+                                    </Col>
+                                </Form.Row>
+                            </Form>
+                        </Col>
+
+                        <Col md="auto"></Col>
+
+                        <Col>
+                            <Form>
+                                <Form.Label>Fractional CSP3 (non-flatness of a molecule)</Form.Label>
+                                <Form.Row>
+                                    <Col>
+                                        <Form.Control onChange={this.handleFsp3Min}/>
+                                        <Form.Text className="text-muted">From (ex: 1.5)</Form.Text>
+                                    </Col>
+                                    <Col>
+                                        <Form.Control onChange={this.handleFsp3Max}/>
+                                        <Form.Text className="text-muted">To (ex: 50.1)</Form.Text>
+                                    </Col>
+                                    <Col md="auto">
+                                        <Form.Control name="fsp3-and-or" as="select" onChange={this.handleFsp3Logic}>
+                                            <option value="AND">AND</option>
+                                            <option value="OR">OR</option>
+                                        </Form.Control>
+                                    </Col>
+                                </Form.Row>
+                            </Form>
+                        </Col>
+                    </Row>
+                </Form.Group>
+
+
+
+                <Form.Group>
+                    <Row>
+                        <Col>
+
+                            <Form>
+                                <Form.Label>Lipinski Rule of 5 failures</Form.Label>
+                                <Form.Row>
+                                    <Col>
+                                        <Form.Control onChange={this.handleLipinskiMin}/>
+                                        <Form.Text className="text-muted">Minimal number of failures (0)</Form.Text>
+                                    </Col>
+                                    <Col>
+                                        <Form.Control onChange={this.handleLipinskiMax}/>
+                                        <Form.Text className="text-muted">Maximal number of failures (5)</Form.Text>
+                                    </Col>
+                                    <Col md="auto">
+                                        <Form.Control name="lipinski-and-or" as="select" onChange={this.handleLipinskiLogic}>
+                                            <option value="AND">AND</option>
+                                            <option value="OR">OR</option>
+                                        </Form.Control>
+                                    </Col>
+                                </Form.Row>
+                            </Form>
+                        </Col>
+
+                        <Col md="auto"></Col>
+
+                        <Col>
+                            <Form>
+                                <Form.Label>Number of Spiro Atoms</Form.Label>
+                                <Form.Row>
+                                    <Col>
+                                        <Form.Control onChange={this.handleSpiroMin}/>
+                                        <Form.Text className="text-muted">From (ex: 0)</Form.Text>
+                                    </Col>
+                                    <Col>
+                                        <Form.Control onChange={this.handleSpiroMax}/>
+                                        <Form.Text className="text-muted">To (ex: 9)</Form.Text>
+                                    </Col>
+                                    <Col md="auto">
+                                        <Form.Control name="spiro-and-or" as="select" onChange={this.handleSpiroLogic}>
+                                            <option value="AND">AND</option>
+                                            <option value="OR">OR</option>
+                                        </Form.Control>
+                                    </Col>
+                                </Form.Row>
+                            </Form>
+                        </Col>
+                    </Row>
+                </Form.Group>
+
+
 
 
 
 
                 <h3>Data sources</h3>
                 <p>
-                    TODO data sources (multiple selection list)
+                    Coming soon...
                 </p>
 
 
