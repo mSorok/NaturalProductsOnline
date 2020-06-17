@@ -211,7 +211,7 @@ public class UniqueNaturalProduct {
     //Vertex adjacency information (magnitude): 1 + log2 m where m is the number of heavy-heavy bonds. If m is zero, then zero is returned. (definition from MOE tutorial on line)
     public Double vertexAdjMagnitude;
 
-    public Double wienerPathNumber;
+    public Double weinerPathNumber;
     public Double wienerPolarityNumber;
 
     //Prediction of logP based on the atom-type method called XLogP. Requires all hydrogens to be explicit.
@@ -647,14 +647,14 @@ public class UniqueNaturalProduct {
     }
 
     public Double getWienerPathNumber() {
-        return wienerPathNumber;
+        return weinerPathNumber;
     }
 
-    public void setWienerPathNumber(Double wienerPathNumber) {
-        this.wienerPathNumber = wienerPathNumber;
+    public void setWeinerPathNumber(Double wienerPathNumber) {
+        this.weinerPathNumber = wienerPathNumber;
     }
 
-    public Double getWienerPolarityNumber() {
+    public Double getWeinerPolarityNumber() {
         return wienerPolarityNumber;
     }
 

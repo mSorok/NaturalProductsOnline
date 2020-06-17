@@ -33,14 +33,16 @@ export default class  References  extends React.Component {
 
                 } else if (RegExp(/\b(10[.][0-9]{4,}(?:[.][0-9]+)*\/(?:(?!["&\'<>])\S)+)\b/g).test(naturalProduct.citationDOI[i])) {
                     //doi but without the "doi"
-                    let ra = "doi.org/"+naturalProduct.citationDOI[i];
+                    let ra = "https://doi.org/"+naturalProduct.citationDOI[i];
                     ref_link = <a href= {ra}>DOI </a> ;
                 }else if( RegExp(/^(doi.org).+/).test(naturalProduct.citationDOI[i]) ){
                     //doi.org
-                    ref_link = <a href={naturalProduct.citationDOI[i]}>DOI</a> ;
+                    let ra = "https://"+naturalProduct.citationDOI[i];
+
+                    ref_link = <a href={ra}>DOI</a>;
                 }else if(RegExp(/^(doi:|DOI:).+/).test(naturalProduct.citationDOI[i])){
                     //doi:
-                    let ra = "doi.org/" + naturalProduct.citationDOI[i].split(":")[1];
+                    let ra = "https://doi.org/" + naturalProduct.citationDOI[i].split(":")[1];
                     ref_link = <a href={ra}>DOI</a>;
                 }else {
                     //for now, actual text

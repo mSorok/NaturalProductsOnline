@@ -72,7 +72,7 @@ export default class ComputedProperties extends React.Component {
                         {/*{this.createSimpleRow("numberSpiroAtoms", naturalProduct.numberSpiroAtoms)}*/}
                         {/*{this.createRowWithOverlayTooltip("vabcDescriptor", naturalProduct.vabcDescriptor, "Volume descriptor using the method implemented in the VABCVolume class.")}*/}
                         {/*{this.createRowWithOverlayTooltip("vertexAdjMagnitude", naturalProduct.vertexAdjMagnitude, "Vertex adjacency information (magnitude): 1 + log2 m where m is the number of heavy-heavy bonds. If m is zero, then zero is returned. (definition from MOE tutorial on line)")}*/}
-                        {this.createSimpleRow("WienerPathNumber", Math.round((naturalProduct.weinerPathNumber + Number.EPSILON) * 10000) / 10000 )}
+                        {this.createSimpleRow("WienerPathNumber", naturalProduct.weinerPathNumber ) }
                         {/*{this.createSimpleRow("weinerPolarityNumber", naturalProduct.weinerPolarityNumber)}*/}
                         {this.createRowWithOverlayTooltip("xlogp", Math.round((naturalProduct.xlogp + Number.EPSILON) * 10000) / 10000 , "Prediction of logP based on the atom-type method called XLogP. Requires all hydrogens to be explicit.")}
                         {this.createRowWithOverlayTooltip("zagrebIndex", Math.round((naturalProduct.zagrebIndex + Number.EPSILON) * 10000) / 10000 , "The sum of the squares of atom degree over all heavy atoms i.")}

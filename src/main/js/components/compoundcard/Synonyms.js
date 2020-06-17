@@ -44,7 +44,9 @@ export default class  Synonyms  extends React.Component {
                     <Card.Title className="text-primary">Synonyms</Card.Title>
                     <br />
                     <Table size="sm">
+                        <tbody>
                         {synonymsList}
+                        </tbody>
                     </Table>
                 </Card.Body>
             </Card>

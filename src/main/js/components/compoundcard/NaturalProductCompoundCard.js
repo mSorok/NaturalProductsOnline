@@ -10,7 +10,7 @@ import Representations from "./Representations";
 import MolecularProperties from "./MolecularProperties";
 import ComputedProperties from "./ComputedProperties";
 import CrossReferences from "./CrossReferences";
-import NPlikeness from "./NPlikeness";
+import KnownStereochemicalVariants from "./KnownStereochemicalVariants";
 import References from "./References";
 import Synonyms from "./Synonyms";
 
@@ -68,15 +68,12 @@ export default class NaturalProductCompoundCard extends React.Component {
                 "synonyms",
                 "molecular_properties",
                 "computed_properties",
+                "known_stereochemical_variants",
                 "references",
                 "cross_references"
                 /*
-                this information is also attached to sourceNaturalProduct,
-                consider adding these in cross reference section
 
-                "species",
-                "synonyms",
-                "citations"
+                "species"
 
                 */
             ];
@@ -107,19 +104,18 @@ export default class NaturalProductCompoundCard extends React.Component {
                             <Row id={compoundCardItems[4]} className="compoundCardRow">
                                 <ComputedProperties naturalProduct={naturalProduct}/>
                             </Row>
+
                             <br/>
                             <Row id={compoundCardItems[5]} className="compoundCardRow">
+                                <KnownStereochemicalVariants naturalProduct={naturalProduct}/>
+                            </Row>
+
+                            <br/>
+                            <Row id={compoundCardItems[6]} className="compoundCardRow">
                                 <References naturalProduct={naturalProduct}/>
                             </Row>
                             <br/>
-                            {/* hide fragments
-                            <br/>
-                            <Row id="" className="compoundCardRow">
-                                <Fragments fragments={this.state.naturalProduct.fragments} fragmentsWithSugar={this.state.naturalProduct.fragmentsWithSugar}/>
-                            </Row>
-                            <br/>
-                            */}
-                            <Row id={compoundCardItems[6]} className="compoundCardRow">
+                            <Row id={compoundCardItems[7]} className="compoundCardRow">
                                 <CrossReferences naturalProduct={naturalProduct}/>
                             </Row>
                             <br/>
