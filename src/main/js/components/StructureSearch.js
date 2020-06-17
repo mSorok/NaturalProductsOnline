@@ -10,6 +10,7 @@ import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import Col from "react-bootstrap/Col";
 import Alert from "react-bootstrap/Alert";
+import Utils from "../Utils";
 
 
 const React = require("react");
@@ -55,6 +56,7 @@ export default class StructureSearch extends React.Component {
             stringInput: "",
 
 
+
             similaritySearch: false
         };
 
@@ -76,6 +78,8 @@ export default class StructureSearch extends React.Component {
 
         this.handleStringInput = this.handleStringInput.bind(this);
 
+        this.handleSDFDownload = this.handleSDFDownload.bind(this);
+
 
 
         this.searchResultHeadline = React.createRef();
@@ -91,9 +95,23 @@ export default class StructureSearch extends React.Component {
             this.scrollToRef(this.searchResultHeadline);
         }
 
-        if(this.state.searchSubmitted){
+        if(this.state.searchSubmitted && !this.state.ajaxIsLoaded){
             this.scrollToRef(this.spinnerRef);
         }
+    }
+
+    handleSDFDownload(e, npList) {
+        e.preventDefault();
+
+        const download = document.createElement("a");
+
+        download.setAttribute("href", "data:chemical/x-mdl-molfile;charset=utf-8," + encodeURIComponent(Utils.getSDFileStringByNPList(npList)));
+        download.setAttribute("download", "coconut_structure_search_result.sdf");
+        download.style.display = "none";
+
+        document.body.appendChild(download);
+        download.click();
+        document.body.removeChild(download);
     }
 
     handleExactMatchTypeSelect(e){
@@ -284,6 +302,8 @@ export default class StructureSearch extends React.Component {
         let resultRow;
         let alertMessage;
 
+        console.log(ajaxResult);
+
         if (searchSubmitted) {
             if(smilesCorrect){
                 if (ajaxError) {
@@ -297,16 +317,25 @@ export default class StructureSearch extends React.Component {
                             {similaritySearch && <p>Note: The similarity search can be long.</p>}
                         </Row>
                 } else {
+                    let npList = [...ajaxResult.naturalProducts];
                     if (ajaxResult.naturalProducts.length > 0) {
                         resultRow =
                             <>
                                 <Row>
-                                    <p>Your search for "{ajaxResult.originalQuery}" yielded {ajaxResult.count} results.</p>
+                                    <Col>
+                                    <p>Your search for "{ajaxResult.originalQuery}" returned {ajaxResult.count} hits.</p>
+                                    </Col>
+                                    <Col md="auto">
+                                        <Button id="downloadSDFfile" variant="outline-primary" size="sm" onClick={(e) => this.handleSDFDownload(e, npList)}>
+                                            <FontAwesomeIcon icon="file-download" fixedWidth/>
+                                            &nbsp;Download SDF
+                                        </Button>
+                                    </Col>
                                 </Row>
                                 <Row>
                                     <CardBrowser naturalProducts={ajaxResult.naturalProducts}/>
                                 </Row>
-                            </>
+                            </>;
                     } else {
                         resultRow = <Row><p>There are no results that match your structure.</p></Row>;
                     }
@@ -340,7 +369,7 @@ export default class StructureSearch extends React.Component {
                             </Col>
                             <Col xs lg="2">
                                 <br/>
-                                <Button id="structureSearchDrawExampleButton" variant="outline-info" type="submit" onClick={this.handleDesireForCoffee}>
+                                <Button id="structureSearchDrawExampleButton" type="submit" onClick={this.handleDesireForCoffee}>
                                     &nbsp;Load example
                                 </Button>
                             </Col>

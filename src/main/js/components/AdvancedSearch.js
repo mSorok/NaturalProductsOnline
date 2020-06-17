@@ -11,6 +11,7 @@ import Tabs from 'react-bootstrap/Tabs';
 import Col from "react-bootstrap/Col";
 import Alert from "react-bootstrap/Alert";
 import { useRef } from 'react';
+import Utils from "../Utils";
 
 
 const React = require("react");
@@ -192,6 +193,8 @@ export default class AdvancedSearch extends React.Component {
         this.handleSpiroMax = this.handleSpiroMax.bind(this);
         this.handleSpiroLogic =  this.handleSpiroLogic.bind(this);
 
+        this.handleSDFDownload = this.handleSDFDownload.bind(this);
+
 
 
         this.searchResultHeadline = React.createRef();
@@ -214,6 +217,20 @@ export default class AdvancedSearch extends React.Component {
         if(this.state.searchSubmitted && !this.state.ajaxIsLoaded){
             this.scrollToRef(this.spinnerRef);
         }
+    }
+
+    handleSDFDownload(e, npList) {
+        e.preventDefault();
+
+        const download = document.createElement("a");
+
+        download.setAttribute("href", "data:chemical/x-mdl-molfile;charset=utf-8," + encodeURIComponent(Utils.getSDFileStringByNPList(npList)));
+        download.setAttribute("download", "coconut_structure_search_result.sdf");
+        download.style.display = "none";
+
+        document.body.appendChild(download);
+        download.click();
+        document.body.removeChild(download);
     }
 
     handleAdvancedSearchSubmit(){
@@ -939,11 +956,20 @@ export default class AdvancedSearch extends React.Component {
                         {/*Eventually some message here*/}
                     </Row>
             } else {
+                let npList = [...ajaxResult.naturalProducts];
                 if (ajaxResult.naturalProducts.length > 0) {
                     resultRow =
                         <>
                             <Row>
+                                <Col>
                                 <p>Your search returned {ajaxResult.count} results.</p>
+                                </Col>
+                                <Col md="auto">
+                                    <Button id="downloadSDFfile" variant="outline-primary" size="sm" onClick={(e) => this.handleSDFDownload(e, npList)}>
+                                        <FontAwesomeIcon icon="file-download" fixedWidth/>
+                                        &nbsp;Download SDF
+                                    </Button>
+                                </Col>
                             </Row>
                             <Row>
                                 <CardBrowser naturalProducts={ajaxResult.naturalProducts}/>

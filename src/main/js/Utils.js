@@ -34,6 +34,25 @@ export default class Utils {
         }
     }
 
+
+    static getSDFileStringByNPList(npList){
+
+
+        let sdfString = "";
+
+        for(let i=0; i<npList.length; i++){
+            try {
+                const npMolecule = OpenChemLib.Molecule.fromSmiles(npList[i].clean_smiles);
+                sdfString+= npMolecule.toMolfileV3() +"\n$$$$\n";
+            } catch(e) {
+                console.log(e.name + " in OpenChemLib: " + e.message);
+            }
+
+        }
+        return(sdfString);
+
+    }
+
     static capitalize(string) {
         return string[0].toUpperCase() + string.slice(1);
     }

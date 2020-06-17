@@ -38,21 +38,26 @@ export default class KnownStereochemicalVariants extends React.Component {
             Object.keys(naturalProduct.absolute_smiles).forEach((abs_smiles, dbs) => {
                 //console.log(abs_smiles);
 
+                if (abs_smiles != "nostereo"){
 
-                const structure = Utils.drawMoleculeBySmiles(abs_smiles);
+                    const structure = Utils.drawMoleculeBySmiles(abs_smiles);
 
-                stereoList.push(
-                    <tr key={"stereo_"+count}>
-                        <td>
-                            <Image src={structure.toDataURL()} alt={<FontAwesomeIcon icon="file-image" className="standAloneIcon" size="2x"/>} fluid/>
-                        </td>
-                        <td>
-                            {abs_smiles}
-                        </td>
-                    </tr>
-                );
-                count++;
+                    stereoList.push(
+                        <tr key={"stereo_" + count}>
+                            <td>
+                                <Image src={structure.toDataURL()}
+                                       alt={<FontAwesomeIcon icon="file-image" className="standAloneIcon" size="2x"/>}
+                                       fluid/>
+                            </td>
+                            <td>
+                                {abs_smiles}
+                            </td>
+                        </tr>
+                    );
+                    count++;
+                }
             });
+
         }
 
         return (

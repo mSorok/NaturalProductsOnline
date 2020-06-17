@@ -91,7 +91,7 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
                 Criteria cbis = null;
 
                 if(criterias.getListOfSearchItems()[i].getAsString("itemValue").equals("any_sugar")){
-                    c = Criteria.where("contains_sugar").gt(1);
+                    c = Criteria.where("contains_sugar").gte(1);
 
                 }else if(criterias.getListOfSearchItems()[i].getAsString("itemValue").equals("ring_sugar")){
                     c = Criteria.where("contains_ring_sugars").is(true);
@@ -179,6 +179,7 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
 
 
 
+        System.out.println(advancedQuery);
         result = mongoTemplate.find(advancedQuery, UniqueNaturalProduct.class);
 
         return result;
