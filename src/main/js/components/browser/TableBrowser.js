@@ -16,13 +16,12 @@ export default class TableBrowser extends React.Component {
                 <thead>
                 <tr>
                     <th className="tableThumbnail"></th>
+                    <th>COCONUT id</th>
                     <th>Name</th>
-                    <th>COCONUT id</th>th>
-                    <th>NPL score</th>
                     <th>Mol. formula</th>
                     <th>Mol. weight</th>
+                    <th>NP-likeness</th>
                     <th>InChI</th>
-                    <th>InChIKey</th>
                 </tr>
                 </thead>
                 <tbody>

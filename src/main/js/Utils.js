@@ -43,7 +43,12 @@ export default class Utils {
         for(let i=0; i<npList.length; i++){
             try {
                 const npMolecule = OpenChemLib.Molecule.fromSmiles(npList[i].clean_smiles);
-                sdfString+= npMolecule.toMolfileV3() +"\n$$$$\n";
+                sdfString+= npMolecule.toMolfileV3();
+                sdfString+= "> <coconut_id> \n";
+                sdfString+= npList[i].coconut_id +"\n\n";
+                sdfString+= "> <SMILES> \n";
+                sdfString+= npList[i].clean_smiles +"\n\n";
+                sdfString+= "$$$$\n";
             } catch(e) {
                 console.log(e.name + " in OpenChemLib: " + e.message);
             }
