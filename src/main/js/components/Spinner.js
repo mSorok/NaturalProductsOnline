@@ -15,7 +15,7 @@ export default class Spinner extends React.Component {
 
     constructor(props) {
         super(props);
-        this.size = this.props.size || "5x";
+        this.size = this.props.size || "4x";
     }
 
     render() {

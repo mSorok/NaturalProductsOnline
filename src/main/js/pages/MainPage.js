@@ -18,6 +18,7 @@ import SearchResult from "../components/SearchResult";
 import StructureSearch from "../components/StructureSearch";
 import AdvancedSearch from "../components/AdvancedSearch";
 import NaturalProductCompoundCard from "../components/compoundcard/NaturalProductCompoundCard";
+import Footer from "../components/footer/Footer";
 
 const React = require("react");
 const ReactDOM = require("react-dom");
@@ -47,6 +48,7 @@ class MainPage extends React.Component {
         <Route component={NotFound}/>
         </Switch>
         </Container>
+                <Footer/>
         </React.Fragment>
         </BrowserRouter>
     );

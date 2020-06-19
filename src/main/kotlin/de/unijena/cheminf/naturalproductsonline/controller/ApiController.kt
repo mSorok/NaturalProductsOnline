@@ -194,25 +194,31 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
     fun doSimpleSearchWithHeuristic(query: String): Map<String, Any> {
         // determine type of input on very basic principles without validation
 
-        var queryType = "unknown"
 
 
         var inchiPattern = Regex("^InChI=.*$")
         val inchikeyPattern = Regex("^[A-Z]{14}-[A-Z]{10}-[A-Z]$")
         val molecularFormulaPattern = Regex("C[0-9]+?H[0-9].+")
-        //var smilesPattern = Regex("^([^Jj][A-Za-z0-9@+\\-\\[\\]\\(\\)\\\\\\/%=#\$]+)\$")
+        var smilesPattern = Regex("^([^Jj][A-Za-z0-9@+\\-\\[\\]\\(\\)\\\\\\/%=#\$]+)\$")
         val coconutPattern = Regex("^CNP[0-9]+?$")
 
         var naturalProducts : List<UniqueNaturalProduct>
         val determinedInputType : String
 
 
-        /*if(smilesPattern.containsMatchIn(query)){
-             naturalProducts =  this.uniqueNaturalProductRepository.findBySmiles(query)
-             determinedInputType = "SMILES"
+        if(smilesPattern.containsMatchIn(query)){
+
+            val queryAC: IAtomContainer = this.smilesParser.parseSmiles(query)
+            val querySmiles = this.smilesGenerator.create(queryAC)
+            determinedInputType = "SMILES"
+
+            naturalProducts =  this.uniqueNaturalProductRepository.findByClean_smiles(querySmiles)
+            if(naturalProducts.isEmpty()) {
+                naturalProducts = this.uniqueNaturalProductRepository.findBySmiles(querySmiles)
+            }
+
         }
-        else */
-        if(coconutPattern.containsMatchIn(query)){
+        else if(coconutPattern.containsMatchIn(query)){
             naturalProducts =  this.uniqueNaturalProductRepository.findByCoconut_id(query)
             determinedInputType = "COCONUT ID"
         }
@@ -321,8 +327,8 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
 
             }else{
                 //Vento-Foggia
-                 pattern = VentoFoggia.findSubstructure(queryAC)
-                 for(unp in matchedList){ //loop@
+                pattern = VentoFoggia.findSubstructure(queryAC)
+                for(unp in matchedList){ //loop@
 
                     var targetAC : IAtomContainer = this.atomContainerToUniqueNaturalProductService.createAtomContainer(unp)
 

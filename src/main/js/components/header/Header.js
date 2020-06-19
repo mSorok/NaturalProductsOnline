@@ -17,10 +17,10 @@ export default class Header extends React.Component {
             <Container fluid id="header" className="fixed-top border-bottom">
                 <Container>
                     <Row>
-                        <Col sm={3} className="align-self-end">
+                        <Col sm={4} className="align-content-center">
                             <Link to="/"><Image id="headerIcon" alt="COCONUT Database Logo" className="img-fluid" src={CoconutIcon}/></Link>
                         </Col>
-                        <Col sm={9} className="align-self-end">
+                        <Col sm={8} className="align-self-end">
                             <HeaderSearchBar/>
                             <HeaderNavBar/>
                         </Col>
