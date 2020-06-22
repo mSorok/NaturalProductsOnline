@@ -206,7 +206,7 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
         val determinedInputType : String
 
 
-        if(smilesPattern.containsMatchIn(query)){
+        /*if(smilesPattern.containsMatchIn(query)){
 
             val queryAC: IAtomContainer = this.smilesParser.parseSmiles(query)
             val querySmiles = this.smilesGenerator.create(queryAC)
@@ -218,7 +218,8 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
             }
 
         }
-        else if(coconutPattern.containsMatchIn(query)){
+        else */
+        if(coconutPattern.containsMatchIn(query)){
             naturalProducts =  this.uniqueNaturalProductRepository.findByCoconut_id(query)
             determinedInputType = "COCONUT ID"
         }

@@ -14,7 +14,7 @@ export default class ComputedProperties extends React.Component {
                 <OverlayTrigger key={name + "Overlay"} placement="top" overlay={
                     <Tooltip id={name + "Tooltip"}>{tooltiptext}</Tooltip>
                 }>
-                    <td>{Utils.capitalize(name)} <FontAwesomeIcon icon="question-circle" fixedWidth/></td>
+                    <td>{Utils.capitalize(name)} <FontAwesomeIcon icon="question-circle-o" fixedWidth/></td>
                 </OverlayTrigger>
                 <td>{value}</td>
             </tr>

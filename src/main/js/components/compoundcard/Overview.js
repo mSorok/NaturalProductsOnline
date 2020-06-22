@@ -91,7 +91,7 @@ export default class Overview extends React.Component {
                                                 <p>2 stars: one of the above; 3 stars: two of the above; 4 stars: three of the above; 5 stars: full annotation </p>
                                             </Tooltip>
                                         }>
-                                            <FontAwesomeIcon icon="question-circle" fixedWidth/>
+                                            <FontAwesomeIcon icon="question-circle-o" fixedWidth/>
                                         </OverlayTrigger>
                                     </td>
                                     <td><table><tbody><tr>{starsAnnotation}</tr></tbody></table></td>

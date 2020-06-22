@@ -9,7 +9,7 @@ library.add(fas);
 import Header from "../components/header/Header"
 import Index from "../components/Index";
 import {BrowserRouter, Route, Switch} from "react-router-dom";
-import About from "../components/About";
+import Documentation from "../components/Documentation";
 import Container from "react-bootstrap/Container";
 import Download from "../components/Download";
 import Browser from "../components/browser/Browser";
@@ -38,7 +38,7 @@ class MainPage extends React.Component {
             <Container fluid className="content" id="contentContainer">
             <Switch>
             <Route exact path="/" component={Index}/>
-        <Route path="/about" component={About}/>
+        <Route path="/documentation" component={Documentation}/>
         <Route path="/browser*" component={Browser}/>
         <Route path="/compound/:identifier(inchi|inchikey|coconut_id|id)/:identifierValue" component={NaturalProductCompoundCard}/>
         <Route path="/download" component={Download}/>

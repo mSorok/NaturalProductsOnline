@@ -61,8 +61,8 @@ export default class HeaderNavBar extends React.Component {
                             </LinkContainer>
                         </Nav.Item>
                         <Nav.Item>
-                            <LinkContainer to="/about">
-                                <Nav.Link>About</Nav.Link>
+                            <LinkContainer to="/documentation">
+                                <Nav.Link>Documentation</Nav.Link>
                             </LinkContainer>
                         </Nav.Item>
                     </Nav>

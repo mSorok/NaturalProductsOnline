@@ -5,7 +5,7 @@ import Col from "react-bootstrap/Col";
 
 const React = require("react");
 
-export default class About extends React.Component {
+export default class Documentation extends React.Component {
     render() {
         return (
             <Container>

@@ -29,7 +29,7 @@ public interface UniqueNaturalProductRepository  extends MongoRepository<UniqueN
     public List<UniqueNaturalProduct> findByName(String name);
 
 
-    @Query("{molecular_weight : ?0}") //TODO make it approximative
+    @Query("{molecular_weight : ?0}")
     public List<UniqueNaturalProduct> findByMolecular_weight(String weight);
 
 

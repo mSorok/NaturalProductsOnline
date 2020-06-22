@@ -22,22 +22,70 @@ export default class Browser extends React.Component {
         this.state = {
             currentPage: 0
         };
+
+
         this.handlePageRequestEvent = this.handlePageRequestEvent.bind(this);
+
+
+        this.handlePageFirst = this.handlePageFirst.bind(this);
+        this.handlePagePrev = this.handlePagePrev.bind(this);
+        this.handlePageNext = this.handlePageNext.bind(this);
+        this.handlePageLast = this.handlePageLast.bind(this);
+
     }
 
-    handlePageRequestEvent(e, targetPageNumber) {
+
+
+    handlePageRequestEvent(e) {
+
         e.preventDefault();
+
+        this.state.currentPage = e.target.text;
+
         this.setState({
-            currentPage: targetPageNumber
+            currentPage: e.target.text
+        });
+    }
+
+    handlePageNext(e){
+        this.state.currentPage = this.state.currentPage+1;
+
+        this.setState({
+            currentPage: this.state.currentPage
+        });
+    }
+
+    handlePagePrev(e){
+        this.state.currentPage = this.state.currentPage-1;
+
+        this.setState({
+            currentPage: this.state.currentPage
+        });
+    }
+
+    handlePageFirst(e){
+        this.state.currentPage = 0;
+
+        this.setState({
+            currentPage: this.state.currentPage
+        });
+    }
+
+    handlePageLast(e, lastPage){
+        this.state.currentPage =lastPage-1;
+
+        this.setState({
+            currentPage: this.state.currentPage
         });
     }
 
 
-    withSubscription(ViewComponent, pageNumber, pageRequestHandler) {
+    withSubscription(ViewComponent, pageNumber, pageRequestHandler, firstPageHandler, prevPageHandler, nextPageHandler, lastPageHandler) {
         return class extends React.Component {
             constructor(props) {
                 super(props);
                 this.state = {
+                    currentPage: pageNumber,
                     data: {
                         error: null,
                         isLoaded: false,
@@ -45,7 +93,7 @@ export default class Browser extends React.Component {
                     },
                     stats: {
                         totalCompoundCount: null,
-                        totalPageCount: null
+                        totalPageCount: null,
                     }
                 };
             }
@@ -89,29 +137,77 @@ export default class Browser extends React.Component {
                 } else if (!isLoaded) {
                     return <Spinner/>
                 } else {
-                    /*
-                    note: the api starts counting pages at 0
-                    pageNumber refers to the page that should be fetched from the api
-                    displayPageNumber is the number shown in the UI
-                    */
-                    const pageNumberFirst = 0;
-                    const displayPageNumberFirst = pageNumberFirst + 1;
 
-                    const pageNumberLast = this.state.stats.totalPageCount - 1;
-                    const displayPageNumberLast = this.state.stats.totalPageCount;
 
-                    const pageNumberPrev = pageNumber - 1;
-                    const pageNumberNext = pageNumber + 1;
+                    let current = parseInt(this.state.currentPage);
+                    let last = this.state.stats.totalPageCount-1;
+                    let delta = 5;
+                    let range = [];
+                    let rangeWithDots = [];
 
-                    let paginationItems = [];
-                    for (let i = 0; i < 10; i++) {
-                        paginationItems.push(
-                            <Pagination.Item key={pageNumberFirst + i} onClick={(e) => pageRequestHandler(e, pageNumberFirst + i)} active={pageNumberFirst + i === pageNumber}>
-                                {displayPageNumberFirst + i}
-                            </Pagination.Item>);
+
+
+                    if(!current){
+                        current=0;
                     }
-                    paginationItems.push(<Pagination.Ellipsis key="ellipsis_0" disabled/>);
-                    paginationItems.push(<Pagination.Item key={pageNumberLast} onClick={(e) => pageRequestHandler(e, pageNumberLast)} active={pageNumberLast === pageNumber}>{displayPageNumberLast}</Pagination.Item>);
+
+                    let left = current - delta;
+                    let right = current + delta + 1;
+                    if(left<=0) {
+                        right = right+Math.abs(left);
+                    }
+
+
+                    for (let i = 0; i <= last; i++) {
+
+                        if (i === 0 ) {
+                            range.push(i);
+                        }else if(i === last){
+                            range.push(i);
+                        }else if(i >= left && i < right){
+                            range.push(i);
+                        }
+                    }
+
+
+                    let l;
+
+
+
+                    for (let index = 0 ; index < range.length; index++) {
+
+
+                        let i = range[index];
+
+
+
+                        if (l != null) {
+                            if (i - l === 2) {
+                                //rangeWithDots.push(l + 1);
+                                rangeWithDots.push(
+                                <Pagination.Item key={l+1} onClick={pageRequestHandler} active={l+1 === current} >
+                                    {l+1}
+                                </Pagination.Item>);
+
+                            } else if (i - l >= 2 ) {
+                                rangeWithDots.push(
+                                    <Pagination.Ellipsis key={"ellipsis_"+i} disabled/>
+                                );
+                            }
+                        }
+                        rangeWithDots.push(
+                            <Pagination.Item key={i} onClick={pageRequestHandler} active={i === current} >
+                            {i}
+                        </Pagination.Item>);
+                        l = i;
+
+                    }
+
+
+                    let paginationItems = rangeWithDots;
+
+
+
 
                     return (
                         <Container>
@@ -129,21 +225,15 @@ export default class Browser extends React.Component {
                             </Row>
                             <br/>
                             <Row>
-                                <p>There are {this.state.stats.totalCompoundCount.toLocaleString()} unique natural products in the database. They are sorted by their annotation level, from best annotated to worst.</p>
+                                <p>There are {this.state.stats.totalCompoundCount.toLocaleString()} unique natural products in the database. They are sorted by their annotation level, starting with the best annotated.</p>
                             </Row>
-                            <Row>
-                                <Pagination>
-                                    <Pagination.First onClick={(e) => pageRequestHandler(e, pageNumberFirst)}/>
-                                    {pageNumberPrev >= pageNumberFirst &&
-                                        <Pagination.Prev onClick={(e) => pageRequestHandler(e, pageNumberPrev)}/>
-                                    }
-
+                            <Row className="justify-content-md-center" >
+                                <Pagination >
+                                    <Pagination.First onClick={firstPageHandler}/>
+                                    <Pagination.Prev onClick={prevPageHandler}/>
                                     {paginationItems}
-
-                                    {pageNumberNext <= pageNumberLast &&
-                                        <Pagination.Next onClick={(e) => pageRequestHandler(e, pageNumberNext)}/>
-                                    }
-                                    <Pagination.Last onClick={(e) => pageRequestHandler(e, pageNumberLast)}/>
+                                    <Pagination.Next onClick={nextPageHandler}/>
+                                    <Pagination.Last onClick={ (e)=>   lastPageHandler (e, this.state.stats.totalPageCount)}/>
                                 </Pagination>
                             </Row>
                             <br/>
@@ -158,8 +248,8 @@ export default class Browser extends React.Component {
     }
 
     render() {
-        const CardBrowserWithSubscription = this.withSubscription(CardBrowser, this.state.currentPage, this.handlePageRequestEvent);
-        const TableBrowserWithSubscription = this.withSubscription(TableBrowser, this.state.currentPage, this.handlePageRequestEvent);
+        const CardBrowserWithSubscription = this.withSubscription(CardBrowser, this.state.currentPage, this.handlePageRequestEvent, this.handlePageFirst, this.handlePagePrev, this.handlePageNext, this.handlePageLast);
+        const TableBrowserWithSubscription = this.withSubscription(TableBrowser, this.state.currentPage, this.handlePageRequestEvent, this.handlePageFirst, this.handlePagePrev, this.handlePageNext, this.handlePageLast);
 
         return (
             <Switch>
