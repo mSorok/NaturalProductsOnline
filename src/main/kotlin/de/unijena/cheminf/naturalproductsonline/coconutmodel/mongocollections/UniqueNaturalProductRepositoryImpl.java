@@ -36,7 +36,6 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
         for(int i=0; i< criterias.getListOfSearchItems().length; i++) {
 
 
-
             String itemType = criterias.getListOfSearchItems()[i].getAsString("itemType");
             String itemLogic = criterias.getListOfSearchItems()[i].getAsString("itemLogic");
 
@@ -56,82 +55,123 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
                 }
 
 
-            }else if(itemType.equals("number_of_rings")){
+            } else if (itemType.equals("number_of_rings")) {
 
 
                 Double itemValueMin = 0.0;
-                if(!criterias.getListOfSearchItems()[i].getAsString("itemValueMin").equals("")){
-                    itemValueMin = Double.parseDouble( criterias.getListOfSearchItems()[i].getAsString("itemValueMin") );
+                if (!criterias.getListOfSearchItems()[i].getAsString("itemValueMin").equals("")) {
+                    itemValueMin = Double.parseDouble(criterias.getListOfSearchItems()[i].getAsString("itemValueMin"));
                 }
 
                 Double itemValueMax = 0.0;
-                if(!criterias.getListOfSearchItems()[i].getAsString("itemValueMax").equals("")){
-                    itemValueMax = Double.parseDouble( criterias.getListOfSearchItems()[i].getAsString("itemValueMax") );
+                if (!criterias.getListOfSearchItems()[i].getAsString("itemValueMax").equals("")) {
+                    itemValueMax = Double.parseDouble(criterias.getListOfSearchItems()[i].getAsString("itemValueMax"));
                 }
-
 
 
                 Criteria c1 = Criteria.where("min_number_of_rings").gte(itemValueMin);
                 Criteria c2 = Criteria.where("max_number_of_rings").lte(itemValueMax);
                 ArrayList<Criteria> cl = new ArrayList<Criteria>();
-                cl.add(c1); cl.add(c2);
-                Criteria c = new Criteria().andOperator( cl.toArray(new Criteria[cl.size()]) );
+                cl.add(c1);
+                cl.add(c2);
+                Criteria c = new Criteria().andOperator(cl.toArray(new Criteria[cl.size()]));
 
-                if(itemLogic.equals("AND")){
+                if (itemLogic.equals("AND")) {
                     andCriterias.add(c);
                     //bigCriteria.andOperator(c);
-                }else{
+                } else {
                     orCriterias.add(c);
                     //bigCriteria.orOperator(c);
                 }
 
 
-            }else if(itemType.equals("contains_sugars")){
+            } else if (itemType.equals("contains_sugars")) {
                 Criteria c = new Criteria();
                 Criteria cbis = null;
 
-                if(criterias.getListOfSearchItems()[i].getAsString("itemValue").equals("any_sugar")){
+                if (criterias.getListOfSearchItems()[i].getAsString("itemValue").equals("any_sugar")) {
                     c = Criteria.where("contains_sugar").gte(1);
 
-                }else if(criterias.getListOfSearchItems()[i].getAsString("itemValue").equals("ring_sugar")){
+                } else if (criterias.getListOfSearchItems()[i].getAsString("itemValue").equals("ring_sugar")) {
                     c = Criteria.where("contains_ring_sugars").is(true);
 
-                }else if(criterias.getListOfSearchItems()[i].getAsString("itemValue").equals("only_ring_sugar")){
+                } else if (criterias.getListOfSearchItems()[i].getAsString("itemValue").equals("only_ring_sugar")) {
                     Criteria c1 = Criteria.where("contains_ring_sugars").is(true);
                     Criteria c2 = Criteria.where("contains_linear_sugars").is(false);
 
                     ArrayList<Criteria> cl = new ArrayList<Criteria>();
-                    cl.add(c1); cl.add(c2);
-                    c = new Criteria().andOperator( cl.toArray(new Criteria[cl.size()]) );
+                    cl.add(c1);
+                    cl.add(c2);
+                    c = new Criteria().andOperator(cl.toArray(new Criteria[cl.size()]));
 
-                }else if(criterias.getListOfSearchItems()[i].getAsString("itemValue").equals("linear_sugar")){
+                } else if (criterias.getListOfSearchItems()[i].getAsString("itemValue").equals("linear_sugar")) {
                     c = Criteria.where("contains_linear_sugars").is(true);
 
-                }else if(criterias.getListOfSearchItems()[i].getAsString("itemValue").equals("only_linear_sugar")){
+                } else if (criterias.getListOfSearchItems()[i].getAsString("itemValue").equals("only_linear_sugar")) {
                     Criteria c1 = Criteria.where("contains_ring_sugars").is(false);
                     Criteria c2 = Criteria.where("contains_linear_sugars").is(true);
 
                     ArrayList<Criteria> cl = new ArrayList<Criteria>();
-                    cl.add(c1); cl.add(c2);
-                    c = new Criteria().andOperator( cl.toArray(new Criteria[cl.size()]) );
+                    cl.add(c1);
+                    cl.add(c2);
+                    c = new Criteria().andOperator(cl.toArray(new Criteria[cl.size()]));
 
-                }else if(criterias.getListOfSearchItems()[i].getAsString("itemValue").equals("no_sugar")){
+                } else if (criterias.getListOfSearchItems()[i].getAsString("itemValue").equals("no_sugar")) {
                     c = Criteria.where("contains_sugar").is(0);
                 }
 
-                if(itemLogic.equals("AND")){
+                if (itemLogic.equals("AND")) {
                     andCriterias.add(c);
-                    if(cbis != null){
+                    if (cbis != null) {
                         andCriterias.add(cbis);
                     }
                     //bigCriteria.andOperator(c);
-                }else{
+                } else {
                     orCriterias.add(c);
-                    if(cbis != null){
+                    if (cbis != null) {
                         orCriterias.add(cbis);
                     }
                     //bigCriteria.orOperator(c);
                 }
+
+            }else if(itemType.equals("databases")){
+
+                String dbLogic = criterias.getListOfSearchItems()[i].getAsString("dbLogic");
+
+
+                //leave value as string
+                String s = criterias.getListOfSearchItems()[i].getAsString("itemValue");
+
+                s = s.replace("[", "");
+                s = s.replace("]", "");
+                String [] listDatabases = s.split(", ");
+
+
+                ArrayList<Criteria> dbCriterias = new ArrayList<>();
+
+                for(String db : listDatabases){
+                    Criteria c = new Criteria().where("found_in_databases").all(db);
+                    dbCriterias.add(c);
+
+                }
+
+
+                Criteria c = null;
+                if(dbLogic.equals("OR")) {
+                     c = new Criteria().orOperator(dbCriterias.toArray(new Criteria[dbCriterias.size()]));
+                }else{
+                    c = new Criteria().andOperator(dbCriterias.toArray(new Criteria[dbCriterias.size()]));
+                }
+
+                if (itemLogic.equals("AND")) {
+                    andCriterias.add(c);
+                } else {
+                    orCriterias.add(c);
+                }
+
+
+
+
 
             }else{
                 Double itemValueMin = 0.0;

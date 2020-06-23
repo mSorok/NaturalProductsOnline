@@ -13,6 +13,8 @@ import Alert from "react-bootstrap/Alert";
 import { useRef } from 'react';
 import Utils from "../Utils";
 
+import SourcesList from "./SourcesList";
+
 
 const React = require("react");
 const OpenChemLib = require("openchemlib/full");
@@ -122,6 +124,15 @@ export default class AdvancedSearch extends React.Component {
             spiroMax: "",
             spiroLogic: "AND",
 
+            dbSelected: false,
+            dbChoice: "",
+            orAndDbChoice: "OR",
+            dbChoiceLogic: "AND",
+
+
+
+
+
 
 
 
@@ -193,6 +204,12 @@ export default class AdvancedSearch extends React.Component {
         this.handleSpiroMax = this.handleSpiroMax.bind(this);
         this.handleSpiroLogic =  this.handleSpiroLogic.bind(this);
 
+
+        this.handleDBselect = this.handleDBselect.bind(this);
+        this.handleDBSelectLogic = this.handleDBSelectLogic.bind(this);
+        this.handleDBSelectAllOne = this.handleDBSelectAllOne.bind(this);
+
+
         this.handleSDFDownload = this.handleSDFDownload.bind(this);
 
 
@@ -242,7 +259,7 @@ export default class AdvancedSearch extends React.Component {
         if(this.state.molecularFormulaSubmitted || this.state.molecularWeightSubmitted || this.state.heavyAtomsSubmitted || this.state.numberOfCarbonsSubmitted
             || this.state.numberOfOxygensSubmitted || this.state.numberOfNitrogensSubmitted || this.state.numberOfRingsSubmitted || this.state.containSugarsSubmitted
             || this.state.bondCountSubmitted || this.state.nplScoreSubmitted || this.state.apolSubmitted || this.state.alogpSubmitted || this.state.fsp3Submitted
-            || this.state.lipinskiSubmitted || this.state.spiroSubmitted){
+            || this.state.lipinskiSubmitted || this.state.spiroSubmitted || this.state.dbSelected){
 
             this.setState({
                 searchSubmitted: true
@@ -409,7 +426,21 @@ export default class AdvancedSearch extends React.Component {
             }
 
 
-            this.doSearch(uriString);
+            if(this.state.dbSelected){
+
+                let advancedSearchItem = {
+                itemType: "databases",
+                    itemValue : this.state.dbChoice ,
+                    itemLogic: this.state.dbChoiceLogic,
+                    dbLogic: this.state.orAndDbChoice,
+                };
+                this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
+            }
+
+
+
+
+                this.doSearch(uriString);
 
 
         }
@@ -867,6 +898,53 @@ export default class AdvancedSearch extends React.Component {
 
 
 
+    handleDBselect(e){
+
+
+        let options = e.target.options;
+        let value = [];
+        for (let i = 0, l = options.length; i < l; i++) {
+            if (options[i].selected && options[i].value != "0" && options[i].value != 0) {
+                value.push(options[i].value);
+            }
+        }
+
+
+
+
+        if(value.length>0 ) {
+            this.state.dbChoice = value;
+        }else{
+            this.state.dbChoice = "";
+        }
+
+
+        if(this.state.dbChoice != "" && this.state.dbChoice != null && this.state.dbChoice.length >0) {
+            this.state.dbSelected = true;
+
+        }else{
+            this.state.dbSelected = false;
+        }
+    }
+
+    handleDBSelectLogic(e){
+        this.setState(
+            {
+                dbChoiceLogic:e.target.value
+            }
+        );
+    }
+
+    handleDBSelectAllOne(e){
+        this.setState(
+            {
+                orAndDbChoice:e.target.value
+            }
+        );
+    }
+
+
+
     /**
      * Molecular Formula
      * */
@@ -962,7 +1040,7 @@ export default class AdvancedSearch extends React.Component {
                         <>
                             <Row>
                                 <Col>
-                                <p>Your search returned {ajaxResult.count} results.</p>
+                                    <p>Your search returned {ajaxResult.count} results.</p>
                                 </Col>
                                 <Col md="auto">
                                     <Button id="downloadSDFfile" variant="outline-primary" size="sm" onClick={(e) => this.handleSDFDownload(e, npList)}>
@@ -1396,9 +1474,40 @@ export default class AdvancedSearch extends React.Component {
 
 
                 <h3>Data sources</h3>
-                <p>
-                    Coming soon...
-                </p>
+
+                <Form.Group>
+
+
+                    <Form.Row>
+                        <Col>
+                            <Form onChange = {this.handleDBselect}>
+                            <SourcesList/>
+                            </Form>
+                        </Col>
+
+                        <Col md="auto">
+                            <Form.Control name="select-db-all-or" as="select" onChange={this.handleDBSelectAllOne}>
+                                <option value="OR">IN AT LEAST ONE</option>
+                                <option value="AND">IN ALL</option>
+
+                            </Form.Control>
+                            <Form.Text className="text-muted">Select if query present in ALL the selected databases or in AT LEAST ONE</Form.Text>
+                        </Col>
+
+                        <Col md="auto">
+                            <Form.Control name="select-db-and-or" as="select" onChange={this.handleDBSelectLogic}>
+                                <option value="AND">AND</option>
+                                <option value="OR">OR</option>
+                            </Form.Control>
+                            <Form.Text className="text-muted">Select if this criteria adds to others with AND or with OR</Form.Text>
+                        </Col>
+
+
+
+                    </Form.Row>
+
+
+                </Form.Group>
 
 
 

@@ -4,6 +4,7 @@ import Button from "react-bootstrap/Button";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
+import Form from "react-bootstrap/Form";
 
 const React = require("react");
 
@@ -34,6 +35,8 @@ export default class Download extends React.Component {
                 </Row>
 
                 <ColoredLine color="white" />
+
+                <Form.Group>
 
 
                 <Row>
@@ -71,6 +74,27 @@ export default class Download extends React.Component {
                         </Button>
                     </Col>
                 </Row>
+
+                <ColoredLine color="white" />
+
+                <Row>
+                    <Col sm={5}>
+                        <p>Download Natural Products Structures in SMILES format</p>
+                    </Col>
+                    <Col sm={2}>
+
+                        <Button id="downloadSmilesFile" type="primary" href="/download/smiles">
+                            <FontAwesomeIcon icon="file-download" fixedWidth/>
+                            &nbsp;Download
+                        </Button>
+                    </Col>
+                    <Col sm={2}>&nbsp;</Col>
+                </Row>
+                </Form.Group>
+
+            <br/>
+
+
             </Container>
         );
     }

@@ -26,6 +26,20 @@ class DownloadController(@Qualifier("webApplicationContext") val resourceLoader:
                 .body(resource)
     }
 
+    @GetMapping("/download/smiles")
+    fun downloadSmilesFile(): ResponseEntity<Resource> {
+        val resource: Resource = resourceLoader.getResource("file:./data/coconut.smiles")
+
+        val headers = HttpHeaders()
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=COCONUT_DB.smi")
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.valueOf("text/plain"))
+                .body(resource)
+    }
+
+
 
     @GetMapping("/download/mongo")
     fun downloadMongoDump(): ResponseEntity<Resource> {

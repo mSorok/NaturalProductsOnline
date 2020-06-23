@@ -13,6 +13,8 @@ import CrossReferences from "./CrossReferences";
 import KnownStereochemicalVariants from "./KnownStereochemicalVariants";
 import References from "./References";
 import Synonyms from "./Synonyms";
+import Organisms from "./Organisms";
+import Geography from "./Geography";
 
 const React = require("react");
 const restClient = require("../../restClient");

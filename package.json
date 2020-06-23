@@ -10,7 +10,7 @@
     "natural products",
     "database"
   ],
-  "author": "Peter Merseburger, Maria Sorokina",
+  "author": "Maria Sorokina, Peter Merseburger",
   "license": "MIT",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.25",
