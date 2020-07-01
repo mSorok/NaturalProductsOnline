@@ -359,7 +359,8 @@ export default class StructureSearch extends React.Component {
                 <br/>
 
 
-                <Tabs defaultActiveKey="draw" id="select-input-type" onSelect={this.handleInputType}>
+                <Tabs defaultActiveKey="paste" id="select-input-type" onSelect={this.handleInputType}>
+
                     <Tab eventKey="draw" title="Draw structure">
 
                         <Row className="justify-content-md-center">
@@ -389,8 +390,6 @@ export default class StructureSearch extends React.Component {
                         </Row>
 
                     </Tab>
-
-
 
 
                     <Tab eventKey="paste" title="Paste structure">

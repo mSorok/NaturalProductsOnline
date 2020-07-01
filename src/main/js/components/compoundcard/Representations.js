@@ -33,7 +33,7 @@ export default class Representations extends React.Component {
                         </tr>
                         <tr>
                             <td>Canonical SMILES (CDK)</td>
-                            <td>{naturalProduct.clean_smiles}</td>
+                            <td>{naturalProduct.unique_smiles || naturalProduct.clean_smiles }</td>
                         </tr>
                         <tr>
                             <td>Murcko Framework</td>

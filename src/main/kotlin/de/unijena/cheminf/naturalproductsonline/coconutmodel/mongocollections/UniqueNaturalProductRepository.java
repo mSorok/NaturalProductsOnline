@@ -23,6 +23,9 @@ public interface UniqueNaturalProductRepository  extends MongoRepository<UniqueN
     @Query("{ clean_smiles : ?0}")
     public List<UniqueNaturalProduct> findByClean_smiles(String clean_smiles);
 
+    @Query("{ unique_smiles : ?0}")
+    public List<UniqueNaturalProduct> findByUnique_smiles(String unique_smiles);
+
     @Query("{molecular_formula : ?0}")
     public List<UniqueNaturalProduct> findByMolecular_formula(String molecular_formula);
 

@@ -7,7 +7,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.security.PublicKey;
 import java.util.*;
 
 @Document
@@ -32,6 +31,8 @@ public class UniqueNaturalProduct {
 
     //@Indexed(name="smiles_index")
     public String smiles;
+
+    public String unique_smiles;
 
     //@Indexed(name="clean_smiles_index")
     public String clean_smiles;
@@ -107,6 +108,9 @@ public class UniqueNaturalProduct {
 
     public HashSet<String> found_in_databases;
 
+    public HashSet<ArrayList<String>> xrefs ; // in each arrayList there is the source,  idInSource,  and the URL
+
+
 
     // Molecular fragmentation
 
@@ -122,6 +126,8 @@ public class UniqueNaturalProduct {
 
 
     public ArrayList<Integer> pubchemFingerprint;
+
+    public HashMap<Integer, ArrayList<Integer>> pubfp;
 
     public ArrayList<Integer> circularFingerprint;
 
@@ -925,5 +931,29 @@ public class UniqueNaturalProduct {
 
     public void setAnnotationLevel(Integer annotationLevel) {
         this.annotationLevel = annotationLevel;
+    }
+
+    public String getUnique_smiles() {
+        return unique_smiles;
+    }
+
+    public void setUnique_smiles(String unique_smiles) {
+        this.unique_smiles = unique_smiles;
+    }
+
+    public HashSet<ArrayList<String>> getXrefs() {
+        return xrefs;
+    }
+
+    public void setXrefs(HashSet<ArrayList<String>> xrefs) {
+        this.xrefs = xrefs;
+    }
+
+    public HashMap<Integer, ArrayList<Integer>> getPubfp() {
+        return pubfp;
+    }
+
+    public void setPubfp(HashMap<Integer, ArrayList<Integer>> pubfp) {
+        this.pubfp = pubfp;
     }
 }

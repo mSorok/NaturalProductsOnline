@@ -203,23 +203,37 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
         val coconutPattern = Regex("^CNP[0-9]+?$")
 
         var naturalProducts : List<UniqueNaturalProduct>
-        val determinedInputType : String
+        var determinedInputType : String
 
 
-        /*if(smilesPattern.containsMatchIn(query)){
+        if(smilesPattern.containsMatchIn(query)){
 
-            val queryAC: IAtomContainer = this.smilesParser.parseSmiles(query)
-            val querySmiles = this.smilesGenerator.create(queryAC)
-            determinedInputType = "SMILES"
+            try {
+                val queryAC: IAtomContainer = this.smilesParser.parseSmiles(query)
+                val querySmiles = this.smilesGenerator.create(queryAC)
+                determinedInputType = "SMILES"
 
-            naturalProducts =  this.uniqueNaturalProductRepository.findByClean_smiles(querySmiles)
-            if(naturalProducts.isEmpty()) {
-                naturalProducts = this.uniqueNaturalProductRepository.findBySmiles(querySmiles)
+                naturalProducts = this.uniqueNaturalProductRepository.findByUnique_smiles(querySmiles)
+                if (naturalProducts.isEmpty()) {
+                    naturalProducts = this.uniqueNaturalProductRepository.findBySmiles(querySmiles)
+                    if (naturalProducts.isEmpty()) {
+                        naturalProducts = this.uniqueNaturalProductRepository.findByClean_smiles(querySmiles)
+                    }
+
+                }
+            }catch (e: InvalidSmilesException){
+
+                //it was probably a name
+                naturalProducts = this.uniqueNaturalProductRepository.findByName(query)
+
+                if(naturalProducts == null || naturalProducts.isEmpty()){
+                    naturalProducts = this.uniqueNaturalProductRepository.fuzzyNameSearch(query)
+                }
+                determinedInputType = "name"
             }
 
         }
-        else */
-        if(coconutPattern.containsMatchIn(query)){
+        else if(coconutPattern.containsMatchIn(query)){
             naturalProducts =  this.uniqueNaturalProductRepository.findByCoconut_id(query)
             determinedInputType = "COCONUT ID"
         }
@@ -351,7 +365,7 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
 
 
             hits.sortBy { it.heavy_atom_number }
-            val hitsToReturn = hits.subList(0, maxResults)
+            val hitsToReturn = hits.subList(0, minOf(hits.size , maxResults))
 
             println("ready to return results!")
 
