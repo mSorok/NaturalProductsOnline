@@ -12,10 +12,14 @@ import Col from "react-bootstrap/Col";
 import Alert from "react-bootstrap/Alert";
 import Utils from "../Utils";
 
+import RangeSlider from 'react-bootstrap-range-slider';
+
 
 const React = require("react");
 const OpenChemLib = require("openchemlib/full");
 const restClient = require("../restClient");
+
+
 
 const ColoredLine = ({ color}) => (
     <hr
@@ -44,20 +48,22 @@ export default class StructureSearch extends React.Component {
             searchSubmittedButIncorrect:false,
             searchHitsLimit: 100,
 
-            exactMatch: true,
+            searchType: "exact", //substructure OR similarity
+
+
             exactMatchType: "inchi",
 
             smilesCorrect:false,
 
 
-            substructureSearch: false,
             substructureSearchType: "default",
 
             stringInput: "",
 
+            similarityThreshold : 90,
 
 
-            similaritySearch: false
+
         };
 
         this.handleSearchHitsLimit = this.handleSearchHitsLimit.bind(this);
@@ -80,6 +86,8 @@ export default class StructureSearch extends React.Component {
 
         this.handleSDFDownload = this.handleSDFDownload.bind(this);
 
+        this.handleSimilarityThreshold = this.handleSimilarityThreshold.bind(this);
+
 
 
         this.searchResultHeadline = React.createRef();
@@ -87,7 +95,7 @@ export default class StructureSearch extends React.Component {
     }
 
     componentDidMount() {
-        this.editor = OpenChemLib.StructureEditor.createSVGEditor("structureSearchEditor", 1.25);
+        this.editor = OpenChemLib.StructureEditor.createSVGEditor("structureSearchEditor", 1);
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -170,7 +178,6 @@ export default class StructureSearch extends React.Component {
         }
 
 
-
         //TODO test if SMILES (or other Inchi and co)
 
         if (structureAsSmiles != null && structureAsSmiles != "" && structureAsSmiles != " ") {
@@ -183,22 +190,32 @@ export default class StructureSearch extends React.Component {
             this.state.smilesCorrect = true;
             this.state.searchSubmittedButIncorrect = false;
 
-            if (this.state.exactMatch) {
+            if (this.state.searchType == "exact") {
                 if (this.state.exactMatchType == "inchi") {
                     this.doSearch("/api/search/exact-structure?type=inchi&smiles=", encodeURIComponent(structureAsSmiles));
                 } else {
                     this.doSearch("/api/search/exact-structure?type=smi&smiles=", encodeURIComponent(structureAsSmiles));
                 }
 
-            } else if (this.state.substructureSearch) {
-                if (this.state.substructureSearchType == "dafault") {
+            } else if (this.state.searchType == "substructure") {
+                if (this.state.substructureSearchType == "default") {
                     this.doSearch("/api/search/substructure?type=default&max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
                 } else if (this.state.substructureSearchType == "df") {
                     this.doSearch("/api/search/substructure?type=uit&max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
                 } else {
                     this.doSearch("/api/search/substructure?type=vf&max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
                 }
-            } else {
+
+
+            } else if(this.state.searchType == "similarity") {
+
+                console.log("detected similarity");
+                console.log(this.state.similarityThreshold);
+
+                this.doSearch("/api/search/similarity?simThreshold="+this.state.similarityThreshold+"&max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
+
+
+            }else {
                 this.doSearch("/api/search/exact-structure?max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
             }
 
@@ -222,6 +239,17 @@ export default class StructureSearch extends React.Component {
 
 
 
+    handleSimilarityThreshold(e){
+
+        this.setState({
+            similarityThreshold : Number(e.target.value)
+        });
+        //this.state.similarityThreshold = e.target.value;
+        //setValue(Number(e.target.value));
+    }
+
+
+
     handleInputType(key){
         if(key==="draw"){
             this.state.inputType = "draw";
@@ -238,9 +266,10 @@ export default class StructureSearch extends React.Component {
         if(key==="exact-match"){
             this.setState(
                 {
-                    exactMatch:true,
-                    substructureSearch: false,
-                    similaritySearch: false
+                    searchType :"exact",
+                    //exactMatch:true,
+                    //substructureSearch: false,
+                    //similaritySearch: false
 
                 }
             );
@@ -249,9 +278,10 @@ export default class StructureSearch extends React.Component {
             console.log("substructure");
             this.setState(
                 {
-                    exactMatch:false,
-                    substructureSearch: true,
-                    similaritySearch: false
+                    searchType :"substructure",
+                    //exactMatch:false,
+                    //substructureSearch: true,
+                    //similaritySearch: false
 
                 }
             );
@@ -260,9 +290,10 @@ export default class StructureSearch extends React.Component {
         if(key==="similarity-search"){
             this.setState(
                 {
-                    exactMatch:false,
-                    substructureSearch: false,
-                    similaritySearch: true
+                    searchType :"similarity",
+                    //exactMatch:false,
+                    //substructureSearch: false,
+                    //similaritySearch: true
 
                 }
             );
@@ -297,8 +328,10 @@ export default class StructureSearch extends React.Component {
         window.scrollTo(0, ref.current.offsetTop);
     }
 
+
+
     render() {
-        const {ajaxError, ajaxIsLoaded, ajaxResult, searchSubmitted, searchSubmittedButIncorrect, exactMatch, fullExactMatch, bondTypeFreeExactMatch, substructureSearch, similaritySearch, smilesCorrect } = this.state;
+        const {ajaxError, ajaxIsLoaded, ajaxResult, searchSubmitted, searchSubmittedButIncorrect, searchType, fullExactMatch, bondTypeFreeExactMatch, smilesCorrect } = this.state;
         let resultRow;
         let alertMessage;
 
@@ -312,9 +345,9 @@ export default class StructureSearch extends React.Component {
                     resultRow =
                         <Row className="justify-content-center" ref={this.spinnerRef}>
                             <Spinner/>
-                            {substructureSearch &&
+                            {searchType=="substructure" &&
                             <p>Note: The substructure search might be long if the input molecule is small.</p>}
-                            {similaritySearch && <p>Note: The similarity search can be long.</p>}
+                            {searchType=="similarity" && <p>Note: The similarity search can be long.</p>}
                         </Row>
                 } else {
                     let npList = [...ajaxResult.naturalProducts];
@@ -323,7 +356,7 @@ export default class StructureSearch extends React.Component {
                             <>
                                 <Row>
                                     <Col>
-                                    <p>Your search for "{ajaxResult.originalQuery}" returned {ajaxResult.count} hits.</p>
+                                        <p>Your search for "{ajaxResult.originalQuery}" returned {ajaxResult.count} hits.</p>
                                     </Col>
                                     <Col md="auto">
                                         <Button id="downloadSDFfile" variant="outline-primary" size="sm" onClick={(e) => this.handleSDFDownload(e, npList)}>
@@ -359,7 +392,21 @@ export default class StructureSearch extends React.Component {
                 <br/>
 
 
-                <Tabs defaultActiveKey="paste" id="select-input-type" onSelect={this.handleInputType}>
+                <Tabs defaultActiveKey="draw" id="select-input-type" onSelect={this.handleInputType}>
+
+
+                    <Tab eventKey="paste" title="Paste structure">
+                        <Form>
+                            <Form.Group controlId="molecularStructureString">
+                                <Form.Label>Paste molecule</Form.Label>
+                                <Form.Control onChange={this.handleStringInput} />
+                                <Form.Text className="text-muted">SMILES</Form.Text> {/*in the future: , InChI, COCONUT id, name*/}
+                            </Form.Group>
+                        </Form>
+
+
+                    </Tab>
+
 
                     <Tab eventKey="draw" title="Draw structure">
 
@@ -392,17 +439,7 @@ export default class StructureSearch extends React.Component {
                     </Tab>
 
 
-                    <Tab eventKey="paste" title="Paste structure">
-                        <Form>
-                            <Form.Group controlId="molecularStructureString">
-                                <Form.Label>Paste molecule</Form.Label>
-                                <Form.Control onChange={this.handleStringInput} />
-                                <Form.Text className="text-muted">SMILES</Form.Text> {/*in the future: , InChI, COCONUT id, name*/}
-                            </Form.Group>
-                        </Form>
 
-
-                    </Tab>
                 </Tabs>
 
 
@@ -414,8 +451,9 @@ export default class StructureSearch extends React.Component {
 
                     <Tab eventKey="exact-match" title="Exact match" >
 
-
+                        <br/>
                         <Form>
+                            <h4 >Exact match type: using InChI (recommended) or SMILES</h4>
                             <Form.Group>
                                 <div key="exact-match-type" className="lg-8">
                                     <Form.Check
@@ -447,9 +485,10 @@ export default class StructureSearch extends React.Component {
 
 
                     <Tab eventKey="substructure-search" title="Substructure search" >
-
+                        <br/>
 
                         <Form>
+                            <h4 >Substructure matching algorithm</h4>
                             <Form.Group>
                                 <div key="substructure-match-type" className="lg-8">
                                     <Form.Check
@@ -489,8 +528,35 @@ export default class StructureSearch extends React.Component {
 
 
                     </Tab>
-                    <Tab eventKey="similarity-search" title="Similarity search" disabled>
-                        <p>Here will be radio buttons for similarity search params</p>
+
+                    <Tab eventKey="similarity-search" title="Similarity search" >
+                        <br/>
+
+                        <Form>
+                            <Form.Row>
+                                <Col>
+                                <h4 >Select Tanimoto similarity threshold (in %)</h4>
+                                <Form.Group controlId="tanimotoThreshold"  as={Row}>
+                                    <Col xs="11">
+
+
+                                        <RangeSlider
+                                            value={this.state.similarityThreshold}
+                                            onChange={this.handleSimilarityThreshold}
+                                            tooltip='auto'
+                                        />
+
+                                    </Col>
+                                    <Col xs="1">
+                                        <Form.Control value={this.state.similarityThreshold} onChange={this.handleSimilarityThreshold}/>
+                                    </Col>
+
+                                </Form.Group>
+                                </Col>
+                            </Form.Row>
+                        </Form>
+
+
                     </Tab>
                 </Tabs>
 

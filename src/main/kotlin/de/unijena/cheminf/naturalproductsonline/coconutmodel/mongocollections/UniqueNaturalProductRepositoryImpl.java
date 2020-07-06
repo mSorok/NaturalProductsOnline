@@ -1,14 +1,24 @@
 package de.unijena.cheminf.naturalproductsonline.coconutmodel.mongocollections;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import de.unijena.cheminf.naturalproductsonline.model.AdvancedSearchModel;
+import de.unijena.cheminf.naturalproductsonline.utils.CustomAggregationOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.aggregation.*;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.query.*;
+import org.springframework.data.mongodb.repository.query.StringBasedMongoQuery;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
+import java.util.*;
+
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
+
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.project;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+
 
 public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductRepositoryCustom {
     private final MongoTemplate mongoTemplate;
@@ -17,6 +27,46 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
     public UniqueNaturalProductRepositoryImpl(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
     }
+
+
+
+    @Override
+    public List<UniqueNaturalProduct> similaritySearch(ArrayList<Integer> reqbits, ArrayList<Integer> qfp,  Integer qmin, Integer qmax, Integer qn, Double threshold ){
+
+        String fMatch1 = "{'$match': {'pfCounts.count': {'$gte': "+qmin+", '$lte': "+qmax+"}, 'pfCounts.bits': {'$in': "+reqbits+"}}}";
+
+
+        String fProjection = "{'$project': { 'tanimoto': {'$let': {  'vars': {'common': {'$size': {'$setIntersection': ['$pfCounts.bits', "+qfp+"]}}}, 'in': {'$divide': ['$$common', {'$subtract': [{'$add': ["+qn+", '$pfCounts.count']}, '$$common']}]}  }},   'coconut_id': 1, 'unique_smiles':1, 'clean_smiles':1, 'molecular_formula':1, 'molecular_weight':1, 'npl_score':1 , 'name':1, 'smiles':1}}";
+
+
+        String fMatch2 = "{'$match': {'tanimoto': {'$gte': "+threshold+"}}}";
+
+        String fSort = "{ $sort: { 'tanimoto': -1} }";
+
+
+        //String fQuery = "{'$match': {'pfCounts.count': {'$gte': "+qmin+", '$lte': "+qmax+"}, 'pfCounts.bits': {'$in': "+reqbits+"}}},{'$project': {'tanimoto': {'$let': {'vars': {'common': {'$size': {'$setIntersection': ['$pfCounts.bits', "+qfp+"]}}},'in': {'$divide': ['$$common', {'$subtract': [{'$add': ["+qn+", '$pfCounts.count']}, '$$common']}]} }},'coconut_id': 1, }},{'$match': {'tanimoto': {'$gte': "+threshold+"}}}" ;
+
+
+        TypedAggregation agg = newAggregation(
+                UniqueNaturalProduct.class,
+
+                new CustomAggregationOperation(fMatch1),
+                new CustomAggregationOperation(fProjection),
+                new CustomAggregationOperation(fMatch2),
+                new CustomAggregationOperation(fSort)
+
+        );
+
+        System.out.println(agg);
+
+        AggregationResults results = mongoTemplate.aggregate(agg, "uniqueNaturalProduct", UniqueNaturalProduct.class);
+
+
+        List<UniqueNaturalProduct> returnedNP = results.getMappedResults();
+
+        return returnedNP;
+    }
+
 
 
     @Override
@@ -44,7 +94,7 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
                 //leave value as string
                 String totalItemValue = criterias.getListOfSearchItems()[i].getAsString("itemValue");
 
-                Criteria c = Criteria.where(itemType).is(totalItemValue);
+                Criteria c = where(itemType).is(totalItemValue);
 
                 if (itemLogic.equals("AND")) {
                     andCriterias.add(c);
@@ -69,8 +119,8 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
                 }
 
 
-                Criteria c1 = Criteria.where("min_number_of_rings").gte(itemValueMin);
-                Criteria c2 = Criteria.where("max_number_of_rings").lte(itemValueMax);
+                Criteria c1 = where("min_number_of_rings").gte(itemValueMin);
+                Criteria c2 = where("max_number_of_rings").lte(itemValueMax);
                 ArrayList<Criteria> cl = new ArrayList<Criteria>();
                 cl.add(c1);
                 cl.add(c2);
@@ -90,14 +140,14 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
                 Criteria cbis = null;
 
                 if (criterias.getListOfSearchItems()[i].getAsString("itemValue").equals("any_sugar")) {
-                    c = Criteria.where("contains_sugar").gte(1);
+                    c = where("contains_sugar").gte(1);
 
                 } else if (criterias.getListOfSearchItems()[i].getAsString("itemValue").equals("ring_sugar")) {
-                    c = Criteria.where("contains_ring_sugars").is(true);
+                    c = where("contains_ring_sugars").is(true);
 
                 } else if (criterias.getListOfSearchItems()[i].getAsString("itemValue").equals("only_ring_sugar")) {
-                    Criteria c1 = Criteria.where("contains_ring_sugars").is(true);
-                    Criteria c2 = Criteria.where("contains_linear_sugars").is(false);
+                    Criteria c1 = where("contains_ring_sugars").is(true);
+                    Criteria c2 = where("contains_linear_sugars").is(false);
 
                     ArrayList<Criteria> cl = new ArrayList<Criteria>();
                     cl.add(c1);
@@ -105,11 +155,11 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
                     c = new Criteria().andOperator(cl.toArray(new Criteria[cl.size()]));
 
                 } else if (criterias.getListOfSearchItems()[i].getAsString("itemValue").equals("linear_sugar")) {
-                    c = Criteria.where("contains_linear_sugars").is(true);
+                    c = where("contains_linear_sugars").is(true);
 
                 } else if (criterias.getListOfSearchItems()[i].getAsString("itemValue").equals("only_linear_sugar")) {
-                    Criteria c1 = Criteria.where("contains_ring_sugars").is(false);
-                    Criteria c2 = Criteria.where("contains_linear_sugars").is(true);
+                    Criteria c1 = where("contains_ring_sugars").is(false);
+                    Criteria c2 = where("contains_linear_sugars").is(true);
 
                     ArrayList<Criteria> cl = new ArrayList<Criteria>();
                     cl.add(c1);
@@ -117,7 +167,7 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
                     c = new Criteria().andOperator(cl.toArray(new Criteria[cl.size()]));
 
                 } else if (criterias.getListOfSearchItems()[i].getAsString("itemValue").equals("no_sugar")) {
-                    c = Criteria.where("contains_sugar").is(0);
+                    c = where("contains_sugar").is(0);
                 }
 
                 if (itemLogic.equals("AND")) {
@@ -187,13 +237,13 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
                 Criteria c;
 
                 if(itemValueMin==0 || itemValueMin == null || itemValueMin.isNaN()){
-                    c = Criteria.where(itemType).lte(itemValueMax);
+                    c = where(itemType).lte(itemValueMax);
 
                 }else if(itemValueMax==0 || itemValueMax == null || itemValueMax.isNaN()){
-                    c = Criteria.where(itemType).gte(itemValueMin);
+                    c = where(itemType).gte(itemValueMin);
                 }else {
 
-                    c = Criteria.where(itemType).lte(itemValueMax).gte(itemValueMin);
+                    c = where(itemType).lte(itemValueMax).gte(itemValueMin);
                 }
 
                 if(itemLogic.equals("AND")){

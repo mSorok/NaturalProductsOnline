@@ -1,6 +1,8 @@
 package de.unijena.cheminf.naturalproductsonline.controller
 
 
+import de.unijena.cheminf.naturalproductsonline.coconutmodel.mongocollections.PubFingerprintsCounts
+import de.unijena.cheminf.naturalproductsonline.coconutmodel.mongocollections.PubFingerprintsCountsRepository
 import de.unijena.cheminf.naturalproductsonline.coconutmodel.mongocollections.UniqueNaturalProduct
 import de.unijena.cheminf.naturalproductsonline.coconutmodel.mongocollections.UniqueNaturalProductRepository
 import de.unijena.cheminf.naturalproductsonline.model.AdvancedSearchModel
@@ -25,7 +27,9 @@ import org.springframework.data.domain.Slice
 import org.springframework.http.MediaType
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.web.bind.annotation.*
+import java.lang.Math.ceil
 import java.net.URLDecoder
+import java.util.ArrayList
 
 
 @RestController
@@ -50,6 +54,9 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
 
     @Autowired
     lateinit var atomContainerToUniqueNaturalProductService: AtomContainerToUniqueNaturalProductService
+
+    @Autowired
+    lateinit var pubFingerprintsCountsRepository: PubFingerprintsCountsRepository
 
 
     /**
@@ -100,6 +107,19 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
         println(queryString)
         return this.doSimpleSearchWithHeuristic(URLDecoder.decode(queryString.trim(), "UTF-8"))
         // return this.doSimpleSearch(URLDecoder.decode(queryString.trim(), "UTF-8"))
+    }
+
+
+    /**
+     *  Similarity handling
+     */
+    @RequestMapping("/search/similarity")
+    fun similaritySearch(@RequestParam("smiles") smiles: String , @RequestParam("max-hits") maxHits:String, @RequestParam("simThreshold") simThreshold:String): Map<String, Any> {
+
+        var th: Int? = simThreshold.toIntOrNull()
+        th = th
+
+        return this.doSimilaritySearch(URLDecoder.decode(smiles.trim(), "UTF-8"), maxHits.toIntOrNull(), th)
     }
 
 
@@ -298,7 +318,7 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
             // run $allBitsSet in mongo
             val matchedList = this.uniqueNaturalProductRepository.findAllPubchemBitsSet(pubchemFingerprinter.getBitFingerprint(queryAC).asBitSet().toByteArray())
 
-            //TODO get the exact bitset also?
+            //TODO get the exact bitset also? for faster substructure search of the first element
 
             println("found molecules with bits set")
             val pattern: Pattern
@@ -385,18 +405,81 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
 
 
 
-    fun doSimilaritySearch(smiles: String): Map<String, Any>{
-
-        var count: Int = 0
-        var hits = 0
+    fun doSimilaritySearch(smiles: String, maxHitsSubmitted: Int?, th: Int?): Map<String, Any> {
 
 
+        var threshold: Double = 0.9
 
-        return mapOf(
-                "originalQuery" to smiles,
-                "count" to count,
-                "naturalProducts" to hits
-        )
+        if(th != null){
+            threshold = th.toDouble()/100
+        }
+
+        println("entered similarity search")
+
+        println(smiles)
+
+        var maxResults = 1000
+
+        if(maxHitsSubmitted != null ){
+            maxResults = maxHitsSubmitted
+        }
+
+        val hits = mutableListOf<UniqueNaturalProduct>()
+        var counter: Int = 0
+
+        try {
+            val queryAC: IAtomContainer = this.smilesParser.parseSmiles(smiles)
+
+            val s = pubchemFingerprinter.getBitFingerprint(queryAC).asBitSet()
+            val queryPF = ArrayList<Int>()
+            var i = s.nextSetBit(0)
+            while (i != -1) {
+                queryPF.add(i)
+                i = s.nextSetBit(i + 1)
+            }
+            //queryPF is an array of indexes of ON bits for the query molecule
+
+            var qLen : Int = queryPF.size
+
+            var qmin = (ceil(qLen * threshold)).toInt()        // Minimum number of bits in results fingerprints
+            var qmax = (qLen / threshold).toInt()              // Maximum number of bits in results fingerprints
+            var ncommon = qLen - qmin + 1                      // Number of fingerprint bits in which at least 1 must be in common
+
+
+            var allBits: MutableList<PubFingerprintsCounts> = pubFingerprintsCountsRepository.findAll()
+            allBits.sortByDescending { it.count } //sorting to have the most frequent bits first
+
+            var requestedBits = ArrayList<Int>()
+
+            getbits@for (bit:PubFingerprintsCounts in allBits ){
+                if(bit.id in queryPF){
+                    requestedBits.add(bit.id)
+                }
+                if(requestedBits.size==ncommon)break@getbits
+
+            }
+
+
+            val matchedList = this.uniqueNaturalProductRepository.similaritySearch(requestedBits, queryPF, qmin, qmax, qLen, threshold)
+
+
+            //hits.sortBy { it.heavy_atom_number }
+            val hitsToReturn = matchedList.subList(0, minOf(matchedList.size , maxResults))
+
+
+            return mapOf(
+                    "originalQuery" to smiles,
+                    "count" to hitsToReturn.size,
+                    "naturalProducts" to hitsToReturn
+            )
+
+        } catch (e: InvalidSmilesException) {
+            error("An InvalidSmilesException occured: ${e.message}")
+        } catch (e: CDKException) {
+            error("A CDKException occured: ${e.message}")
+        }
+
+
 
     }
 }

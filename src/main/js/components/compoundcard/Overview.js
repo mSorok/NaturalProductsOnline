@@ -35,7 +35,7 @@ export default class Overview extends React.Component {
 
     render() {
         const naturalProduct = this.props.naturalProduct;
-        const structure = Utils.drawMoleculeBySmiles(naturalProduct.smiles);
+        const structure = Utils.drawMoleculeBySmiles(naturalProduct.unique_smiles);
 
         let cas_registry_num = "";
         if(naturalProduct.cas != null && naturalProduct.cas != ""){

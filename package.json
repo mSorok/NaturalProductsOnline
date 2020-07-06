@@ -22,6 +22,7 @@
     "openchemlib": "^7.2.1",
     "react": "^16.10.2",
     "react-bootstrap": "^1.0.0-beta.14",
+    "react-bootstrap-range-slider": "^1.0.0",
     "react-dom": "^16.10.2",
     "react-router-bootstrap": "^0.25.0",
     "react-router-dom": "^5.1.2",
