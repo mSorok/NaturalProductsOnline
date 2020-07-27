@@ -242,14 +242,32 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
 
                 }
             }catch (e: InvalidSmilesException){
-
-                //it was probably a name
-                naturalProducts = this.uniqueNaturalProductRepository.findByName(query)
-
-                if(naturalProducts == null || naturalProducts.isEmpty()){
-                    naturalProducts = this.uniqueNaturalProductRepository.fuzzyNameSearch(query)
+                if(coconutPattern.containsMatchIn(query)) {
+                    naturalProducts = this.uniqueNaturalProductRepository.findByCoconut_id(query)
+                    determinedInputType = "COCONUT ID"
                 }
-                determinedInputType = "name"
+                else if(inchiPattern.containsMatchIn(query)){
+                    naturalProducts =  this.uniqueNaturalProductRepository.findByInchi(query)
+                    determinedInputType = "InChi"
+                }
+                else if(inchikeyPattern.containsMatchIn(query)){
+                    naturalProducts =  this.uniqueNaturalProductRepository.findByInchikey(query)
+                    determinedInputType = "InChi Key"
+                }
+                else if(molecularFormulaPattern.containsMatchIn(query)){
+                    naturalProducts = this.uniqueNaturalProductRepository.findByMolecular_formula(query)
+                    determinedInputType = "molecular formula"
+                }
+                else {
+
+                    //it was probably a name
+                    naturalProducts = this.uniqueNaturalProductRepository.findByName(query)
+
+                    if (naturalProducts == null || naturalProducts.isEmpty()) {
+                        naturalProducts = this.uniqueNaturalProductRepository.fuzzyNameSearch(query)
+                    }
+                    determinedInputType = "name"
+                }
             }
 
         }

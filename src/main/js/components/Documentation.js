@@ -3,9 +3,19 @@ import Image from "react-bootstrap/Image";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
+
+import ReactMarkdown from "react-markdown";
+
+
+
 const React = require("react");
 
+import DocumentationMD from '../../resources/documentation/coconut_general_documentation.md';
+
+
 export default class Documentation extends React.Component {
+
+
     render() {
         return (
             <Container>
@@ -27,6 +37,10 @@ export default class Documentation extends React.Component {
                 <Row className="justify-content-center">
                     <p>For further information visit the <a href="https://cheminf.uni-jena.de/" target="_blank"><i>Cheminformatics and Computational Metabolomics</i> homepage</a>.</p>
                 </Row>
+
+
+                <ReactMarkdown source={DocumentationMD} />
+
             </Container>
         );
     }

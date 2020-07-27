@@ -44,11 +44,27 @@ public class UniqueNaturalProduct {
 
     public Hashtable<String, HashSet<String>> absolute_smiles;
 
+    //@Indexed(name = "name_index")
+    public String name;
+
+    public String iupac_name;
+
+    public Integer nameTrustLevel=0;
+
+    public Integer annotationLevel=0;
+
+
+    public HashSet<String> synonyms;
+
     public String cas;
 
     public boolean contains_ring_sugars;
 
     public boolean contains_linear_sugars;
+
+
+    public ArrayList<String> collection = new ArrayList<>();
+    //public String[] collection = new String["coconut"]; //alternative: jena, plants book, etc
 
 
 
@@ -66,15 +82,7 @@ public class UniqueNaturalProduct {
 
     public HashSet<String> geoLocation;
 
-    //@Indexed(name = "name_index")
-    public String name;
 
-    public Integer nameTrustLevel=0;
-
-    public Integer annotationLevel=0;
-
-
-    public HashSet<String> synonyms;
 
 
     public Double npl_noh_score;
@@ -128,6 +136,8 @@ public class UniqueNaturalProduct {
     public ArrayList<Integer> pubchemFingerprint;
 
     public HashMap<Integer, ArrayList<Integer>> pubfp;
+
+    public PubchemFingerPrintsCounts pfCounts;
 
     public ArrayList<Integer> circularFingerprint;
 
@@ -955,5 +965,30 @@ public class UniqueNaturalProduct {
 
     public void setPubfp(HashMap<Integer, ArrayList<Integer>> pubfp) {
         this.pubfp = pubfp;
+    }
+
+
+    public String getIupac_name() {
+        return iupac_name;
+    }
+
+    public void setIupac_name(String iupac_name) {
+        this.iupac_name = iupac_name;
+    }
+
+    public PubchemFingerPrintsCounts getPfCounts() {
+        return pfCounts;
+    }
+
+    public void setPfCounts(PubchemFingerPrintsCounts pfCounts) {
+        this.pfCounts = pfCounts;
+    }
+
+    public ArrayList<String> getCollection() {
+        return collection;
+    }
+
+    public void setCollection(ArrayList<String> collection) {
+        this.collection = collection;
     }
 }

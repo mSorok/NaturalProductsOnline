@@ -10,7 +10,82 @@ const restClient = require("../../restClient");
 
 
 export default class CrossReferences extends React.Component {
-    constructor(props) {
+
+
+
+    render() {
+
+        const naturalProduct = this.props.naturalProduct;
+
+        const nbXref = naturalProduct.xrefs.length;
+
+        const found_in_databases = naturalProduct.found_in_databases;
+
+
+
+        if (nbXref===0) {
+            return(
+                <Card className="compoundCardItem">
+                    <Card.Body>
+                        <Card.Title className="text-primary">Cross References</Card.Title>
+                        <br />
+                        <p>This compound is not present in a currently existing database.</p>
+                        <p>It was retrieved from the following collection(s): {found_in_databases}</p>
+                    </Card.Body>
+                </Card>
+            );
+        } else {
+
+
+            let linksToSources = [];
+            for(let i=0; i<naturalProduct.xrefs.length; i++){
+                let source = naturalProduct.xrefs[i][0];
+                let linkToSource = naturalProduct.xrefs[i][2] + naturalProduct.xrefs[i][1];
+
+                const buttonToSource =
+                    <Button id={"linkTo" + i} variant="outline-primary" size="sm" href={linkToSource} target="_blank">
+                        <FontAwesomeIcon icon="external-link-alt" fixedWidth/>
+                    </Button>;
+
+                linksToSources.push(
+                    <tr key={i}>
+                        <td>{source}</td>
+                        <td>{buttonToSource}</td>
+                    </tr>
+                );
+
+            }
+
+            return (
+                <Card className="compoundCardItem">
+                    <Card.Body>
+                        <Card.Title className="text-primary">Cross References</Card.Title>
+                        <br/>
+                        <p>External identifiers:</p>
+                        <Table size="sm">
+                            <thead>
+                            <tr>
+                                <th>Reference</th>
+                                <th>Link to reference</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {linksToSources}
+                            </tbody>
+                        </Table>
+                    </Card.Body>
+                </Card>
+            );
+        }
+    }
+}
+
+
+/*
+
+const { error, isLoaded, sourceNaturalProducts } = this.state;
+
+constructor(props) {
         super(props);
         this.state = {
             error: null,
@@ -19,7 +94,8 @@ export default class CrossReferences extends React.Component {
         };
     }
 
-    componentDidMount() {
+
+componentDidMount() {
         this.fetchSourcesByInchikey(this.props.naturalProduct.inchikey);
     }
 
@@ -42,53 +118,5 @@ export default class CrossReferences extends React.Component {
             });
     }
 
-    render() {
-        const { error, isLoaded, sourceNaturalProducts } = this.state;
 
-        if (error) {
-            return <Error/>;
-        } else if (!isLoaded) {
-            return <Spinner/>;
-        } else {
-            const countSources = sourceNaturalProducts.length;
-
-            let sourceTableRows = [];
-            sourceNaturalProducts.map((item, index) => {
-                const buttonToSource =
-                    <Button id={"linkTo" + item["idInSource"]} variant="outline-primary" size="sm" disabled>
-                        <FontAwesomeIcon icon="external-link-alt" fixedWidth/>
-                    </Button>;
-
-                sourceTableRows.push(
-                    <tr key={index}>
-                        <td>{item["source"]}</td>
-                        <td>{item["idInSource"]}</td>
-                        <td>{buttonToSource}</td>
-                    </tr>
-                );
-            });
-
-            return (
-                <Card className="compoundCardItem">
-                    <Card.Body>
-                        <Card.Title className="text-primary">Cross References</Card.Title>
-                        <br/>
-                        <p>External identifiers:</p>
-                        <Table size="sm">
-                            <thead>
-                            <tr>
-                                <th>Reference</th>
-                                <th>Original ID</th>
-                                <th>Link to reference</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {sourceTableRows}
-                            </tbody>
-                        </Table>
-                    </Card.Body>
-                </Card>
-            );
-        }
-    }
-}
+ */

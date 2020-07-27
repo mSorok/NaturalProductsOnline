@@ -240,6 +240,18 @@ export default class Browser extends React.Component {
                             <Row>
                                 <ViewComponent naturalProducts={result}/>
                             </Row>
+
+
+                            <Row className="justify-content-md-center" >
+                                <Pagination >
+                                    <Pagination.First onClick={firstPageHandler}/>
+                                    <Pagination.Prev onClick={prevPageHandler}/>
+                                    {paginationItems}
+                                    <Pagination.Next onClick={nextPageHandler}/>
+                                    <Pagination.Last onClick={ (e)=>   lastPageHandler (e, this.state.stats.totalPageCount)}/>
+                                </Pagination>
+                            </Row>
+
                         </Container>
                     );
                 }

@@ -43,6 +43,10 @@ module.exports = {
                 use: [{
                     loader: "url-loader"
                 }]
+            },
+            {
+                test: /\.md$/,
+                use: 'raw-loader'
             }
         ]
     }

@@ -24,6 +24,10 @@ export default class Representations extends React.Component {
                             <td>{naturalProduct.name}</td>
                         </tr>
                         <tr>
+                            <td>IUPAC name</td>
+                            <td>{naturalProduct.iupac_name}</td>
+                        </tr>
+                        <tr>
                             <td>InChI</td>
                             <td>{naturalProduct.inchi}</td>
                         </tr>
