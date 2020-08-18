@@ -40,7 +40,6 @@ export default class StructureSearch extends React.Component {
             ajaxError: null,
             ajaxIsLoaded: false,
             ajaxResult: [],
-            newQuery:true, //TODO
 
             inputType: "draw",
 

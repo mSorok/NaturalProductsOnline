@@ -29,6 +29,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.web.bind.annotation.*
 import java.lang.Math.ceil
 import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
 import java.util.ArrayList
 
 
@@ -104,8 +105,12 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
         /* switch between simple and simple heuristic search
         * the latter tries to guess the input type that could become harder with more search options
         */
-        println(queryString)
-        return this.doSimpleSearchWithHeuristic(URLDecoder.decode(queryString.trim(), "UTF-8"))
+
+
+        var decodedString = URLDecoder.decode(queryString.trim(), "UTF-8")
+        decodedString = decodedString.replace("jjj", "%")
+
+        return this.doSimpleSearchWithHeuristic(  decodedString  )
         // return this.doSimpleSearch(URLDecoder.decode(queryString.trim(), "UTF-8"))
     }
 
@@ -214,34 +219,45 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
     fun doSimpleSearchWithHeuristic(query: String): Map<String, Any> {
         // determine type of input on very basic principles without validation
 
+        println("do simple search with heuristic")
 
 
         var inchiPattern = Regex("^InChI=.*$")
         val inchikeyPattern = Regex("^[A-Z]{14}-[A-Z]{10}-[A-Z]$")
         val molecularFormulaPattern = Regex("C[0-9]+?H[0-9].+")
-        var smilesPattern = Regex("^([^Jj][A-Za-z0-9@+\\-\\[\\]\\(\\)\\\\\\/%=#\$]+)\$")
+        var smilesPattern = Regex("^([^J][A-Za-z0-9@+\\-\\[\\]\\(\\)\\\\=#\$%]+)\$")
         val coconutPattern = Regex("^CNP[0-9]+?$")
 
         var naturalProducts : List<UniqueNaturalProduct>
         var determinedInputType : String
 
 
-        if(smilesPattern.containsMatchIn(query)){
+        try {
+            this.smilesParser.parseSmiles(query)
+            determinedInputType = "SMILES"
+            println("detected SMILES")
+
+        }catch (e: InvalidSmilesException){
+            println(e)
+            println("did not detected smiles")
+            determinedInputType = "other"
+        }
+
+        if(determinedInputType=="SMILES"){
 
             try {
                 val queryAC: IAtomContainer = this.smilesParser.parseSmiles(query)
                 val querySmiles = this.smilesGenerator.create(queryAC)
                 determinedInputType = "SMILES"
-
+                println("detected SMILES")
                 naturalProducts = this.uniqueNaturalProductRepository.findByUnique_smiles(querySmiles)
                 if (naturalProducts.isEmpty()) {
-                    naturalProducts = this.uniqueNaturalProductRepository.findBySmiles(querySmiles)
-                    if (naturalProducts.isEmpty()) {
-                        naturalProducts = this.uniqueNaturalProductRepository.findByClean_smiles(querySmiles)
-                    }
+                    println("second try SMILES")
+                    naturalProducts = this.uniqueNaturalProductRepository.findByClean_smiles(querySmiles)
 
                 }
             }catch (e: InvalidSmilesException){
+                println("not a smiles")
                 if(coconutPattern.containsMatchIn(query)) {
                     naturalProducts = this.uniqueNaturalProductRepository.findByCoconut_id(query)
                     determinedInputType = "COCONUT ID"
@@ -289,6 +305,7 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
         }
         else{
             //try to march by name
+            println("apparently a name string")
             naturalProducts = this.uniqueNaturalProductRepository.findByName(query)
 
             if(naturalProducts == null || naturalProducts.isEmpty()){
@@ -296,7 +313,7 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
             }
             determinedInputType = "name"
         }
-
+        println(determinedInputType)
         println("returning")
 
 

@@ -17,9 +17,14 @@ export default class CrossReferences extends React.Component {
 
         const naturalProduct = this.props.naturalProduct;
 
-        const nbXref = naturalProduct.xrefs.length;
+        console.log(naturalProduct);
 
-        const found_in_databases = naturalProduct.found_in_databases;
+        let nbXref = 0 ;
+        if(naturalProduct.clean_xrefs != null) {
+            nbXref = naturalProduct.clean_xrefs.length;
+        }
+
+        const found_in_databases = naturalProduct.found_in_databases.join(", ");
 
 
 
@@ -38,9 +43,12 @@ export default class CrossReferences extends React.Component {
 
 
             let linksToSources = [];
-            for(let i=0; i<naturalProduct.xrefs.length; i++){
-                let source = naturalProduct.xrefs[i][0];
-                let linkToSource = naturalProduct.xrefs[i][2] + naturalProduct.xrefs[i][1];
+            for(let i=0; i<naturalProduct.clean_xrefs.length; i++){
+
+                let xref = naturalProduct.clean_xrefs[i];
+                //clean_xref = {"source": source_pretty_names[xref[0]], "id_in_source": xref[1], "link_to_source": xref[2]}
+                let source = xref.source;
+                let linkToSource = xref.link_to_source + xref.id_in_source;
 
                 const buttonToSource =
                     <Button id={"linkTo" + i} variant="outline-primary" size="sm" href={linkToSource} target="_blank">

@@ -118,7 +118,7 @@ public class UniqueNaturalProduct {
 
     public HashSet<ArrayList<String>> xrefs ; // in each arrayList there is the source,  idInSource,  and the URL
 
-
+    public HashSet clean_xrefs;
 
     // Molecular fragmentation
 

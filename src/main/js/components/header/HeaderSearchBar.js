@@ -13,29 +13,49 @@ const React = require("react");
 export default class HeaderSearchBar extends React.Component {
     constructor(props) {
         super(props);
+
         this.state = {
             searchSubmitted: false,
-            queryString: null
+
+            queryString: null,
         };
         this.handleSearchSubmit = this.handleSearchSubmit.bind(this);
         this.handleSearchSubmitKey = this.handleSearchSubmitKey.bind(this);
+        this.updateStateFromSearchResult = this.updateStateFromSearchResult.bind(this);
+
+
+        this.handleSearchStringChange = this.handleSearchStringChange.bind(this);
+    }
+
+
+    updateStateFromSearchResult(){
+        this.setState({
+            searchSubmitted: false,
+            queryString: null,
+        });
     }
 
     handleSearchSubmit(e) {
         this.setState({
             searchSubmitted: true,
-            queryString: document.getElementById("searchInput").value
+            queryString: document.getElementById("searchInput").value.replace(/%/g, "jjj")
         });
+
     }
 
     handleSearchSubmitKey(e){
         if (e.key === "Enter") {
             this.setState({
                 searchSubmitted: true,
-                queryString: document.getElementById("searchInput").value
+                queryString: document.getElementById("searchInput").value.replace(/%/g, "jjj")
             });
         }
 
+
+    }
+
+    handleSearchStringChange(e){
+        this.updateStateFromSearchResult();
     }
 
     render() {
@@ -48,6 +68,7 @@ export default class HeaderSearchBar extends React.Component {
                                       type="text"
                                       placeholder="Molecule name, InChI, InChIKey, formula, COCONUT id, SMILES"
                                       onKeyPress={this.handleSearchSubmitKey}
+                                      onChange={this.handleSearchStringChange}
                         />
                         <InputGroup.Append>
                             <Button id="searchButton" variant="primary" type="submit" onClick={this.handleSearchSubmit}>
@@ -66,8 +87,11 @@ export default class HeaderSearchBar extends React.Component {
                         </LinkContainer>
                     </Form.Text>
                 </Col>
-                {this.state.searchSubmitted && <Redirect to={"/search/simple/" + encodeURIComponent(this.state.queryString)}/>}
+                {this.state.searchSubmitted && <Redirect to={"/search/simple/" + encodeURIComponent(this.state.queryString)}/> }
+
             </Row>
+
+
         );
     }
 }
