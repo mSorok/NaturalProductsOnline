@@ -40,9 +40,15 @@ export default class Representations extends React.Component {
                             <td>{naturalProduct.unique_smiles || naturalProduct.clean_smiles }</td>
                         </tr>
                         <tr>
+                            <td>Deep SMILESk</td>
+                            <td>{naturalProduct.deep_smiles || "could not be computed"}</td>
+                        </tr>
+                        <tr>
                             <td>Murcko Framework</td>
                             <td>{naturalProduct.murko_framework || "not applicable"}</td>
                         </tr>
+
+
                         </tbody>
                     </Table>
                 </Card.Body>

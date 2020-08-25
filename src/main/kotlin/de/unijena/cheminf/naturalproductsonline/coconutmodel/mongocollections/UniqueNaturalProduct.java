@@ -149,6 +149,12 @@ public class UniqueNaturalProduct {
     public String pubchemBitsString;
 
 
+    public String chemicalSuperClass;
+    public String chemicalClass;
+    public String chemicalSubClass;
+    public String directParentClassification;
+
+
 
 
 
@@ -990,5 +996,37 @@ public class UniqueNaturalProduct {
 
     public void setCollection(ArrayList<String> collection) {
         this.collection = collection;
+    }
+
+    public String getChemicalSuperClass() {
+        return chemicalSuperClass;
+    }
+
+    public void setChemicalSuperClass(String chemicalSuperClass) {
+        this.chemicalSuperClass = chemicalSuperClass;
+    }
+
+    public String getChemicalClass() {
+        return chemicalClass;
+    }
+
+    public void setChemicalClass(String chemicalClass) {
+        this.chemicalClass = chemicalClass;
+    }
+
+    public String getChemicalSubClass() {
+        return chemicalSubClass;
+    }
+
+    public void setChemicalSubClass(String chemicalSubClass) {
+        this.chemicalSubClass = chemicalSubClass;
+    }
+
+    public String getDirectParentClassification() {
+        return directParentClassification;
+    }
+
+    public void setDirectParentClassification(String directParentClassification) {
+        this.directParentClassification = directParentClassification;
     }
 }
