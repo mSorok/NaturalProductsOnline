@@ -219,6 +219,10 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
     fun doSimpleSearchWithHeuristic(query: String): Map<String, Any> {
         // determine type of input on very basic principles without validation
 
+
+
+        var excludeWords = Regex("^(alpha-|beta-).*")
+
         println("do simple search with heuristic")
 
 
@@ -277,10 +281,18 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
                 else {
 
                     //it was probably a name
+
+
                     naturalProducts = this.uniqueNaturalProductRepository.findByName(query)
 
                     if (naturalProducts == null || naturalProducts.isEmpty()) {
-                        naturalProducts = this.uniqueNaturalProductRepository.fuzzyNameSearch(query)
+                        var altQuery = query
+                        if(excludeWords.containsMatchIn(query)){
+                            altQuery=altQuery.replace("alpha-", "")
+                            altQuery=altQuery.replace("beta-", "")
+                        }
+
+                        naturalProducts = this.uniqueNaturalProductRepository.fuzzyNameSearch(altQuery)
                     }
                     determinedInputType = "name"
                 }
@@ -309,7 +321,13 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
             naturalProducts = this.uniqueNaturalProductRepository.findByName(query)
 
             if(naturalProducts == null || naturalProducts.isEmpty()){
-                naturalProducts = this.uniqueNaturalProductRepository.fuzzyNameSearch(query)
+                var altQuery = query
+                if(excludeWords.containsMatchIn(query)){
+                    altQuery=altQuery.replace("alpha-", "")
+                    altQuery=altQuery.replace("beta-", "")
+                }
+
+                naturalProducts = this.uniqueNaturalProductRepository.fuzzyNameSearch(altQuery)
             }
             determinedInputType = "name"
         }

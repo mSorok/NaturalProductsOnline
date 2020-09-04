@@ -13,6 +13,7 @@ import CrossReferences from "./CrossReferences";
 import KnownStereochemicalVariants from "./KnownStereochemicalVariants";
 import References from "./References";
 import Synonyms from "./Synonyms";
+import ChemClassification from "./ChemClassification";
 import Organisms from "./Organisms";
 import Geography from "./Geography";
 
@@ -72,6 +73,7 @@ export default class NaturalProductCompoundCard extends React.Component {
                 "computed_properties",
                 "known_stereochemical_variants",
                 "references",
+                "chemical_classification",
                 "cross_references"
                 /*
 
@@ -118,6 +120,11 @@ export default class NaturalProductCompoundCard extends React.Component {
                             </Row>
                             <br/>
                             <Row id={compoundCardItems[7]} className="compoundCardRow">
+                                <ChemClassification naturalProduct={naturalProduct}/>
+                            </Row>
+                            <br/>
+
+                            <Row id={compoundCardItems[8]} className="compoundCardRow">
                                 <CrossReferences naturalProduct={naturalProduct}/>
                             </Row>
                             <br/>

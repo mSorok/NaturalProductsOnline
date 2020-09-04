@@ -40,7 +40,7 @@ export default class Representations extends React.Component {
                             <td>{naturalProduct.unique_smiles || naturalProduct.clean_smiles }</td>
                         </tr>
                         <tr>
-                            <td>Deep SMILESk</td>
+                            <td>Deep SMILES</td>
                             <td>{naturalProduct.deep_smiles || "could not be computed"}</td>
                         </tr>
                         <tr>

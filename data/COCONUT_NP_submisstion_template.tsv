@@ -1,0 +1,16 @@
+
+Minimal fields
+
+common_name
+iupac_name
+smiles
+inchi
+chemical_class*
+organism*
+organism_part*
+DOI*
+
+
+* means there can be several key-value pairs with given key
+Additional fields
+

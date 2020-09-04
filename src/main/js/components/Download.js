@@ -33,6 +33,12 @@ export default class Download extends React.Component {
                 <h2>Download COCONUT data</h2>
                     </Col>
                 </Row>
+                <Row>
+                    <Col>
+                        <i>COCONUT version from August 2020</i>
+                    </Col>
+                </Row>
+
 
                 <ColoredLine color="white" />
 

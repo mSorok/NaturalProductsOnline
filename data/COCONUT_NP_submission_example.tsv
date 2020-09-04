@@ -1,0 +1,9 @@
+common_name menyanthoside
+iupac_name  3-O-[β-d-galactopyranosyl(1→4)β-d-glucuronopyranosyl]-28-O-[β-d-apiofuranosyl(1→6)β-d-glucopyranosyl]betulinic acid
+smiles  [H][C@]12C@@HC©=C
+inchi   1S/C53H84O23/c1-22(2)23-10-15-52(47(67)76-44-37(62)34(59)32(57)26(72-44)19-69-46-41(64)53(68,20-55)21-70-46)17-16-50(6)24(30(23)52)8-9-28-49(5)13-12-29(48(3,4)27(49)11-14-51(28,50)7)73-45-38(63)35(60)39(40(75-45)42(65)66)74-43-36(61)33(58)31(56)25(18-54)71-43/h23-41,43-46,54-64,68H,1,8-21H2,2-7H3,(H,65,66)/t23-,24+,25-,26+,27-,28+,29-,30+,31+,32+,33+,34-,35+,36-,37+,38+,39-,40-,41-,43+,44-,45+,46+,49-,50+,51+,52-,53+/m0/s1
+chemclass   triterpenoid
+chemclass   saponin
+organism    Menyanthes trifoliata (or better an NCIB taxonomy ID)
+organismpart    rhizome (or better a BRENDA tissue ontology ID)
+doi doi:10.1016/0031-9422(90)85352-G

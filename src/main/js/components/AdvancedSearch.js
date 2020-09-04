@@ -1472,7 +1472,6 @@ export default class AdvancedSearch extends React.Component {
 
 
 
-
                 <h3>Data sources</h3>
 
                 <Form.Group>

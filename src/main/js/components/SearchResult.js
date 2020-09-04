@@ -83,7 +83,7 @@ export default class SearchResult extends React.Component {
                     <Row>
                         {searchIsLoaded &&
                             <p>Your search for "{searchResult.originalQuery}" returned {resultCount.toLocaleString()} natural product{resultCount > 1 ? "s" : null}
-                            {typeof(searchResult.determinedInputType) !== "undefined" && searchResult.determinedInputType !== "" ? " (detected query is a " + searchResult.determinedInputType + ")." : "."} </p>}
+                            { ". "} </p>}
                     <br/>
 
                         {additionalSearch}

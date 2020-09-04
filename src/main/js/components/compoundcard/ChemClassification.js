@@ -18,7 +18,7 @@ export default class ChemClassification extends React.Component {
                 <Card className="compoundCardItem">
                     <Card.Body>
                         <Card.Title className="text-primary">Chemical classification</Card.Title>
-                        <Card.Subtitle><FontAwesomeIcon icon="info" fixedWidth/>Computed with <a target="_blank" rel="noopener noreferrer"  href="http://classyfire.wishartlab.com/">ClassyFire</a></Card.Subtitle>
+                        <Card.Subtitle size="sm"><FontAwesomeIcon icon="info" fixedWidth/>Computed with <a target="_blank" rel="noopener noreferrer"  href="http://classyfire.wishartlab.com/">ClassyFire</a></Card.Subtitle>
                         <br />
                         <p>No chemical classification seems to exist for this compound</p>
                     </Card.Body>
@@ -26,68 +26,66 @@ export default class ChemClassification extends React.Component {
             );
         } else {
 
+            //TODO links to the API to retrieve all with this classification
 
-
-            if (naturalProduct.chemicalSuperClass != "") {
+            if (naturalProduct.chemicalSuperClass != "" &&  naturalProduct.chemicalSuperClass != "NaN" ) {
                 classTable.push(
-                    <tr key={i + "_cclass"}>
+                    <tr key={"sc_cclass"}>
                         <td>Super class</td>
                         <td>{naturalProduct.chemicalSuperClass}</td>
                     </tr>
                 );
             } else {
                 classTable.push(
-                    <tr key={i + "_cclass"}>
+                    <tr key={"sc_cclass"}>
                         <td>Super class</td>
                         <td>No known superclass</td>
                     </tr>
                 );
             }
 
-
-            //TODO links to the API to retrieve all with this classification
-            if (naturalProduct.chemicalClass != "") {
+            if (naturalProduct.chemicalClass != "" && naturalProduct.chemicalClass != "NaN" ) {
                 classTable.push(
-                    <tr key={i + "_cclass"}>
+                    <tr key={"cc_cclass"}>
                         <td>Class</td>
                         <td>{naturalProduct.chemicalClass}</td>
                     </tr>
                 );
             } else {
                 classTable.push(
-                    <tr key={i + "_cclass"}>
+                    <tr key={"cc_cclass"}>
                         <td>Class</td>
                         <td>No known class</td>
                     </tr>
                 );
             }
 
-            if (naturalProduct.chemicalSubClass != "") {
+            if (naturalProduct.chemicalSubClass != "" && naturalProduct.chemicalSubClass != "NaN") {
                 classTable.push(
-                    <tr key={i + "_cclass"}>
+                    <tr key={"sbc_cclass"}>
                         <td>Subclass</td>
                         <td>{naturalProduct.chemicalSubClass}</td>
                     </tr>
                 );
             } else {
                 classTable.push(
-                    <tr key={i + "_cclass"}>
+                    <tr key={"sbc_cclass"}>
                         <td>Subclass</td>
                         <td>No known subclass</td>
                     </tr>
                 );
             }
 
-            if (naturalProduct.directParentClassification != "") {
+            if (naturalProduct.directParentClassification != "" && naturalProduct.directParentClassification != "NaN") {
                 classTable.push(
-                    <tr key={i + "_cclass"}>
+                    <tr key={"dp_cclass"}>
                         <td>Direct parent</td>
                         <td>{naturalProduct.directParentClassification}</td>
                     </tr>
                 );
             } else {
                 classTable.push(
-                    <tr key={i + "_cclass"}>
+                    <tr key={"dp_cclass"}>
                         <td>Direct parent</td>
                         <td>No known direct parent</td>
                     </tr>
@@ -100,7 +98,7 @@ export default class ChemClassification extends React.Component {
                 <Card className="compoundCardItem">
                     <Card.Body>
                         <Card.Title className="text-primary">Chemical classification</Card.Title>
-                        <Card.Subtitle><FontAwesomeIcon icon="info" fixedWidth/>Computed with <a target="_blank" rel="noopener noreferrer"  href="http://classyfire.wishartlab.com/">ClassyFire</a></Card.Subtitle>
+                        <Card.Subtitle size="sm"><FontAwesomeIcon icon="info" fixedWidth/>Computed with <a target="_blank" rel="noopener noreferrer"  href="http://classyfire.wishartlab.com/">ClassyFire</a></Card.Subtitle>
                         <br />
                         <Table size="sm">
                             <tbody>

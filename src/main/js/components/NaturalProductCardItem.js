@@ -15,7 +15,7 @@ export default class NaturalProductCardItem extends React.Component {
 
         return (
             <Card className="cardBrowserItem">
-                <Card.Img variant="top" src={structure.toDataURL()} alt="🥥"/>
+                <Card.Link href={linkToCompoundPage} className="cardItemImg"><Card.Img variant="top" src={structure.toDataURL()} alt="🥥"/></Card.Link>
                 <Card.Body>
                     <Card.Title>
                         <Card.Link href={linkToCompoundPage} className="cardItemHeadline">{this.props.naturalProduct.coconut_id}</Card.Link>
