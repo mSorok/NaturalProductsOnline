@@ -20,7 +20,7 @@ export default class Browser extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentPage: 0
+            currentPage: 1
         };
 
 
@@ -48,7 +48,14 @@ export default class Browser extends React.Component {
     }
 
     handlePageNext(e){
-        this.state.currentPage = this.state.currentPage+1;
+
+        if(this.state.currentPage+1 > this.state.stats.totalPageCount){
+            this.state.currentPage = this.state.stats.totalPageCount;
+        }else{
+            this.state.currentPage = this.state.currentPage+1;
+        }
+
+
 
         this.setState({
             currentPage: this.state.currentPage
@@ -56,7 +63,13 @@ export default class Browser extends React.Component {
     }
 
     handlePagePrev(e){
-        this.state.currentPage = this.state.currentPage-1;
+
+        if(this.state.currentPage-1 >=1 ){
+            this.state.currentPage = this.state.currentPage-1;
+        }else{
+            this.state.currentPage=1;
+        }
+
 
         this.setState({
             currentPage: this.state.currentPage
@@ -64,7 +77,7 @@ export default class Browser extends React.Component {
     }
 
     handlePageFirst(e){
-        this.state.currentPage = 0;
+        this.state.currentPage = 1;
 
         this.setState({
             currentPage: this.state.currentPage
@@ -148,19 +161,19 @@ export default class Browser extends React.Component {
 
 
                     if(!current){
-                        current=0;
+                        current=1;
                     }
 
                     let left = current - delta;
                     let right = current + delta + 1;
-                    if(left<=0) {
+                    if(left<=1) {
                         right = right+Math.abs(left);
                     }
 
 
-                    for (let i = 0; i <= last; i++) {
+                    for (let i = 1; i <= last; i++) {
 
-                        if (i === 0 ) {
+                        if (i === 1 ) {
                             range.push(i);
                         }else if(i === last){
                             range.push(i);
