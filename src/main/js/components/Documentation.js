@@ -26,12 +26,12 @@ export default class Documentation extends React.Component {
                 </Row>
                 <br/>
                 <Row>
-                    <p>COCONUT (COlleCtion of Open Natural ProdUcTs) Online is an open source project for Natural Products (NPs) storage, search and analysis. It gathers data from over 50 open NP resources and is available free of charge and without any restriction.
+                    <p style={{textAlign: "justify"}}>COCONUT (COlleCtion of Open Natural ProdUcTs) Online is an open source project for Natural Products (NPs) storage, search and analysis. It gathers data from over 50 open NP resources and is available free of charge and without any restriction.
                     It currently contains 426 895 unique "flat" NPs, and, when available, their known stereochemical forms, literature, organisms that produce them, natural geographical presence and diverse pre-computed molecular properties.
                     </p>
-                    <p>The COCONUT logo combines an open coconut with a molecule of 6-Amyl-α-pyrone, a coconut-scented insaturated lactone produced by the Trichodema species (fungi).</p>
+                    <p style={{textAlign: "justify"}}>The COCONUT logo combines an open coconut with a molecule of 6-Amyl-α-pyrone, a coconut-scented insaturated lactone produced by the Trichodema species (fungi).</p>
 
-                    <p> Please submit bug reports, feature requests and general issues through the issues tracker at <a href="https://github.com/mSorok/NaturalProductsOnline/issues" target="_blank">GitHub</a>. </p>
+                    <p style={{textAlign: "justify"}}> Please submit bug reports, feature requests and general issues through the issues tracker at <a href="https://github.com/mSorok/NaturalProductsOnline/issues" target="_blank">GitHub</a>. </p>
                 </Row>
                 <br/>
                 <Row className="justify-content-center">
@@ -45,7 +45,9 @@ export default class Documentation extends React.Component {
 
 
 
-                <ReactMarkdown source={DocumentationMD} />
+
+                <ReactMarkdown  source={DocumentationMD} />
+
 
             </Container>
         );

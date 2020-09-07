@@ -1,12 +1,8 @@
-
-
-
-### Citation guidelines:
+### Citation guidelines
 
 If you use data from COCONUT Online, appropriate citation enables readers to locate the original source of the work. 
 
-COCONUT dataset provisory DOI: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3778405.svg)](https://doi.org/10.5281/zenodo.3778405)
-
+Cite as: Maria Sorokina, & Christoph Steinbeck. (2020). COCONUT: the COlleCtion of Open NatUral producTs. (Version 4) (Data set). Zenodo. http://doi.org/10.5281/zenodo.3778405
 
 
 
@@ -79,7 +75,7 @@ Another advantage of advanced search is the ability to select the search in one 
 Rest API is an application program interface where users  utilize  HTTP requests to put and then get data about natural products. The Rest API uses less bandwidth than other search methods. Therefore, the Rest API is a faster search method due to highly efficient internet usage.
 There are following search options via Rest API:
 
-#### Exact search 
+#### Exact search
 
 1. The user should enter the SMILES structural formula of the molecule after which software searches for the corresponding InChl match in the database.
 Example: URL link for O=C1OC(C(O)=C1O)CO  search
@@ -94,7 +90,7 @@ Example: URL link for O=C1OC(C(O)=C1O)CO  search
 In both cases, the user should use the provided URL links by modifying the part after the equals sign where he should write the formula of his interest.
 
 
-#### Simple search 
+#### Simple search
 
 The user may pursue a simple search by entering the following: Coconut ID, InChl, InChl key, and molecule name. 
 Example: URL link for searching of a particular compound by entering its Coconut ID
@@ -104,16 +100,20 @@ Example: URL link for searching of a particular compound by entering its Coconut
 The user should use the same URL link by modifying the part after the equals sign where he should write the desired compound  in any of the above-mentioned forms. The user may enter a compound in any of the four available forms without specifying which form he used.
 
 #### Substructure search
+
 An example of URL link for substructure search:
 
     https://coconut.naturalproducts.net/api/search/substructure?type=default&max-hits=100&smiles=O=C1OC(C(O)=C1O)CO 
 
 The user should use the above-presented URL link by adjusting the following options:
+
+
 * type
     * default for detecting the substructure with the Ullmann algorithm
     * df for detecting the substructure with depth-first pattern
     * vf for detecting the substructure with Vento-Foggia algorithm
-* max-hits represents the maximum number of natural products to be displayed. 
+* max-hits represents the maximum number of natural products to be displayed.  
+
 
 
 
@@ -131,18 +131,23 @@ The list of  available sections at the natural products page:
 * Note: We could write here about the software/application that was used for computation.
 * Known stereochemical variants
 * References (literature)
-* Cross references to other chemical databases
+* Cross references to other chemical databases  
+
+
 
 
 ###  Downloads
+
 COCONUT Online offers the different download options of fragments or a complete database with all information included.
 
 1. Download Natural Products Structures in SDF format. The SDF (structure data file) represents a chemical data file format developed by MDL. In this type of format, the natural products are delimited by lines consisting of four dollar signs ($$$$). All associated data items are denoted for every natural product in the database.
 2. Download the complete COCONUT dataset as a MongoDB dump. Using this option, all datasets are imported with the same visual depiction as it is at the Website.
-3. Download Natural Products Structures in SMILES format
+3. Download Natural Products Structures in SMILES format  
 
 
-### Data sources
+
+
+### Data sources  
 
 COCONUT Online uses more than 50 open natural product resources.  One of the options of advanced search is the specification of one or more available resources where the search is going to be pursued.
 
