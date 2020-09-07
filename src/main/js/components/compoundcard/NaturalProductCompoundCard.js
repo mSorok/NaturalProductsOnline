@@ -8,7 +8,7 @@ import NavigationSidebar from "./NavigationSidebar";
 import Overview from "./Overview";
 import Representations from "./Representations";
 import MolecularProperties from "./MolecularProperties";
-import ComputedProperties from "./ComputedProperties";
+import MolecularDescriptors from "./MolecularDescriptors";
 import CrossReferences from "./CrossReferences";
 import KnownStereochemicalVariants from "./KnownStereochemicalVariants";
 import References from "./References";
@@ -70,17 +70,16 @@ export default class NaturalProductCompoundCard extends React.Component {
                 "representations",
                 "synonyms",
                 "molecular_properties",
-                "computed_properties",
+                "molecular_descriptors",
                 "known_stereochemical_variants",
                 "references",
                 "chemical_classification",
                 "cross_references"
-                /*
 
-                "species"
+                //Idea: add an empty string at the beginning?
 
-                */
             ];
+
 
             return (
                 <Container>
@@ -106,7 +105,7 @@ export default class NaturalProductCompoundCard extends React.Component {
                             </Row>
                             <br/>
                             <Row id={compoundCardItems[4]} className="compoundCardRow">
-                                <ComputedProperties naturalProduct={naturalProduct}/>
+                                <MolecularDescriptors naturalProduct={naturalProduct}/>
                             </Row>
 
                             <br/>

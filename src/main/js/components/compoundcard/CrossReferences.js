@@ -17,7 +17,6 @@ export default class CrossReferences extends React.Component {
 
         const naturalProduct = this.props.naturalProduct;
 
-        console.log(naturalProduct);
 
         let nbXref = 0 ;
         if(naturalProduct.clean_xrefs != null) {
@@ -42,7 +41,7 @@ export default class CrossReferences extends React.Component {
         } else {
 
 
-            let linksToSources = [];
+            let dic = {};
             for(let i=0; i<naturalProduct.clean_xrefs.length; i++){
 
                 let xref = naturalProduct.clean_xrefs[i];
@@ -50,14 +49,29 @@ export default class CrossReferences extends React.Component {
                 let source = xref.source;
                 let linkToSource = xref.link_to_source + xref.id_in_source;
 
+                dic[linkToSource] = source;
+
+            }
+
+            console.log(dic);
+
+            let linksToSources = [];
+            //for(let i=0; i<naturalProduct.clean_xrefs.length; i++){
+            for(let linkToSource in dic){
+
+/*                let xref = naturalProduct.clean_xrefs[i];
+                //clean_xref = {"source": source_pretty_names[xref[0]], "id_in_source": xref[1], "link_to_source": xref[2]}
+                let source = xref.source;
+                let linkToSource = xref.link_to_source + xref.id_in_source;*/
+
                 const buttonToSource =
-                    <Button id={"linkTo" + i} variant="outline-primary" size="sm" href={linkToSource} target="_blank">
+                    <Button id={"linkTo_" + linkToSource} variant="outline-primary" size="sm" href={linkToSource} target="_blank">
                         <FontAwesomeIcon icon="external-link-alt" fixedWidth/>
                     </Button>;
 
                 linksToSources.push(
-                    <tr key={i}>
-                        <td>{source}</td>
+                    <tr key={"ref_"+linkToSource}>
+                        <td>{dic[linkToSource]}</td>
                         <td>{buttonToSource}</td>
                     </tr>
                 );
@@ -69,11 +83,10 @@ export default class CrossReferences extends React.Component {
                     <Card.Body>
                         <Card.Title className="text-primary">Cross References</Card.Title>
                         <br/>
-                        <p>External identifiers:</p>
                         <Table size="sm">
                             <thead>
                             <tr>
-                                <th>Reference</th>
+                                <th>Database</th>
                                 <th>Link to reference</th>
                             </tr>
                             </thead>

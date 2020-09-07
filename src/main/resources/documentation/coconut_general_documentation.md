@@ -127,7 +127,7 @@ The list of  available sections at the natural products page:
 * Representations
 * Synonyms
 * Molecular properties
-* Computed properties
+* Molecular descriptors
 * Note: We could write here about the software/application that was used for computation.
 * Known stereochemical variants
 * References (literature)
