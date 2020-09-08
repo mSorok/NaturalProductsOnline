@@ -13,6 +13,9 @@ import Alert from "react-bootstrap/Alert";
 import { useRef } from 'react';
 import Utils from "../Utils";
 
+const { Formik } = require("formik");
+
+
 import SourcesList from "./SourcesList";
 
 
@@ -30,6 +33,8 @@ const ColoredLine = ({ color}) => (
         }}
     />
 );
+
+
 
 
 
@@ -1102,11 +1107,13 @@ export default class AdvancedSearch extends React.Component {
                                 <Form.Label>Molecular weight</Form.Label>
                                 <Form.Row>
                                     <Col>
-                                        <Form.Control onChange={this.handleMolecularWeightMin}/>
+                                        <Form.Control onChange={this.handleMolecularWeightMin}  type="number" />
+                                        <Form.Control.Feedback type="invalid">Please use only numeric values.</Form.Control.Feedback>
                                         <Form.Text className="text-muted">From (ex: 74.08)</Form.Text>
                                     </Col>
                                     <Col>
-                                        <Form.Control onChange={this.handleMolecularWeightMax}/>
+                                        <Form.Control onChange={this.handleMolecularWeightMax} type="number" />
+                                        <Form.Control.Feedback type="invalid">Please use only numeric values.</Form.Control.Feedback>
                                         <Form.Text className="text-muted">To (ex: 3346.74)</Form.Text>
                                     </Col>
                                     <Col md="auto">
@@ -1128,11 +1135,13 @@ export default class AdvancedSearch extends React.Component {
                                 <Form.Label>Number of heavy atoms</Form.Label>
                                 <Form.Row>
                                     <Col>
-                                        <Form.Control onChange={this.handleNumberHeavyAtomsMin}/>
+                                        <Form.Control onChange={this.handleNumberHeavyAtomsMin} type={"number"}/>
+                                        <Form.Control.Feedback type="invalid">Please use only numeric values.</Form.Control.Feedback>
                                         <Form.Text className="text-muted">From (ex: 6)</Form.Text>
                                     </Col>
                                     <Col>
-                                        <Form.Control onChange={this.handleNumberHeavyAtomsMax}/>
+                                        <Form.Control onChange={this.handleNumberHeavyAtomsMax} type={"number"}/>
+                                        <Form.Control.Feedback type="invalid">Please use only numeric values.</Form.Control.Feedback>
                                         <Form.Text className="text-muted">To (ex: 209)</Form.Text>
                                     </Col>
                                     <Col md="auto">
@@ -1157,11 +1166,13 @@ export default class AdvancedSearch extends React.Component {
                                 <Form.Label>Number of carbons</Form.Label>
                                 <Form.Row>
                                     <Col>
-                                        <Form.Control onChange={this.handleNumberOfCarbonsMin}/>
+                                        <Form.Control onChange={this.handleNumberOfCarbonsMin} type={"number"}/>
+                                        <Form.Control.Feedback type="invalid">Please use only numeric values.</Form.Control.Feedback>
                                         <Form.Text className="text-muted">From (ex: 0)</Form.Text>
                                     </Col>
                                     <Col>
-                                        <Form.Control onChange={this.handleNumberOfCarbonsMax}/>
+                                        <Form.Control onChange={this.handleNumberOfCarbonsMax} type={"number"}/>
+                                        <Form.Control.Feedback type="invalid">Please use only numeric values.</Form.Control.Feedback>
                                         <Form.Text className="text-muted">To (ex: 156)</Form.Text>
                                     </Col>
                                     <Col  md="auto">
@@ -1180,11 +1191,13 @@ export default class AdvancedSearch extends React.Component {
                                 <Form.Label>Number of oxygens</Form.Label>
                                 <Form.Row>
                                     <Col>
-                                        <Form.Control onChange={this.handleNumberOfOxygensMin}/>
+                                        <Form.Control onChange={this.handleNumberOfOxygensMin} type={"number"}/>
+                                        <Form.Control.Feedback type="invalid">Please use only numeric values.</Form.Control.Feedback>
                                         <Form.Text className="text-muted">From (ex: 0)</Form.Text>
                                     </Col>
                                     <Col>
-                                        <Form.Control onChange={this.handleNumberOfOxygensMax}/>
+                                        <Form.Control onChange={this.handleNumberOfOxygensMax} type={"number"}/>
+                                        <Form.Control.Feedback type="invalid">Please use only numeric values.</Form.Control.Feedback>
                                         <Form.Text className="text-muted">To (ex: 109)</Form.Text>
                                     </Col>
                                     <Col  md="auto">
@@ -1209,11 +1222,12 @@ export default class AdvancedSearch extends React.Component {
                                 <Form.Label>Number of nitrogens</Form.Label>
                                 <Form.Row>
                                     <Col>
-                                        <Form.Control onChange={this.handleNumberOfNitrogensMin}/>
+                                        <Form.Control onChange={this.handleNumberOfNitrogensMin} type={"number"}/>
+                                        <Form.Control.Feedback type="invalid">Please use only numeric values.</Form.Control.Feedback>
                                         <Form.Text className="text-muted">From (ex: 0)</Form.Text>
                                     </Col>
                                     <Col>
-                                        <Form.Control onChange={this.handleNumberOfNitrogensMax}/>
+                                        <Form.Control onChange={this.handleNumberOfNitrogensMax} type={"number"}/>
                                         <Form.Text className="text-muted">To (ex: 45)</Form.Text>
                                     </Col>
                                     <Col  md="auto">
@@ -1234,11 +1248,13 @@ export default class AdvancedSearch extends React.Component {
                                 <Form.Label>Bond count</Form.Label>
                                 <Form.Row>
                                     <Col>
-                                        <Form.Control onChange={this.handleBondCountMin}/>
+                                        <Form.Control onChange={this.handleBondCountMin} type={"number"}/>
+                                        <Form.Control.Feedback type="invalid">Please use only numeric values.</Form.Control.Feedback>
                                         <Form.Text className="text-muted">From (ex: 5)</Form.Text>
                                     </Col>
                                     <Col>
-                                        <Form.Control onChange={this.handleBondCountMax}/>
+                                        <Form.Control onChange={this.handleBondCountMax} type={"number"}/>
+                                        <Form.Control.Feedback type="invalid">Please use only numeric values.</Form.Control.Feedback>
                                         <Form.Text className="text-muted">To (ex: 231)</Form.Text>
                                     </Col>
                                     <Col  md="auto">
@@ -1289,11 +1305,13 @@ export default class AdvancedSearch extends React.Component {
                                 <Form.Label>Number of rings</Form.Label>
                                 <Form.Row>
                                     <Col>
-                                        <Form.Control onChange={this.handleNumberOfRingsMin}/>
+                                        <Form.Control onChange={this.handleNumberOfRingsMin} type={"number"}/>
+                                        <Form.Control.Feedback type="invalid">Please use only numeric values.</Form.Control.Feedback>
                                         <Form.Text className="text-muted">From (ex: 0)</Form.Text>
                                     </Col>
                                     <Col>
-                                        <Form.Control onChange={this.handleNumberOfRingsMax}/>
+                                        <Form.Control onChange={this.handleNumberOfRingsMax} type={"number"}/>
+                                        <Form.Control.Feedback type="invalid">Please use only numeric values.</Form.Control.Feedback>
                                         <Form.Text className="text-muted">To (ex: 1639)</Form.Text>
                                     </Col>
                                     <Col  md="auto">
@@ -1321,11 +1339,13 @@ export default class AdvancedSearch extends React.Component {
                                 <Form.Label>NP-likeness score</Form.Label>
                                 <Form.Row>
                                     <Col>
-                                        <Form.Control onChange={this.handleNPLScoreMin}/>
+                                        <Form.Control onChange={this.handleNPLScoreMin} type={"number"}/>
+                                        <Form.Control.Feedback type="invalid">Please use only numeric values.</Form.Control.Feedback>
                                         <Form.Text className="text-muted">From (ex: -4.5)</Form.Text>
                                     </Col>
                                     <Col>
-                                        <Form.Control onChange={this.handleNPLScoreMax}/>
+                                        <Form.Control onChange={this.handleNPLScoreMax} type={"number"}/>
+                                        <Form.Control.Feedback type="invalid">Please use only numeric values.</Form.Control.Feedback>
                                         <Form.Text className="text-muted">To (ex: 4.6)</Form.Text>
                                     </Col>
                                     <Col md="auto">
@@ -1345,11 +1365,13 @@ export default class AdvancedSearch extends React.Component {
                                 <Form.Label>Apol</Form.Label>
                                 <Form.Row>
                                     <Col>
-                                        <Form.Control onChange={this.handleApolMin}/>
+                                        <Form.Control onChange={this.handleApolMin} type={"number"}/>
+                                        <Form.Control.Feedback type="invalid">Please use only numeric values.</Form.Control.Feedback>
                                         <Form.Text className="text-muted">From (ex: 6.2)</Form.Text>
                                     </Col>
                                     <Col>
-                                        <Form.Control onChange={this.handleApolMax}/>
+                                        <Form.Control onChange={this.handleApolMax} type={"number"}/>
+                                        <Form.Control.Feedback type="invalid">Please use only numeric values.</Form.Control.Feedback>
                                         <Form.Text className="text-muted">To (ex: 501.3)</Form.Text>
                                     </Col>
                                     <Col md="auto">
@@ -1372,11 +1394,13 @@ export default class AdvancedSearch extends React.Component {
                                 <Form.Label>AlpgP</Form.Label>
                                 <Form.Row>
                                     <Col>
-                                        <Form.Control onChange={this.handleAlogpMin}/>
+                                        <Form.Control onChange={this.handleAlogpMin} type={"number"}/>
+                                        <Form.Control.Feedback type="invalid">Please use only numeric values.</Form.Control.Feedback>
                                         <Form.Text className="text-muted">From (ex: 1.5)</Form.Text>
                                     </Col>
                                     <Col>
-                                        <Form.Control onChange={this.handleAlogpMax}/>
+                                        <Form.Control onChange={this.handleAlogpMax} type={"number"}/>
+                                        <Form.Control.Feedback type="invalid">Please use only numeric values.</Form.Control.Feedback>
                                         <Form.Text className="text-muted">To (ex: 50.1)</Form.Text>
                                     </Col>
                                     <Col md="auto">
@@ -1396,11 +1420,13 @@ export default class AdvancedSearch extends React.Component {
                                 <Form.Label>Fractional CSP3 (non-flatness of a molecule)</Form.Label>
                                 <Form.Row>
                                     <Col>
-                                        <Form.Control onChange={this.handleFsp3Min}/>
+                                        <Form.Control onChange={this.handleFsp3Min} type={"number"}/>
+                                        <Form.Control.Feedback type="invalid">Please use only numeric values.</Form.Control.Feedback>
                                         <Form.Text className="text-muted">From (ex: 1.5)</Form.Text>
                                     </Col>
                                     <Col>
-                                        <Form.Control onChange={this.handleFsp3Max}/>
+                                        <Form.Control onChange={this.handleFsp3Max} type={"number"}/>
+                                        <Form.Control.Feedback type="invalid">Please use only numeric values.</Form.Control.Feedback>
                                         <Form.Text className="text-muted">To (ex: 50.1)</Form.Text>
                                     </Col>
                                     <Col md="auto">
@@ -1425,11 +1451,13 @@ export default class AdvancedSearch extends React.Component {
                                 <Form.Label>Lipinski Rule of 5 failures</Form.Label>
                                 <Form.Row>
                                     <Col>
-                                        <Form.Control onChange={this.handleLipinskiMin}/>
+                                        <Form.Control onChange={this.handleLipinskiMin} type={"number"}/>
+                                        <Form.Control.Feedback type="invalid">Please use only numeric values.</Form.Control.Feedback>
                                         <Form.Text className="text-muted">Minimal number of failures (0)</Form.Text>
                                     </Col>
                                     <Col>
-                                        <Form.Control onChange={this.handleLipinskiMax}/>
+                                        <Form.Control onChange={this.handleLipinskiMax} type={"number"}/>
+                                        <Form.Control.Feedback type="invalid">Please use only numeric values.</Form.Control.Feedback>
                                         <Form.Text className="text-muted">Maximal number of failures (5)</Form.Text>
                                     </Col>
                                     <Col md="auto">
@@ -1449,11 +1477,13 @@ export default class AdvancedSearch extends React.Component {
                                 <Form.Label>Number of Spiro Atoms</Form.Label>
                                 <Form.Row>
                                     <Col>
-                                        <Form.Control onChange={this.handleSpiroMin}/>
+                                        <Form.Control onChange={this.handleSpiroMin} type={"number"}/>
+                                        <Form.Control.Feedback type="invalid">Please use only numeric values.</Form.Control.Feedback>
                                         <Form.Text className="text-muted">From (ex: 0)</Form.Text>
                                     </Col>
                                     <Col>
-                                        <Form.Control onChange={this.handleSpiroMax}/>
+                                        <Form.Control onChange={this.handleSpiroMax} type={"number"}/>
+                                        <Form.Control.Feedback type="invalid">Please use only numeric values.</Form.Control.Feedback>
                                         <Form.Text className="text-muted">To (ex: 9)</Form.Text>
                                     </Col>
                                     <Col md="auto">

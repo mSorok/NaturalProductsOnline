@@ -17,6 +17,7 @@
     "@fortawesome/free-solid-svg-icons": "^5.14.0",
     "@fortawesome/react-fontawesome": "^0.1.11",
     "bootstrap": "^4.5.0",
+    "formik": "^2.1.5",
     "jquery": "^3.5.1",
     "mdbreact": "^4.27.0",
     "openchemlib": "^7.2.1",

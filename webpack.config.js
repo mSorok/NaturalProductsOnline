@@ -51,3 +51,8 @@ module.exports = {
         ]
     }
 };
+
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+new HtmlWebpackPlugin({
+    favicon: "./favicon.ico"
+});
