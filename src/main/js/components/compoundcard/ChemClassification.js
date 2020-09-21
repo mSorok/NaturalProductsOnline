@@ -1,13 +1,50 @@
 import Card from "react-bootstrap/Card";
 import Table from "react-bootstrap/Table";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {Link, Redirect} from "react-router-dom";
+
+import Button from "react-bootstrap/Button";
+
+
 
 const React = require("react");
 
 
+
 export default class ChemClassification extends React.Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            searchSubmitted: false,
+            queryString: null,
+        };
+        this.handleSearchSubmit = this.handleSearchSubmit.bind(this);
+
+    }
+
+    handleSearchSubmit(e, value){
+
+
+        this.setState(
+            {
+                queryString:value,
+                searchSubmitted:true
+            }
+        );
+
+    }
+
+
+
+
     render() {
         const naturalProduct = this.props.naturalProduct;
+
+        let api_url = "/search/chemclass?query=";
+
+
 
 
         let classTable = [];
@@ -32,7 +69,8 @@ export default class ChemClassification extends React.Component {
                 classTable.push(
                     <tr key={"sc_cclass"}>
                         <td>Super class</td>
-                        <td>{naturalProduct.chemicalSuperClass}</td>
+
+                        <td><Button style={{fontSize: 12}} size="xs" variant="link" onClick={(e) => this.handleSearchSubmit(e, naturalProduct.chemicalSuperClass)} >{naturalProduct.chemicalSuperClass}&nbsp;<FontAwesomeIcon icon="search-plus" fixedWidth/></Button></td>
                     </tr>
                 );
             } else {
@@ -48,7 +86,7 @@ export default class ChemClassification extends React.Component {
                 classTable.push(
                     <tr key={"cc_cclass"}>
                         <td>Class</td>
-                        <td>{naturalProduct.chemicalClass}</td>
+                        <td><Button style={{fontSize: 12}} size="xs" variant="link" onClick={(e) => this.handleSearchSubmit(e, naturalProduct.chemicalClass)} >{naturalProduct.chemicalClass}&nbsp;<FontAwesomeIcon icon="search-plus" fixedWidth/></Button></td>
                     </tr>
                 );
             } else {
@@ -64,7 +102,7 @@ export default class ChemClassification extends React.Component {
                 classTable.push(
                     <tr key={"sbc_cclass"}>
                         <td>Subclass</td>
-                        <td>{naturalProduct.chemicalSubClass}</td>
+                        <td><Button style={{fontSize: 12}} size="xs" variant="link" onClick={(e) => this.handleSearchSubmit(e, naturalProduct.chemicalSubClass)} >{naturalProduct.chemicalSubClass}&nbsp;<FontAwesomeIcon icon="search-plus" fixedWidth/></Button></td>
                     </tr>
                 );
             } else {
@@ -80,7 +118,7 @@ export default class ChemClassification extends React.Component {
                 classTable.push(
                     <tr key={"dp_cclass"}>
                         <td>Direct parent</td>
-                        <td>{naturalProduct.directParentClassification}</td>
+                        <td><Button style={{fontSize: 12}} size="xs" variant="link" onClick={(e) => this.handleSearchSubmit(e, naturalProduct.directParentClassification)} >{naturalProduct.directParentClassification}&nbsp;<FontAwesomeIcon icon="search-plus" fixedWidth/></Button></td>
                     </tr>
                 );
             } else {
@@ -98,7 +136,7 @@ export default class ChemClassification extends React.Component {
                 <Card className="compoundCardItem">
                     <Card.Body>
                         <Card.Title className="text-primary">Chemical classification</Card.Title>
-                        <Card.Subtitle size="sm"><FontAwesomeIcon icon="info" fixedWidth/>Computed with <a target="_blank" rel="noopener noreferrer"  href="http://classyfire.wishartlab.com/">ClassyFire</a></Card.Subtitle>
+                        <Card.Subtitle size="xs"><FontAwesomeIcon icon="info" fixedWidth/>Computed with <a target="_blank" rel="noopener noreferrer"  href="http://classyfire.wishartlab.com/">ClassyFire</a></Card.Subtitle>
                         <br />
                         <Table size="sm">
                             <tbody>
@@ -107,7 +145,10 @@ export default class ChemClassification extends React.Component {
                             </tbody>
                         </Table>
                     </Card.Body>
+                    {this.state.searchSubmitted && <Redirect to={"/search/chemclass/" + encodeURIComponent(this.state.queryString)}/> }
                 </Card>
+
+
             );
         }
 

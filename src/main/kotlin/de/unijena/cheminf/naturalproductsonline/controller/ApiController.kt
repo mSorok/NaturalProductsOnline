@@ -129,9 +129,43 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
 
 
     /**
-     *  ************************************************************************************************
+     *  Searches by chem class type
+     */
+    @RequestMapping("/search/chemclass")
+    fun searchByChemicalClassification(@RequestParam("query") queryString: String) : Map<String, Any>{
+        var decodedString = URLDecoder.decode(queryString.trim(), "UTF-8")
+
+        return this.doChemclassSearch(decodedString)
+    }
+
+
+
+    /**
+    *  ************************************************************************************************
      *  Search functions
      */
+
+
+    fun doChemclassSearch(query: String): Map<String, Any>{
+
+        println("do chem class search")
+
+        println(query)
+
+
+        val results = this.uniqueNaturalProductRepository.findByChemclass(query)
+
+        println(results.size)
+
+        println("returning")
+
+        return mapOf(
+                "originalQuery" to query,
+                "count" to results.size,
+                "naturalProducts" to results
+        )
+
+    }
 
 
     fun doAdvancedSearch(maxHits:Int?, advancedSearchModel: AdvancedSearchModel) : Map<String, Any>{

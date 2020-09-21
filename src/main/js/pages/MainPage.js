@@ -15,6 +15,7 @@ import Download from "../components/Download";
 import Browser from "../components/browser/Browser";
 import NotFound from "../components/NotFound";
 import SearchResult from "../components/SearchResult";
+import ChemSearchResult from "../components/ChemSearchResult";
 import StructureSearch from "../components/StructureSearch";
 import AdvancedSearch from "../components/AdvancedSearch";
 import NaturalProductCompoundCard from "../components/compoundcard/NaturalProductCompoundCard";
@@ -44,6 +45,7 @@ class MainPage extends React.Component {
         <Route path="/download" component={Download}/>
         <Route path="/search/advanced" component={AdvancedSearch}/>
         <Route path="/search/simple/:q" component={SearchResult}/>
+        <Route path="/search/chemclass/:q" component={ChemSearchResult}/>
         <Route path="/search/structure" component={StructureSearch}/>
         <Route component={NotFound}/>
         </Switch>

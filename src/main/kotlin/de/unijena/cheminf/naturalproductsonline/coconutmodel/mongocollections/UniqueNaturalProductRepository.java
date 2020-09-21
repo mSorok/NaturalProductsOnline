@@ -48,4 +48,8 @@ public interface UniqueNaturalProductRepository  extends MongoRepository<UniqueN
 
     @Query("{ pubchemBits : { $bitsAllSet : ?0  }}")
     List<UniqueNaturalProduct> findAllPubchemBitsSet(byte[] querybits) ;
+
+
+    @Query("{ $or: [ {chemicalClass: ?0}, {chemicalSubClass: ?0}, {chemicalSuperClass: ?0}, {directParentClassification: ?0}  ] }")
+    List<UniqueNaturalProduct> findByChemclass(String query);
 }

@@ -247,7 +247,7 @@ export default class AdvancedSearch extends React.Component {
         const download = document.createElement("a");
 
         download.setAttribute("href", "data:chemical/x-mdl-molfile;charset=utf-8," + encodeURIComponent(Utils.getSDFileStringByNPList(npList)));
-        download.setAttribute("download", "coconut_structure_search_result.sdf");
+        download.setAttribute("download", "coconut_advanced_search_result.sdf");
         download.style.display = "none";
 
         document.body.appendChild(download);
