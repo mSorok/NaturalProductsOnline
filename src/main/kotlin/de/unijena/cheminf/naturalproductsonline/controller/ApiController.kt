@@ -1,6 +1,7 @@
 package de.unijena.cheminf.naturalproductsonline.controller
 
 
+import com.mongodb.MongoCommandException
 import de.unijena.cheminf.naturalproductsonline.coconutmodel.mongocollections.PubFingerprintsCounts
 import de.unijena.cheminf.naturalproductsonline.coconutmodel.mongocollections.PubFingerprintsCountsRepository
 import de.unijena.cheminf.naturalproductsonline.coconutmodel.mongocollections.UniqueNaturalProduct
@@ -70,7 +71,22 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
 
         println("catched advanced search")
         //println(advancedSearchModel.listOfSearchItems[1])
-        return this.doAdvancedSearch(maxHits.toIntOrNull(),advancedSearchModel )
+        try {
+            return this.doAdvancedSearch(maxHits.toIntOrNull(), advancedSearchModel)
+        } catch (ex: Exception){
+
+            when(ex) {
+                is MongoCommandException, is OutOfMemoryError -> {
+                    val other: List<UniqueNaturalProduct> = emptyList()
+                    return mapOf(
+                            "originalQuery" to "advanced",
+                            "count" to 0,
+                            "naturalProducts" to  other
+                    )
+                }
+                else -> throw ex
+            }
+        }
 
     }
 
@@ -80,10 +96,27 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
     @RequestMapping("/search/exact-structure")
     fun structureSearchBySmiles(@RequestParam("smiles") smiles: String, @RequestParam("type") type: String): Map<String, Any> {
 
-        if(type=="smi") {
-            return this.doExactStructureSearchBySmiles(URLDecoder.decode(smiles.trim(), "UTF-8"))
-        }else{
-            return this.doExactStructureSearchByInchi(URLDecoder.decode(smiles.trim(), "UTF-8"))
+
+        try {
+
+            if (type == "smi") {
+                return this.doExactStructureSearchBySmiles(URLDecoder.decode(smiles.trim(), "UTF-8"))
+            } else {
+                return this.doExactStructureSearchByInchi(URLDecoder.decode(smiles.trim(), "UTF-8"))
+            }
+        }catch (ex: Exception){
+
+            when(ex) {
+                is MongoCommandException, is OutOfMemoryError -> {
+                    val other: List<UniqueNaturalProduct> = emptyList()
+                    return mapOf(
+                            "originalQuery" to smiles,
+                            "count" to 0,
+                            "naturalProducts" to  other
+                    )
+                }
+                else -> throw ex
+            }
         }
     }
 
@@ -93,7 +126,23 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
      */
     @RequestMapping("/search/substructure")
     fun substructureSearch(@RequestParam("smiles") smiles: String , @RequestParam("type") type: String , @RequestParam("max-hits") maxHits:String): Map<String, Any> {
-        return this.doSubstructureSearch(URLDecoder.decode(smiles.trim(), "UTF-8"), type, maxHits.toIntOrNull())
+
+        try {
+            return this.doSubstructureSearch(URLDecoder.decode(smiles.trim(), "UTF-8"), type, maxHits.toIntOrNull())
+        }catch (ex: Exception){
+
+            when(ex) {
+                is MongoCommandException, is OutOfMemoryError -> {
+                    val other: List<UniqueNaturalProduct> = emptyList()
+                    return mapOf(
+                            "originalQuery" to smiles,
+                            "count" to 0,
+                            "naturalProducts" to  other
+                    )
+                }
+                else -> throw ex
+            }
+        }
     }
 
 
@@ -110,8 +159,23 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
         var decodedString = URLDecoder.decode(queryString.trim(), "UTF-8")
         decodedString = decodedString.replace("jjj", "%")
 
-        return this.doSimpleSearchWithHeuristic(  decodedString  )
-        // return this.doSimpleSearch(URLDecoder.decode(queryString.trim(), "UTF-8"))
+        try {
+            return this.doSimpleSearchWithHeuristic(decodedString)
+            // return this.doSimpleSearch(URLDecoder.decode(queryString.trim(), "UTF-8"))
+        }catch (ex: Exception){
+
+            when(ex) {
+                is MongoCommandException, is OutOfMemoryError -> {
+                    val other: List<UniqueNaturalProduct> = emptyList()
+                    return mapOf(
+                            "originalQuery" to queryString,
+                            "determinedInputType" to "none",
+                            "naturalProducts" to  other
+                    )
+                }
+                else -> throw ex
+            }
+        }
     }
 
 
@@ -124,7 +188,23 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
         var th: Int? = simThreshold.toIntOrNull()
         th = th
 
-        return this.doSimilaritySearch(URLDecoder.decode(smiles.trim(), "UTF-8"), maxHits.toIntOrNull(), th)
+        try {
+            return this.doSimilaritySearch(URLDecoder.decode(smiles.trim(), "UTF-8"), maxHits.toIntOrNull(), th)
+        }catch (ex: Exception){
+
+            when(ex) {
+                is MongoCommandException, is OutOfMemoryError -> {
+                    val other: List<UniqueNaturalProduct> = emptyList()
+                    return mapOf(
+                            "originalQuery" to smiles,
+                            "count" to 0,
+                            "naturalProducts" to  other
+                    )
+                }
+                else -> throw ex
+            }
+
+        }
     }
 
 
@@ -135,7 +215,23 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
     fun searchByChemicalClassification(@RequestParam("query") queryString: String) : Map<String, Any>{
         var decodedString = URLDecoder.decode(queryString.trim(), "UTF-8")
 
-        return this.doChemclassSearch(decodedString)
+        try {
+            return this.doChemclassSearch(decodedString)
+
+        }catch (ex: Exception){
+
+            when(ex) {
+                is MongoCommandException, is OutOfMemoryError -> {
+                    val other: List<UniqueNaturalProduct> = emptyList()
+                    return mapOf(
+                            "originalQuery" to queryString,
+                            "count" to 0,
+                            "naturalProducts" to  other
+                    )
+                }
+                else -> throw ex
+            }
+        }
     }
 
 
