@@ -9,7 +9,7 @@ To fire up a local version of it, you need to have Docker installed.
 In the directory containing the 'docker-compose.yml' file run the following commands:
 
 
-
+```
 docker-compose build
 docker-compose up -d
 
@@ -87,7 +87,6 @@ db.fragment.createIndex({signature:1})
 db.fragment.createIndex({signature:1, withsugar:-1})
 
 exit
-
 exit
 ```
 
