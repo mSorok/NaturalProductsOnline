@@ -2,6 +2,11 @@
 
 NaturalProductsOnline is the web application for the COCONUT database of openly available natural products structures.
 
+Prior to any further action, a target folder needs to be generated, with the following command:
+
+```
+mvn package
+```
 
 To fire up a local version of it, you need to have Docker installed.
 
