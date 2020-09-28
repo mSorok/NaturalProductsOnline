@@ -266,26 +266,22 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
 
     fun doAdvancedSearch(maxHits:Int?, advancedSearchModel: AdvancedSearchModel) : Map<String, Any>{
 
-        var maxResults = 1000
+        var maxResults = 100
 
         if(maxHits != null ){
             maxResults = maxHits
         }
 
-        val results = this.uniqueNaturalProductRepository.advancedSearchWithCriteria(advancedSearchModel)
+        val results = this.uniqueNaturalProductRepository.advancedSearchWithCriteria(advancedSearchModel, maxResults)
 
-        results.shuffle()
-
-        val resultsPart = results.subList(0, minOf(results.size , maxResults))
-
-        resultsPart.sortBy { it.heavy_atom_number }
+        //results.shuffle()
 
 
 
         return mapOf(
                 "originalQuery" to "advanced",
-                "count" to resultsPart.size,
-                "naturalProducts" to resultsPart
+                "count" to results.size,
+                "naturalProducts" to results
         )
 
     }
@@ -484,7 +480,7 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
 
         println(smiles)
 
-        var maxResults = 1000
+        var maxResults = 100
 
         if(maxHitsSubmitted != null ){
             maxResults = maxHitsSubmitted
@@ -499,7 +495,8 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
             println(pubchemFingerprinter.getBitFingerprint(queryAC).asBitSet().toByteArray())
 
             // run $allBitsSet in mongo
-            val matchedList = this.uniqueNaturalProductRepository.findAllPubchemBitsSet(pubchemFingerprinter.getBitFingerprint(queryAC).asBitSet().toByteArray())
+            val barray = pubchemFingerprinter.getBitFingerprint(queryAC).asBitSet().toByteArray()
+            val matchedList = this.uniqueNaturalProductRepository.findAllPubchemBitsSet(barray)
 
             //TODO get the exact bitset also? for faster substructure search of the first element
 
@@ -601,7 +598,7 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
 
         println(smiles)
 
-        var maxResults = 1000
+        var maxResults = 100
 
         if(maxHitsSubmitted != null ){
             maxResults = maxHitsSubmitted
@@ -643,17 +640,18 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
             }
 
 
-            val matchedList = this.uniqueNaturalProductRepository.similaritySearch(requestedBits, queryPF, qmin, qmax, qLen, threshold)
+            val matchedList = this.uniqueNaturalProductRepository.similaritySearch(requestedBits, queryPF, qmin, qmax, qLen, threshold, maxResults)
 
+            //TODO redo a tanomoto here to be sure that the match is correct
 
             //hits.sortBy { it.heavy_atom_number }
-            val hitsToReturn = matchedList.subList(0, minOf(matchedList.size , maxResults))
+            //val hitsToReturn = matchedList.subList(0, minOf(matchedList.size , maxResults))
 
 
             return mapOf(
                     "originalQuery" to smiles,
-                    "count" to hitsToReturn.size,
-                    "naturalProducts" to hitsToReturn
+                    "count" to matchedList.size,
+                    "naturalProducts" to matchedList
             )
 
         } catch (e: InvalidSmilesException) {

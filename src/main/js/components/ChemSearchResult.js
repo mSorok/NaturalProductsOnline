@@ -20,7 +20,6 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 const React = require("react");
 const restClient = require("../restClient");
 
-import InfiniteScroll from "react-infinite-scroll-component";
 
 
 

@@ -5,6 +5,7 @@ import com.mongodb.DBObject;
 import de.unijena.cheminf.naturalproductsonline.model.AdvancedSearchModel;
 import de.unijena.cheminf.naturalproductsonline.utils.CustomAggregationOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -31,7 +32,7 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
 
 
     @Override
-    public List<UniqueNaturalProduct> similaritySearch(ArrayList<Integer> reqbits, ArrayList<Integer> qfp,  Integer qmin, Integer qmax, Integer qn, Double threshold ){
+    public List<UniqueNaturalProduct> similaritySearch(ArrayList<Integer> reqbits, ArrayList<Integer> qfp,  Integer qmin, Integer qmax, Integer qn, Double threshold, Integer maxResults ){
 
         String fMatch1 = "{'$match': {'pfCounts.count': {'$gte': "+qmin+", '$lte': "+qmax+"}, 'pfCounts.bits': {'$in': "+reqbits+"}}}";
 
@@ -43,6 +44,8 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
 
         String fSort = "{ $sort: { 'tanimoto': -1} }";
 
+        String limit = "{$limit: "+maxResults+"}";
+
 
         //String fQuery = "{'$match': {'pfCounts.count': {'$gte': "+qmin+", '$lte': "+qmax+"}, 'pfCounts.bits': {'$in': "+reqbits+"}}},{'$project': {'tanimoto': {'$let': {'vars': {'common': {'$size': {'$setIntersection': ['$pfCounts.bits', "+qfp+"]}}},'in': {'$divide': ['$$common', {'$subtract': [{'$add': ["+qn+", '$pfCounts.count']}, '$$common']}]} }},'coconut_id': 1, }},{'$match': {'tanimoto': {'$gte': "+threshold+"}}}" ;
 
@@ -53,7 +56,8 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
                 new CustomAggregationOperation(fMatch1),
                 new CustomAggregationOperation(fProjection),
                 new CustomAggregationOperation(fMatch2),
-                new CustomAggregationOperation(fSort)
+                new CustomAggregationOperation(fSort),
+                new CustomAggregationOperation(limit)
 
         );
 
@@ -70,16 +74,19 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
 
 
     @Override
-    public List<UniqueNaturalProduct> advancedSearchWithCriteria(AdvancedSearchModel criterias){
+    public List<UniqueNaturalProduct> advancedSearchWithCriteria(AdvancedSearchModel criterias, Integer maxResults){
 
         List<UniqueNaturalProduct> result ;
 
         Query advancedQuery = new Query();
 
+
+
         Criteria bigCriteria = new Criteria();
 
         ArrayList<Criteria> andCriterias = new ArrayList<>();
         ArrayList<Criteria> orCriterias = new ArrayList<>();
+
 
 
 
@@ -91,6 +98,14 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
 
 
             if (itemType.equals("molecular_formula")) {
+
+
+
+
+                advancedQuery.with(Sort.by(Sort.Direction.DESC, "heavy_atom_number"));
+
+
+
                 //leave value as string
                 String totalItemValue = criterias.getListOfSearchItems()[i].getAsString("itemValue");
 
@@ -106,6 +121,9 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
 
 
             } else if (itemType.equals("number_of_rings")) {
+
+
+                advancedQuery.with(Sort.by(Sort.Direction.DESC, "max_number_of_rings"));
 
 
                 Double itemValueMin = 0.0;
@@ -136,6 +154,9 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
 
 
             } else if (itemType.equals("contains_sugars")) {
+
+                advancedQuery.with(Sort.by(Sort.Direction.DESC, "heavy_atom_number"));
+
                 Criteria c = new Criteria();
                 Criteria cbis = null;
 
@@ -185,6 +206,8 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
                 }
 
             }else if(itemType.equals("databases")){
+
+                advancedQuery.with(Sort.by(Sort.Direction.DESC, "heavy_atom_number"));
 
                 String dbLogic = criterias.getListOfSearchItems()[i].getAsString("dbLogic");
 
@@ -244,6 +267,8 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
                 }else {
 
                     c = where(itemType).lte(itemValueMax).gte(itemValueMin);
+
+                    advancedQuery.with(Sort.by(Sort.Direction.DESC, itemType));
                 }
 
                 if(itemLogic.equals("AND")){
@@ -269,8 +294,10 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
 
 
 
+        advancedQuery = advancedQuery.limit(maxResults);
+
         System.out.println(advancedQuery);
-        result = mongoTemplate.find(advancedQuery, UniqueNaturalProduct.class);
+        result = mongoTemplate.find(advancedQuery , UniqueNaturalProduct.class);
 
         return result;
     }

@@ -10,7 +10,7 @@ public interface UniqueNaturalProductRepositoryCustom {
 
     //List<UniqueNaturalProduct> fuzzyNameSearch(String name);
 
-    List<UniqueNaturalProduct> advancedSearchWithCriteria (AdvancedSearchModel criterias);
+    List<UniqueNaturalProduct> advancedSearchWithCriteria (AdvancedSearchModel criterias, Integer maxResults);
 
-    List<UniqueNaturalProduct> similaritySearch(ArrayList<Integer> reqbits, ArrayList<Integer> qfp, Integer qmin, Integer qmax, Integer qn, Double threshold );
+    List<UniqueNaturalProduct> similaritySearch(ArrayList<Integer> reqbits, ArrayList<Integer> qfp, Integer qmin, Integer qmax, Integer qn, Double threshold, Integer maxResults );
 }
