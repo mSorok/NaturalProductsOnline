@@ -1,5 +1,6 @@
 package de.unijena.cheminf.naturalproductsonline.coconutmodel.mongocollections;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
@@ -46,8 +47,9 @@ public interface UniqueNaturalProductRepository  extends MongoRepository<UniqueN
     @Query("{ apol: { $exists:false } }")
     List<UniqueNaturalProduct> findAllByApolComputed();
 
-    @Query("{ pubchemBits : { $bitsAllSet : ?0  }}")
+    @Query(value="{ pubchemBits : { $bitsAllSet : ?0  }}", fields = "{ _id:0,coconut_id: 1, unique_smiles:1, clean_smiles:1, molecular_formula:1, molecular_weight:1, npl_score:1 , name:1, smiles:1, total_atom_number:1}" )
     List<UniqueNaturalProduct> findAllPubchemBitsSet(byte[] querybits) ;
+    //  'coconut_id': 1, 'unique_smiles':1, 'clean_smiles':1, 'molecular_formula':1, 'molecular_weight':1, 'npl_score':1 , 'name':1, 'smiles':1
 
 
     @Query("{ $or: [ {chemicalClass: ?0}, {chemicalSubClass: ?0}, {chemicalSuperClass: ?0}, {directParentClassification: ?0}  ] }")

@@ -563,8 +563,10 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
 
             }
 
+            println(hits.size)
+            hits.sortBy { it.total_atom_number }
 
-            hits.sortBy { it.heavy_atom_number }
+            //list.sortedWith(compareBy({ it.customProperty }))
             val hitsToReturn = hits.subList(0, minOf(hits.size , maxResults))
 
             println("ready to return results!")

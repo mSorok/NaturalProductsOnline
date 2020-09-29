@@ -41,11 +41,15 @@ export default class StructureSearch extends React.Component {
             ajaxIsLoaded: false,
             ajaxResult: [],
 
+            resultIsRendered:false,
+
             inputType: "draw",
 
             searchSubmitted: false,
             searchSubmittedButIncorrect:false,
             searchHitsLimit: 100,
+
+            searchSubmittedAndSent:false,
 
             searchType: "exact", //substructure OR similarity
 
@@ -64,6 +68,7 @@ export default class StructureSearch extends React.Component {
 
 
         };
+
 
         this.handleSearchHitsLimit = this.handleSearchHitsLimit.bind(this);
 
@@ -89,21 +94,25 @@ export default class StructureSearch extends React.Component {
 
 
 
+
         this.searchResultHeadline = React.createRef();
         this.spinnerRef = React.createRef();
+
+        this.allChangeRef = React.createRef();
     }
+
+
+
 
     componentDidMount() {
         this.editor = OpenChemLib.StructureEditor.createSVGEditor("structureSearchEditor", 1);
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (this.state.ajaxIsLoaded) {
-            this.scrollToRef(this.searchResultHeadline);
-        }
 
-        if(this.state.searchSubmitted && !this.state.ajaxIsLoaded){
-            this.scrollToRef(this.spinnerRef);
+
+        if(this.state.searchSubmitted){
+            this.scrollToRef(this.allChangeRef);
         }
     }
 
@@ -123,25 +132,25 @@ export default class StructureSearch extends React.Component {
 
     handleExactMatchTypeSelect(e){
         if(e.target.value=="inchi"){
-            console.log("I'm in inchi");
+            //console.log("I'm in inchi");
             this.state.exactMatchType="inchi";
 
         }else if(e.target.value=="smi") {
-            console.log("I'm in smi");
+            //console.log("I'm in smi");
             this.state.exactMatchType="smiles";
         }
     }
 
     handleSubstructureSearchTypeSelect(e){
         if(e.target.value=="sub-def"){
-            console.log("I'm in sub-def");
+            //console.log("I'm in sub-def");
             this.state.substructureSearchType="default";
 
         }else if(e.target.value=="vf") {
-            console.log("I'm in vf");
+            //console.log("I'm in vf");
             this.state.substructureSearchType="vf";
         }else if(e.target.value=="df") {
-            console.log("I'm in df");
+            //console.log("I'm in df");
             this.state.substructureSearchType="df";
         }
     }
@@ -169,65 +178,75 @@ export default class StructureSearch extends React.Component {
 
     handleStructureSubmit() {
 
-        let structureAsSmiles = "";
-        if(this.state.inputType=="draw"){
-            structureAsSmiles = this.editor.getSmiles();
-        }else if(this.state.inputType=="paste"){
-            structureAsSmiles = this.state.stringInput;
-        }
+        //console.log(this.state);
 
 
-        //TODO test if SMILES (or other Inchi and co)
+        if(!this.state.searchSubmittedAndSent) {
 
-        if (structureAsSmiles != null && structureAsSmiles != "" && structureAsSmiles != " ") {
-
-
-            this.setState({
-                searchSubmitted: true
-            });
-
-            this.state.smilesCorrect = true;
-            this.state.searchSubmittedButIncorrect = false;
-
-            if (this.state.searchType == "exact") {
-                if (this.state.exactMatchType == "inchi") {
-                    this.doSearch("/api/search/exact-structure?type=inchi&smiles=", encodeURIComponent(structureAsSmiles));
-                } else {
-                    this.doSearch("/api/search/exact-structure?type=smi&smiles=", encodeURIComponent(structureAsSmiles));
-                }
-
-            } else if (this.state.searchType == "substructure") {
-                if (this.state.substructureSearchType == "default") {
-                    this.doSearch("/api/search/substructure?type=default&max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
-                } else if (this.state.substructureSearchType == "df") {
-                    this.doSearch("/api/search/substructure?type=uit&max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
-                } else {
-                    this.doSearch("/api/search/substructure?type=vf&max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
-                }
-
-
-            } else if(this.state.searchType == "similarity") {
-
-                console.log("detected similarity");
-                console.log(this.state.similarityThreshold);
-
-                this.doSearch("/api/search/similarity?simThreshold="+this.state.similarityThreshold+"&max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
-
-
-            }else {
-                this.doSearch("/api/search/exact-structure?max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
+            let structureAsSmiles = "";
+            if (this.state.inputType == "draw") {
+                structureAsSmiles = this.editor.getSmiles();
+            } else if (this.state.inputType == "paste") {
+                structureAsSmiles = this.state.stringInput;
             }
 
-        }
-        else{
-            console.log("you need to submit a valid molecule!")
-            this.state.smilesCorrect = false;
-            this.state.searchSubmittedButIncorrect = true;
-            this.setState({
-                searchSubmittedButIncorrect: true
-            });
-        }
 
+            //TODO test if SMILES (or other Inchi and co)
+
+            if (structureAsSmiles != null && structureAsSmiles != "" && structureAsSmiles != " ") {
+
+
+                this.setState({
+                    searchSubmitted: true,
+                    resultIsRendered:false
+                });
+
+                this.state.smilesCorrect = true;
+                this.state.searchSubmittedButIncorrect = false;
+
+                if (this.state.searchType == "exact") {
+                    if (this.state.exactMatchType == "inchi") {
+                        this.doSearch("/api/search/exact-structure?type=inchi&smiles=", encodeURIComponent(structureAsSmiles));
+                    } else {
+                        this.doSearch("/api/search/exact-structure?type=smi&smiles=", encodeURIComponent(structureAsSmiles));
+                    }
+
+                } else if (this.state.searchType == "substructure") {
+                    if (this.state.substructureSearchType == "default") {
+                        this.doSearch("/api/search/substructure?type=default&max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
+                    } else if (this.state.substructureSearchType == "df") {
+                        this.doSearch("/api/search/substructure?type=uit&max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
+                    } else {
+                        this.doSearch("/api/search/substructure?type=vf&max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
+                    }
+
+
+                } else if (this.state.searchType == "similarity") {
+
+                    //console.log("detected similarity");
+                    //console.log(this.state.similarityThreshold);
+
+                    this.doSearch("/api/search/similarity?simThreshold=" + this.state.similarityThreshold + "&max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
+
+
+                } else {
+                    this.doSearch("/api/search/exact-structure?max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
+                }
+
+            }
+            else {
+                //console.log("you need to submit a valid molecule!");
+                alert("Please submit a valid molecule!");
+                this.state.smilesCorrect = false;
+                this.state.searchSubmittedButIncorrect = true;
+                this.setState({
+                    searchSubmittedButIncorrect: true
+                });
+            }
+        }else{
+            //console.log("wait till the previous query returns or open a new tab!");
+            alert("Please, wait the completion of the running query or run a new query in a new window!");
+        }
     }
 
 
@@ -252,8 +271,10 @@ export default class StructureSearch extends React.Component {
     handleInputType(key){
         if(key==="draw"){
             this.state.inputType = "draw";
+            this.state.stringInput= "";
         }else{
             this.state.inputType = "paste";
+            this.editor.setSmiles("");
         }
     }
 
@@ -274,7 +295,7 @@ export default class StructureSearch extends React.Component {
             );
         }
         if(key==="substructure-search"){
-            console.log("substructure");
+            //console.log("substructure");
             this.setState(
                 {
                     searchType :"substructure",
@@ -305,6 +326,7 @@ export default class StructureSearch extends React.Component {
 
 
     doSearch(path, searchString) {
+        this.setState({searchSubmittedAndSent:true});
         restClient({
             method: "GET",
             path: path + encodeURIComponent(searchString)
@@ -312,13 +334,15 @@ export default class StructureSearch extends React.Component {
             (response) => {
                 this.setState({
                     ajaxIsLoaded: true,
-                    ajaxResult: response.entity
+                    ajaxResult: response.entity,
+                    searchSubmittedAndSent:false
                 });
             },
             (error) => {
                 this.setState({
                     ajaxIsLoaded: true,
-                    ajaxError: error
+                    ajaxError: error,
+                    searchSubmittedAndSent:false
                 });
             });
     }
@@ -334,25 +358,35 @@ export default class StructureSearch extends React.Component {
         let resultRow;
         let alertMessage;
 
-        console.log(ajaxResult);
+        //console.log(ajaxResult);
 
         if (searchSubmitted) {
             if(smilesCorrect){
                 if (ajaxError) {
-                    resultRow = <Error/>;
+                    resultRow =
+                        <>
+                        <Error/>
+                        </>;
+                    this.state.ajaxIsLoaded = false; //TODO verify here!
+                    this.state.ajaxError = null;
+
                 } else if (!ajaxIsLoaded) {
                     resultRow =
-                        <Row className="justify-content-center" ref={this.spinnerRef}>
+                        <>
+                        <Row><h2>Search running</h2></Row>
+                        <Row className="justify-content-center" ref={this.allChangeRef}>
                             <Spinner/>
                             {searchType=="substructure" &&
                             <p>Note: The substructure search might be long if the input molecule is small.</p>}
                             {searchType=="similarity" && <p>Note: The similarity search can be long.</p>}
                         </Row>
+                        </>;
                 } else {
                     let npList = [...ajaxResult.naturalProducts];
                     if (ajaxResult.naturalProducts.length > 0) {
                         resultRow =
                             <>
+                                <Row ref={this.allChangeRef}><h2>Search Results</h2></Row>
                                 <Row>
                                     <Col>
                                         <p>Your search for "{ajaxResult.originalQuery}" returned {ajaxResult.count} hits.</p>
@@ -371,14 +405,19 @@ export default class StructureSearch extends React.Component {
                     } else {
                         resultRow = <Row><p>There are no results that match your structure.</p></Row>;
                     }
+                    this.state.ajaxIsLoaded = false; //TODO verify here!
+                    this.state.resultIsRendered = true;
+
+                    //console.log(this.state);
                 }
             }
         }
         else if(searchSubmittedButIncorrect){
-            console.log("trying to pop an alert");
+            //console.log("trying to pop an alert");
             this.state.searchSubmitted = false;
             this.state.searchSubmittedButIncorrect = true;
-            alertMessage = <Alert variant="danger" > Warning! You need to draw or paste a molecular structure! </Alert>;
+            alert("Warning! You need to draw or paste a molecular structure!");
+            //alertMessage = <Alert variant="danger" > Warning! You need to draw or paste a molecular structure! </Alert>;
         }
 
         return (
@@ -586,7 +625,7 @@ export default class StructureSearch extends React.Component {
                     </Row>
                 </Container>
                 <br/>
-                {ajaxIsLoaded && <Row><h2 ref={this.searchResultHeadline}>Search Results</h2></Row>}
+
                 {resultRow}
             </Container>
         );

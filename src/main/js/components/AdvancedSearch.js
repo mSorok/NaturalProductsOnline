@@ -52,6 +52,8 @@ export default class AdvancedSearch extends React.Component {
             searchSubmitted: false,
             searchHitsLimit: 100,
 
+            searchSubmittedAndSent:false,
+
             advancedSearchModel:{
                 listOfSearchItems : []
             },
@@ -223,6 +225,8 @@ export default class AdvancedSearch extends React.Component {
 
         this.spinnerRef = React.createRef();
 
+        this.allChangeRef = React.createRef();
+
 
     }
 
@@ -232,12 +236,8 @@ export default class AdvancedSearch extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (this.state.ajaxIsLoaded) {
-            this.scrollToRef(this.searchResultHeadline);
-        }
-
-        if(this.state.searchSubmitted && !this.state.ajaxIsLoaded){
-            this.scrollToRef(this.spinnerRef);
+        if(this.state.searchSubmitted){
+            this.scrollToRef(this.allChangeRef);
         }
     }
 
@@ -257,197 +257,203 @@ export default class AdvancedSearch extends React.Component {
 
     handleAdvancedSearchSubmit(){
 
+        if(!this.state.searchSubmittedAndSent) {
 
 
 
-        //check if at least one of the fields is set
-        if(this.state.molecularFormulaSubmitted || this.state.molecularWeightSubmitted || this.state.heavyAtomsSubmitted || this.state.numberOfCarbonsSubmitted
-            || this.state.numberOfOxygensSubmitted || this.state.numberOfNitrogensSubmitted || this.state.numberOfRingsSubmitted || this.state.containSugarsSubmitted
-            || this.state.bondCountSubmitted || this.state.nplScoreSubmitted || this.state.apolSubmitted || this.state.alogpSubmitted || this.state.fsp3Submitted
-            || this.state.lipinskiSubmitted || this.state.spiroSubmitted || this.state.dbSelected){
 
-            this.setState({
-                searchSubmitted: true
-            });
+            //check if at least one of the fields is set
+            if (this.state.molecularFormulaSubmitted || this.state.molecularWeightSubmitted || this.state.heavyAtomsSubmitted || this.state.numberOfCarbonsSubmitted
+                || this.state.numberOfOxygensSubmitted || this.state.numberOfNitrogensSubmitted || this.state.numberOfRingsSubmitted || this.state.containSugarsSubmitted
+                || this.state.bondCountSubmitted || this.state.nplScoreSubmitted || this.state.apolSubmitted || this.state.alogpSubmitted || this.state.fsp3Submitted
+                || this.state.lipinskiSubmitted || this.state.spiroSubmitted || this.state.dbSelected) {
 
-
-            let uriString = "/api/search/advanced?max-hits=" + this.state.searchHitsLimit;
-
-            if(this.state.molecularFormulaSubmitted){
-                //uriString+="molecularFormula="+encodeURIComponent(this.state.molecularFormula)+"&"+"mfOA="+encodeURIComponent(this.state.molecularFormulaAO)+"&";
-
-                let advancedSearchItem = {
-                    itemType: "molecular_formula",
-                    itemValue : this.state.molecularFormula,
-                    itemLogic: this.state.molecularFormulaLogic
-                };
-
-                this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
-
-            }
-
-            if(this.state.molecularWeightSubmitted){
-                let advancedSearchItem = {
-                    itemType: "molecular_weight",
-                    itemValueMin: this.state.molecularWeightMin,
-                    itemValueMax: this.state.molecularWeightMax,
-                    itemLogic: this.state.molecularWeightLogic
-                };
-                this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
-            }
-
-            if(this.state.heavyAtomsSubmitted){
-                let advancedSearchItem = {
-                    itemType: "heavy_atom_number",
-                    itemValueMin : this.state.heavyAtomsMin,
-                    itemValueMax: this.state.heavyAtomsMax,
-                    itemLogic: this.state.heavyAtomsLogic
-                };
-                this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
-            }
-
-            if(this.state.numberOfCarbonsSubmitted){
-                let advancedSearchItem = {
-                    itemType: "number_of_carbons",
-                    itemValueMin : this.state.numberOfCarbonsMin,
-                    itemValueMax: this.state.numberOfCarbonsMax,
-                    itemLogic: this.state.numberOfCarbonsLogic
-                };
-                this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
-            }
-
-            if(this.state.numberOfOxygensSubmitted){
-                let advancedSearchItem = {
-                    itemType: "number_of_oxygens",
-                    itemValueMin : this.state.numberOfOxygensMin,
-                    itemValueMax: this.state.numberOfOxygensMax,
-                    itemLogic: this.state.numberOfOxygensLogic
-                };
-                this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
-            }
-
-            if(this.state.numberOfNitrogensSubmitted){
-
-                let advancedSearchItem = {
-                    itemType: "number_of_nitrogens",
-                    itemValueMin : this.state.numberOfNitrogensMin,
-                    itemValueMax: this.state.numberOfNitrogensMax,
-                    itemLogic: this.state.numberOfNitrogensLogic
-                };
-                this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
-            }
-
-            if(this.state.bondCountSubmitted){
-                let advancedSearchItem = {
-                    itemType: "bond_count",
-                    itemValueMin : this.state.bondCountMin,
-                    itemValueMax: this.state.bondCountMax,
-                    itemLogic: this.state.bondCountLogic
-                };
-                this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
-
-            }
+                this.setState({
+                    searchSubmitted: true
+                });
 
 
-            if(this.state.numberOfRingsSubmitted){
-                let advancedSearchItem = {
-                    itemType: "number_of_rings",
-                    itemValueMin : this.state.numberOfRingsMin,
-                    itemValueMax: this.state.numberOfRingsMax,
-                    itemLogic: this.state.numberOfRingsLogic
-                };
-                this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
+                let uriString = "/api/search/advanced?max-hits=" + this.state.searchHitsLimit;
 
-            }
+                if (this.state.molecularFormulaSubmitted) {
+                    //uriString+="molecularFormula="+encodeURIComponent(this.state.molecularFormula)+"&"+"mfOA="+encodeURIComponent(this.state.molecularFormulaAO)+"&";
 
-            if(this.state.containSugarsSubmitted){
-                let advancedSearchItem = {
-                    itemType: "contains_sugars",
-                    itemValue : this.state.containSugars,
-                    itemLogic: this.state.containSugarsLogic
-                };
-                this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
-            }
+                    let advancedSearchItem = {
+                        itemType: "molecular_formula",
+                        itemValue: this.state.molecularFormula,
+                        itemLogic: this.state.molecularFormulaLogic
+                    };
 
-            if(this.state.nplScoreSubmitted){
-                let advancedSearchItem = {
-                    itemType: "npl_score",
-                    itemValueMin : this.state.nplScoreMin,
-                    itemValueMax: this.state.nplScoreMax,
-                    itemLogic: this.state.nplScoreLogic
-                };
-                this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
-            }
+                    this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
 
-            if(this.state.apolSubmitted){
-                let advancedSearchItem = {
-                    itemType: "apol",
-                    itemValueMin : this.state.apolMin,
-                    itemValueMax: this.state.apolMax,
-                    itemLogic: this.state.apolLogic
-                };
-                this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
-            }
+                }
 
+                if (this.state.molecularWeightSubmitted) {
+                    let advancedSearchItem = {
+                        itemType: "molecular_weight",
+                        itemValueMin: this.state.molecularWeightMin,
+                        itemValueMax: this.state.molecularWeightMax,
+                        itemLogic: this.state.molecularWeightLogic
+                    };
+                    this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
+                }
 
-            if(this.state.alogpSubmitted){
-                let advancedSearchItem = {
-                    itemType: "alogp",
-                    itemValueMin : this.state.alogpMin,
-                    itemValueMax: this.state.alogpMax,
-                    itemLogic: this.state.alogpLogic
-                };
-                this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
-            }
+                if (this.state.heavyAtomsSubmitted) {
+                    let advancedSearchItem = {
+                        itemType: "heavy_atom_number",
+                        itemValueMin: this.state.heavyAtomsMin,
+                        itemValueMax: this.state.heavyAtomsMax,
+                        itemLogic: this.state.heavyAtomsLogic
+                    };
+                    this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
+                }
 
-            if(this.state.fsp3Submitted){
-                let advancedSearchItem = {
-                    itemType: "fsp3",
-                    itemValueMin : this.state.fsp3Min ,
-                    itemValueMax: this.state.fsp3Max,
-                    itemLogic: this.state.fsp3Logic
-                };
-                this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
-            }
+                if (this.state.numberOfCarbonsSubmitted) {
+                    let advancedSearchItem = {
+                        itemType: "number_of_carbons",
+                        itemValueMin: this.state.numberOfCarbonsMin,
+                        itemValueMax: this.state.numberOfCarbonsMax,
+                        itemLogic: this.state.numberOfCarbonsLogic
+                    };
+                    this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
+                }
 
-            if(this.state.lipinskiSubmitted){
-                let advancedSearchItem = {
-                    itemType: "lipinskiRuleOf5Failures",
-                    itemValueMin : this.state.lipinskiMin ,
-                    itemValueMax: this.state.lipinskiMax,
-                    itemLogic: this.state.lipinskiLogic
-                };
-                this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
-            }
+                if (this.state.numberOfOxygensSubmitted) {
+                    let advancedSearchItem = {
+                        itemType: "number_of_oxygens",
+                        itemValueMin: this.state.numberOfOxygensMin,
+                        itemValueMax: this.state.numberOfOxygensMax,
+                        itemLogic: this.state.numberOfOxygensLogic
+                    };
+                    this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
+                }
 
-            if(this.state.spiroSubmitted){
-                let advancedSearchItem = {
-                    itemType: "numberSpiroAtoms",
-                    itemValueMin : this.state.spiroMin ,
-                    itemValueMax: this.state.spiroMax,
-                    itemLogic: this.state.spiroLogic
-                };
-                this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
-            }
+                if (this.state.numberOfNitrogensSubmitted) {
+
+                    let advancedSearchItem = {
+                        itemType: "number_of_nitrogens",
+                        itemValueMin: this.state.numberOfNitrogensMin,
+                        itemValueMax: this.state.numberOfNitrogensMax,
+                        itemLogic: this.state.numberOfNitrogensLogic
+                    };
+                    this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
+                }
+
+                if (this.state.bondCountSubmitted) {
+                    let advancedSearchItem = {
+                        itemType: "bond_count",
+                        itemValueMin: this.state.bondCountMin,
+                        itemValueMax: this.state.bondCountMax,
+                        itemLogic: this.state.bondCountLogic
+                    };
+                    this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
+
+                }
 
 
-            if(this.state.dbSelected){
+                if (this.state.numberOfRingsSubmitted) {
+                    let advancedSearchItem = {
+                        itemType: "number_of_rings",
+                        itemValueMin: this.state.numberOfRingsMin,
+                        itemValueMax: this.state.numberOfRingsMax,
+                        itemLogic: this.state.numberOfRingsLogic
+                    };
+                    this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
 
-                let advancedSearchItem = {
-                itemType: "databases",
-                    itemValue : this.state.dbChoice ,
-                    itemLogic: this.state.dbChoiceLogic,
-                    dbLogic: this.state.orAndDbChoice,
-                };
-                this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
-            }
+                }
+
+                if (this.state.containSugarsSubmitted) {
+                    let advancedSearchItem = {
+                        itemType: "contains_sugars",
+                        itemValue: this.state.containSugars,
+                        itemLogic: this.state.containSugarsLogic
+                    };
+                    this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
+                }
+
+                if (this.state.nplScoreSubmitted) {
+                    let advancedSearchItem = {
+                        itemType: "npl_score",
+                        itemValueMin: this.state.nplScoreMin,
+                        itemValueMax: this.state.nplScoreMax,
+                        itemLogic: this.state.nplScoreLogic
+                    };
+                    this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
+                }
+
+                if (this.state.apolSubmitted) {
+                    let advancedSearchItem = {
+                        itemType: "apol",
+                        itemValueMin: this.state.apolMin,
+                        itemValueMax: this.state.apolMax,
+                        itemLogic: this.state.apolLogic
+                    };
+                    this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
+                }
 
 
+                if (this.state.alogpSubmitted) {
+                    let advancedSearchItem = {
+                        itemType: "alogp",
+                        itemValueMin: this.state.alogpMin,
+                        itemValueMax: this.state.alogpMax,
+                        itemLogic: this.state.alogpLogic
+                    };
+                    this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
+                }
+
+                if (this.state.fsp3Submitted) {
+                    let advancedSearchItem = {
+                        itemType: "fsp3",
+                        itemValueMin: this.state.fsp3Min,
+                        itemValueMax: this.state.fsp3Max,
+                        itemLogic: this.state.fsp3Logic
+                    };
+                    this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
+                }
+
+                if (this.state.lipinskiSubmitted) {
+                    let advancedSearchItem = {
+                        itemType: "lipinskiRuleOf5Failures",
+                        itemValueMin: this.state.lipinskiMin,
+                        itemValueMax: this.state.lipinskiMax,
+                        itemLogic: this.state.lipinskiLogic
+                    };
+                    this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
+                }
+
+                if (this.state.spiroSubmitted) {
+                    let advancedSearchItem = {
+                        itemType: "numberSpiroAtoms",
+                        itemValueMin: this.state.spiroMin,
+                        itemValueMax: this.state.spiroMax,
+                        itemLogic: this.state.spiroLogic
+                    };
+                    this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
+                }
+
+
+                if (this.state.dbSelected) {
+
+                    let advancedSearchItem = {
+                        itemType: "databases",
+                        itemValue: this.state.dbChoice,
+                        itemLogic: this.state.dbChoiceLogic,
+                        dbLogic: this.state.orAndDbChoice,
+                    };
+                    this.state.advancedSearchModel.listOfSearchItems.push(advancedSearchItem);
+                }
 
 
                 this.doSearch(uriString);
 
 
+            } else {
+                alert("Please, provide at least one search criterion!");
+            }
+        }else{
+            //console.log("wait till the previous query returns or open a new tab!");
+            alert("Please, wait the completion of the running query or run a new query in a new window!");
         }
     }
 
@@ -986,6 +992,7 @@ export default class AdvancedSearch extends React.Component {
 
 
     doSearch(searchString) {
+        this.setState({searchSubmittedAndSent:true});
 
         let myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
@@ -1004,14 +1011,16 @@ export default class AdvancedSearch extends React.Component {
             .then(result => {
                 this.setState({
                     ajaxIsLoaded: true,
-                    ajaxResult: result
+                    ajaxResult: result,
+                    searchSubmittedAndSent:false
                 });
-                console.log(this.state.ajaxResult);
+                //console.log(this.state.ajaxResult);
             })
             .catch(error => {
                 this.setState({
                     ajaxIsLoaded: true,
-                    ajaxError: error
+                    ajaxError: error,
+                    searchSubmittedAndSent:false
                 });
             });
     }
@@ -1032,9 +1041,12 @@ export default class AdvancedSearch extends React.Component {
         if (searchSubmitted) {
             if (ajaxError) {
                 resultRow = <Error/>;
+                this.state.ajaxIsLoaded = false; //TODO verify here!
+                this.state.ajaxError = null;
+
             } else if (!ajaxIsLoaded) {
                 resultRow =
-                    <Row className="justify-content-center" ref={this.spinnerRef}>
+                    <Row className="justify-content-center" ref={this.allChangeRef}>
                         <Spinner/>
                         {/*Eventually some message here*/}
                     </Row>
@@ -1043,6 +1055,7 @@ export default class AdvancedSearch extends React.Component {
                 if (ajaxResult.naturalProducts.length > 0) {
                     resultRow =
                         <>
+                            <Row ref={this.allChangeRef}><h2>Search Results</h2></Row>
                             <Row>
                                 <Col>
                                     <p>Your search returned {ajaxResult.count} results.</p>
@@ -1061,6 +1074,9 @@ export default class AdvancedSearch extends React.Component {
                 } else {
                     resultRow = <Row><p>There are no results that match your request.</p></Row>;
                 }
+                this.state.ajaxIsLoaded = false; //TODO verify here!
+
+                //console.log(this.state);
             }
 
         }
@@ -1567,7 +1583,7 @@ export default class AdvancedSearch extends React.Component {
                 </Container>
 
                 <br/>
-                {ajaxIsLoaded && <Row><h2 ref={this.searchResultHeadline}>Search Results</h2></Row>}
+
                 {resultRow}
 
             </Container>
