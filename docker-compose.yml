@@ -15,7 +15,7 @@ services:
 
 
   coconut-mongo-db:
-    image: mongo:latest
+    image: mongo:4.0.6
     command: mongod --port 27018
     ports:
       - '27018:27018'

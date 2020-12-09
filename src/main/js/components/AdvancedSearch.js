@@ -17,6 +17,7 @@ const { Formik } = require("formik");
 
 
 import SourcesList from "./SourcesList";
+import NetworkError from "./NetworkError";
 
 
 const React = require("react");
@@ -47,6 +48,7 @@ export default class AdvancedSearch extends React.Component {
             ajaxError: null,
             ajaxIsLoaded: false,
             ajaxResult: [],
+            ajaxErrorStatus:"",
 
 
             searchSubmitted: false,
@@ -239,6 +241,7 @@ export default class AdvancedSearch extends React.Component {
         if(this.state.searchSubmitted){
             this.scrollToRef(this.allChangeRef);
         }
+
     }
 
     handleSDFDownload(e, npList) {
@@ -643,7 +646,7 @@ export default class AdvancedSearch extends React.Component {
     }
 
     handleMolecularWeightMax(e){
-        this.state.molecularWeightMin = e.target.value;
+        this.state.molecularWeightMax = e.target.value;
 
         if( (this.state.molecularWeightMin != "" && this.state.molecularWeightMin != null) || (this.state.molecularWeightMax != "" && this.state.molecularWeightMax != null)  ) {
             this.state.molecularWeightSubmitted = true;
@@ -1012,16 +1015,23 @@ export default class AdvancedSearch extends React.Component {
                 this.setState({
                     ajaxIsLoaded: true,
                     ajaxResult: result,
-                    searchSubmittedAndSent:false
+                    searchSubmittedAndSent:false,
+                    ajaxErrorStatus:""
                 });
                 //console.log(this.state.ajaxResult);
             })
             .catch(error => {
-                this.setState({
-                    ajaxIsLoaded: true,
-                    ajaxError: error,
-                    searchSubmittedAndSent:false
-                });
+                if (!error.response) {
+                    // network error
+                    this.state.ajaxErrorStatus = 'network';
+                } else {
+                    this.setState({
+                        ajaxIsLoaded: true,
+                        ajaxError: error,
+                        searchSubmittedAndSent:false,
+                        ajaxErrorStatus:""
+                    });
+                }
             });
     }
 
@@ -1037,12 +1047,31 @@ export default class AdvancedSearch extends React.Component {
         const {ajaxError, ajaxIsLoaded, ajaxResult, searchSubmitted } = this.state;
         let resultRow;
 
+        console.log("before");
+        console.log(this.state);
+
 
         if (searchSubmitted) {
             if (ajaxError) {
-                resultRow = <Error/>;
+                if (this.state.ajaxErrorStatus === "") {
+
+                    resultRow =
+                        <>
+                            <Row ref={this.allChangeRef}>
+                                <Error/>
+                            </Row>
+                        </>;
+                }else{
+                    resultRow =
+                        <>
+                            <Row ref={this.allChangeRef}>
+                                <NetworkError/>
+                            </Row>
+                        </>;
+                }
                 this.state.ajaxIsLoaded = false; //TODO verify here!
                 this.state.ajaxError = null;
+                this.state.searchSubmitted=false;
 
             } else if (!ajaxIsLoaded) {
                 resultRow =
@@ -1075,6 +1104,9 @@ export default class AdvancedSearch extends React.Component {
                     resultRow = <Row><p>There are no results that match your request.</p></Row>;
                 }
                 this.state.ajaxIsLoaded = false; //TODO verify here!
+                this.state.searchSubmitted = false;
+
+                console.log(this.state);
 
                 //console.log(this.state);
             }

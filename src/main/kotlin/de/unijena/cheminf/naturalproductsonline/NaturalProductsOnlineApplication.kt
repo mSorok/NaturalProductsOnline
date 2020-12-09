@@ -19,4 +19,6 @@ fun main(args: Array<String>) {
 
     runApplication<NaturalProductsOnlineApplication>(*args)
 
+
+
 }

@@ -16,6 +16,8 @@ public class UniqueNaturalProduct {
     @Id
     public String id;
 
+
+
     //@Indexed(name = "coconut_id")
     public String coconut_id;
 
@@ -153,6 +155,9 @@ public class UniqueNaturalProduct {
     public String chemicalClass;
     public String chemicalSubClass;
     public String directParentClassification;
+
+
+    public Double tanimoto; //only for similarity measure when doing similarity search - not a storage in the DB!!!
 
 
 

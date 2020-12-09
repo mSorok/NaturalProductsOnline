@@ -6,7 +6,7 @@ import Col from "react-bootstrap/Col";
 const React = require("react");
 
 
-export default class Error extends React.Component {
+export default class NetworkError extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -20,8 +20,7 @@ export default class Error extends React.Component {
                     <FontAwesomeIcon icon="bug" className="standAloneIcon" size="3x"/>
                 </Row>
                 <Row className="justify-content-center">
-                    <p>An error occurred...</p>
-                    <p>COCONUT is still in beta-mode and we are collected potential issues. Please, help us making COCONUT better by reporting the error through <a target="_blank" rel="noopener noreferrer"  href="https://github.com/mSorok/NaturalProductsOnline/issues">the issues tracker at GitHub</a> or directly by mail to maria.sorokina[@]uni-jena.de.</p>
+                    <p>Network error occurred, query timed out (please retry later or submit a bigger substructure)</p>
                 </Row>
             </Container>
         );

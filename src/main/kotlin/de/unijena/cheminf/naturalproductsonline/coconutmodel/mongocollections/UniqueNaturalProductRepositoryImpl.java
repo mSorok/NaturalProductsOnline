@@ -93,8 +93,11 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
         for(int i=0; i< criterias.getListOfSearchItems().length; i++) {
 
 
+
+
             String itemType = criterias.getListOfSearchItems()[i].getAsString("itemType");
             String itemLogic = criterias.getListOfSearchItems()[i].getAsString("itemLogic");
+
 
 
             if (itemType.equals("molecular_formula")) {

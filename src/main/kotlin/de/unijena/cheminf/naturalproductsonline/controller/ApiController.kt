@@ -129,7 +129,7 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
 
         try {
             return this.doSubstructureSearch(URLDecoder.decode(smiles.trim(), "UTF-8"), type, maxHits.toIntOrNull())
-        }catch (ex: Exception){
+        }catch (ex: Exception ){
 
             when(ex) {
                 is MongoCommandException, is OutOfMemoryError -> {
@@ -409,17 +409,19 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
                     //it was probably a name
 
 
-                    naturalProducts = this.uniqueNaturalProductRepository.findByName(query)
+                    //naturalProducts = this.uniqueNaturalProductRepository.findByName(query)
 
-                    if (naturalProducts == null || naturalProducts.isEmpty()) {
+                    //if (naturalProducts == null || naturalProducts.isEmpty()) {
                         var altQuery = query
                         if(excludeWords.containsMatchIn(query)){
                             altQuery=altQuery.replace("alpha-", "")
                             altQuery=altQuery.replace("beta-", "")
                         }
+                        altQuery = "\""+altQuery+"\""
+                        println(altQuery)
 
                         naturalProducts = this.uniqueNaturalProductRepository.fuzzyNameSearch(altQuery)
-                    }
+                    //}
                     determinedInputType = "name"
                 }
             }
@@ -444,21 +446,45 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
         else{
             //try to march by name
             println("apparently a name string")
-            naturalProducts = this.uniqueNaturalProductRepository.findByName(query)
 
-            if(naturalProducts == null || naturalProducts.isEmpty()){
+            //try {
+            //    naturalProducts = this.uniqueNaturalProductRepository.findByName(query)
+
+            //}catch (ex: Exception){
+
+            //    when(ex) {
+            //        is MongoCommandException, is OutOfMemoryError -> {
+            //            val other: List<UniqueNaturalProduct> = emptyList()
+            //            return mapOf(
+             //                   "originalQuery" to query,
+             //                   "count" to 0,
+             //                   "naturalProducts" to  other
+             //           )
+             //       }
+             //       else -> throw ex
+             //   }
+            //}
+
+
+            //if(naturalProducts == null || naturalProducts.isEmpty()){
                 var altQuery = query
                 if(excludeWords.containsMatchIn(query)){
                     altQuery=altQuery.replace("alpha-", "")
                     altQuery=altQuery.replace("beta-", "")
                 }
+                altQuery = "\""+altQuery+"\""
+                println(altQuery)
+
 
                 naturalProducts = this.uniqueNaturalProductRepository.fuzzyNameSearch(altQuery)
-            }
+            //}
             determinedInputType = "name"
         }
         println(determinedInputType)
         println("returning")
+
+        val runtime = Runtime.getRuntime()
+        println("Free memory: " + runtime.freeMemory() + " bytes.")
 
 
 
@@ -500,7 +526,7 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
 
             //TODO get the exact bitset also? for faster substructure search of the first element
 
-            println("found molecules with bits set")
+            println("found "+matchedList.size+" molecules with bits set")
             val pattern: Pattern
             // return a list of UNP:
             if(type=="default") {
@@ -606,8 +632,6 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
             maxResults = maxHitsSubmitted
         }
 
-        val hits = mutableListOf<UniqueNaturalProduct>()
-        var counter: Int = 0
 
         try {
             val queryAC: IAtomContainer = this.smilesParser.parseSmiles(smiles)
@@ -645,6 +669,7 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
             val matchedList = this.uniqueNaturalProductRepository.similaritySearch(requestedBits, queryPF, qmin, qmax, qLen, threshold, maxResults)
 
             //TODO redo a tanomoto here to be sure that the match is correct
+            println(matchedList[0].tanimoto)
 
             //hits.sortBy { it.heavy_atom_number }
             //val hitsToReturn = matchedList.subList(0, minOf(matchedList.size , maxResults))

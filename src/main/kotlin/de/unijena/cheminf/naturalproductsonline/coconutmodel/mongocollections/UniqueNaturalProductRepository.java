@@ -30,6 +30,7 @@ public interface UniqueNaturalProductRepository  extends MongoRepository<UniqueN
     @Query("{molecular_formula : ?0}")
     public List<UniqueNaturalProduct> findByMolecular_formula(String molecular_formula);
 
+
     public List<UniqueNaturalProduct> findByName(String name);
 
 
