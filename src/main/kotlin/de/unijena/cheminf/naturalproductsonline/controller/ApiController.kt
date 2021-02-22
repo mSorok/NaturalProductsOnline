@@ -186,7 +186,7 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
     fun similaritySearch(@RequestParam("smiles") smiles: String , @RequestParam("max-hits") maxHits:String, @RequestParam("simThreshold") simThreshold:String): Map<String, Any> {
 
         var th: Int? = simThreshold.toIntOrNull()
-        th = th
+        //th = th
 
         try {
             return this.doSimilaritySearch(URLDecoder.decode(smiles.trim(), "UTF-8"), maxHits.toIntOrNull(), th)
@@ -206,6 +206,9 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
 
         }
     }
+
+
+
 
 
     /**
@@ -237,9 +240,100 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
 
 
     /**
+     * Search by mass
+     */
+    @RequestMapping("/search/molweight")
+    fun massSearch(@RequestParam("minMass") minMass:String, @RequestParam("maxMass") maxMass:String, @RequestParam("maxHits", required=false) maxHits:String ): Map<String, Any>{
+        var minM:Double? = minMass.toDoubleOrNull()
+        var maxM:Double? = maxMass.toDoubleOrNull()
+        var maxNP:Int? = maxHits.toIntOrNull()
+
+        try {
+            return this.doMassSearch(minM, maxM, maxNP)
+        }catch (ex: Exception){
+
+            when(ex) {
+                is MongoCommandException, is OutOfMemoryError -> {
+                    val other: List<UniqueNaturalProduct> = emptyList()
+                    return mapOf(
+                            "count" to 0,
+                            "naturalProducts" to  other
+                    )
+                }
+                else -> throw ex
+            }
+
+        }
+
+    }
+
+
+    /**
     *  ************************************************************************************************
      *  Search functions
      */
+
+    fun doMassSearch(minMass:Double?, maxMass:Double?, maxHits:Int?): Map<String, Any>{
+        println("do mass search")
+
+        var maxResults = 100
+
+        if(maxHits != null ){
+            maxResults = maxHits
+        }
+
+
+
+        if(minMass != null && maxMass != null){
+            println("both min and max")
+            var results = this.uniqueNaturalProductRepository.minMaxMolecularWeightSearch(minMass, maxMass, maxResults)
+            println(results.size)
+
+            println("returning")
+
+            return mapOf(
+                    "count" to results.size,
+                    "naturalProducts" to results
+            )
+        }else if(minMass != null && maxMass == null){
+            println("only min")
+            var results = this.uniqueNaturalProductRepository.minMolecularWeightSearch(minMass, maxResults)
+            println(results.size)
+
+            println("returning")
+
+            return mapOf(
+                    "count" to results.size,
+                    "naturalProducts" to results
+            )
+        }else if(minMass == null && maxMass != null){
+            println("only max")
+            var results = this.uniqueNaturalProductRepository.maxMolecularWeightSearch(maxMass, maxResults)
+            println(results.size)
+
+            println("returning")
+
+            return mapOf(
+                    "count" to results.size,
+                    "naturalProducts" to results
+            )
+        }else{
+            println("0")
+
+            println("returning nothing")
+
+            var results = arrayListOf<UniqueNaturalProduct>()
+
+            return mapOf(
+                    "count" to 0,
+                    "naturalProducts" to results
+            )
+        }
+
+
+
+
+    }
 
 
     fun doChemclassSearch(query: String): Map<String, Any>{
@@ -483,8 +577,7 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
         println(determinedInputType)
         println("returning")
 
-        val runtime = Runtime.getRuntime()
-        println("Free memory: " + runtime.freeMemory() + " bytes.")
+
 
 
 

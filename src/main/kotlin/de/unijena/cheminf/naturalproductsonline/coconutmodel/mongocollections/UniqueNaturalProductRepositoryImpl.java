@@ -31,6 +31,9 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
 
 
 
+
+
+
     @Override
     public List<UniqueNaturalProduct> similaritySearch(ArrayList<Integer> reqbits, ArrayList<Integer> qfp,  Integer qmin, Integer qmax, Integer qn, Double threshold, Integer maxResults ){
 
@@ -71,6 +74,128 @@ public class UniqueNaturalProductRepositoryImpl implements UniqueNaturalProductR
         return returnedNP;
     }
 
+    @Override
+    public List<UniqueNaturalProduct> minMaxMolecularWeightSearch(Double minMolecularWeight, Double maxMolecularWeight, Integer maxResults) {
+
+        List<UniqueNaturalProduct> result ;
+
+        Query advancedQuery = new Query();
+        Criteria bigCriteria = new Criteria();
+
+        ArrayList<Criteria> andCriterias = new ArrayList<>();
+
+
+
+        Criteria c = null;
+
+        if(minMolecularWeight==0 || minMolecularWeight == null || minMolecularWeight.isNaN()){
+            c = where("molecular_weight").lte(maxMolecularWeight);
+
+        }else if(maxMolecularWeight==0 || maxMolecularWeight == null || maxMolecularWeight.isNaN()){
+            c = where("molecular_weight").gte(minMolecularWeight);
+        }else {
+
+            c = where("molecular_weight").lte(maxMolecularWeight).gte(minMolecularWeight);
+
+            advancedQuery.with(Sort.by(Sort.Direction.DESC, "molecular_weight"));
+        }
+
+        andCriterias.add(c);
+
+
+        if (!andCriterias.isEmpty()) {
+            bigCriteria.andOperator(andCriterias.toArray(new Criteria[andCriterias.size()]));
+        }
+
+        advancedQuery.addCriteria(bigCriteria);
+
+
+
+        advancedQuery = advancedQuery.limit(maxResults);
+
+        System.out.println(advancedQuery);
+        result = mongoTemplate.find(advancedQuery , UniqueNaturalProduct.class);
+
+        return result;
+
+    }
+
+    @Override
+    public List<UniqueNaturalProduct> minMolecularWeightSearch(Double minMolecularWeight, Integer maxResults) {
+
+        List<UniqueNaturalProduct> result ;
+
+        Query advancedQuery = new Query();
+        Criteria bigCriteria = new Criteria();
+
+        ArrayList<Criteria> andCriterias = new ArrayList<>();
+
+
+
+        Criteria c = null;
+
+        if(minMolecularWeight != null || !minMolecularWeight.isNaN()){
+            c = where("molecular_weight").gte(minMolecularWeight);
+
+        }
+
+        andCriterias.add(c);
+
+
+        if (!andCriterias.isEmpty()) {
+            bigCriteria.andOperator(andCriterias.toArray(new Criteria[andCriterias.size()]));
+        }
+
+        advancedQuery.addCriteria(bigCriteria);
+
+
+
+        advancedQuery = advancedQuery.limit(maxResults);
+
+        System.out.println(advancedQuery);
+        result = mongoTemplate.find(advancedQuery , UniqueNaturalProduct.class);
+
+        return result;
+
+    }
+
+    @Override
+    public List<UniqueNaturalProduct> maxMolecularWeightSearch(Double maxMolecularWeight, Integer maxResults) {
+
+        List<UniqueNaturalProduct> result ;
+
+        Query advancedQuery = new Query();
+        Criteria bigCriteria = new Criteria();
+
+        ArrayList<Criteria> andCriterias = new ArrayList<>();
+
+
+
+        Criteria c = null;
+
+        if(maxMolecularWeight!=0 || maxMolecularWeight != null || !maxMolecularWeight.isNaN()){
+            c = where("molecular_weight").lte(maxMolecularWeight);
+        }
+
+        andCriterias.add(c);
+
+
+        if (!andCriterias.isEmpty()) {
+            bigCriteria.andOperator(andCriterias.toArray(new Criteria[andCriterias.size()]));
+        }
+
+        advancedQuery.addCriteria(bigCriteria);
+
+
+
+        advancedQuery = advancedQuery.limit(maxResults);
+
+        System.out.println(advancedQuery);
+        result = mongoTemplate.find(advancedQuery , UniqueNaturalProduct.class);
+
+        return result;
+
+    }
 
 
     @Override

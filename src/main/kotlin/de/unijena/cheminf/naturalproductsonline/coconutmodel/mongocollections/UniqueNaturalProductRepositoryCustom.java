@@ -13,4 +13,10 @@ public interface UniqueNaturalProductRepositoryCustom {
     List<UniqueNaturalProduct> advancedSearchWithCriteria (AdvancedSearchModel criterias, Integer maxResults);
 
     List<UniqueNaturalProduct> similaritySearch(ArrayList<Integer> reqbits, ArrayList<Integer> qfp, Integer qmin, Integer qmax, Integer qn, Double threshold, Integer maxResults );
+
+    List<UniqueNaturalProduct> minMaxMolecularWeightSearch(Double minMolecularWeight, Double maxMolecularWeight, Integer maxResults);
+
+    List<UniqueNaturalProduct> minMolecularWeightSearch(Double minMolecularWeight, Integer maxResults);
+
+    List<UniqueNaturalProduct> maxMolecularWeightSearch(Double maxMolecularWeight, Integer maxResults);
 }

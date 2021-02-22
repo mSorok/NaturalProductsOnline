@@ -116,9 +116,8 @@ export default class StructureSearch extends React.Component {
         if(this.state.searchSubmitted){
             this.scrollToRef(this.allChangeRef);
         }
-
-
     }
+
 
     handleSDFDownload(e, npList) {
         e.preventDefault();
