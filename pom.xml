@@ -20,7 +20,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <cdk.version>2.3</cdk.version>
-        <guava.version>28.0-jre</guava.version>
+        <guava.version>29.0-jre</guava.version>
         <docker.image.prefix>nponline</docker.image.prefix>
         <frontend-maven-plugin.version>1.8.0</frontend-maven-plugin.version>
         <frontend-src-dir>${project.basedir}/src/main/js</frontend-src-dir>
