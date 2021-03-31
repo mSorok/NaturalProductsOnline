@@ -13,6 +13,7 @@ import Alert from "react-bootstrap/Alert";
 import Utils from "../Utils";
 
 import RangeSlider from 'react-bootstrap-range-slider';
+import NetworkError from "./NetworkError";
 
 
 const React = require("react");
@@ -40,6 +41,7 @@ export default class StructureSearch extends React.Component {
             ajaxError: null,
             ajaxIsLoaded: false,
             ajaxResult: [],
+            ajaxErrorStatus: "",
 
             resultIsRendered:false,
 
@@ -116,6 +118,7 @@ export default class StructureSearch extends React.Component {
         }
     }
 
+
     handleSDFDownload(e, npList) {
         e.preventDefault();
 
@@ -128,6 +131,8 @@ export default class StructureSearch extends React.Component {
         document.body.appendChild(download);
         download.click();
         document.body.removeChild(download);
+
+
     }
 
     handleExactMatchTypeSelect(e){
@@ -176,11 +181,14 @@ export default class StructureSearch extends React.Component {
         this.editor.setSmiles("");
     }
 
+
+
+
     handleStructureSubmit() {
 
+        console.log("handling submit");
+
         //console.log(this.state);
-
-
         if(!this.state.searchSubmittedAndSent) {
 
             let structureAsSmiles = "";
@@ -191,57 +199,63 @@ export default class StructureSearch extends React.Component {
             }
 
 
-            //TODO test if SMILES (or other Inchi and co)
+            // testing if SMILES is correct (prevents entering random stuff for searching)
+            if(! /^([^J][a-z0-9@+\-\[\]\(\)\\\/%=#$]{6,})$/ig.test(structureAsSmiles)){
+                alert("The molecule you pasted is not in a recognized structure format!")
+            }else {
 
-            if (structureAsSmiles != null && structureAsSmiles != "" && structureAsSmiles != " ") {
 
 
-                this.setState({
-                    searchSubmitted: true,
-                    resultIsRendered:false
-                });
+                if (structureAsSmiles != null && structureAsSmiles != "" && structureAsSmiles != " ") {
 
-                this.state.smilesCorrect = true;
-                this.state.searchSubmittedButIncorrect = false;
 
-                if (this.state.searchType == "exact") {
-                    if (this.state.exactMatchType == "inchi") {
-                        this.doSearch("/api/search/exact-structure?type=inchi&smiles=", encodeURIComponent(structureAsSmiles));
+                    this.setState({
+                        searchSubmitted: true,
+                        resultIsRendered:false
+                    });
+
+                    this.state.smilesCorrect = true;
+                    this.state.searchSubmittedButIncorrect = false;
+
+                    if (this.state.searchType == "exact") {
+                        if (this.state.exactMatchType == "inchi") {
+                            this.doSearch("/api/search/exact-structure?type=inchi&smiles=", encodeURIComponent(structureAsSmiles));
+                        } else {
+                            this.doSearch("/api/search/exact-structure?type=smi&smiles=", encodeURIComponent(structureAsSmiles));
+                        }
+
+                    } else if (this.state.searchType == "substructure") {
+                        if (this.state.substructureSearchType == "default") {
+                            this.doSearch("/api/search/substructure?type=default&max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
+                        } else if (this.state.substructureSearchType == "df") {
+                            this.doSearch("/api/search/substructure?type=uit&max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
+                        } else {
+                            this.doSearch("/api/search/substructure?type=vf&max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
+                        }
+
+
+                    } else if (this.state.searchType == "similarity") {
+
+                        //console.log("detected similarity");
+                        //console.log(this.state.similarityThreshold);
+
+                        this.doSearch("/api/search/similarity?simThreshold=" + this.state.similarityThreshold + "&max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
+
+
                     } else {
-                        this.doSearch("/api/search/exact-structure?type=smi&smiles=", encodeURIComponent(structureAsSmiles));
+                        this.doSearch("/api/search/exact-structure?max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
                     }
 
-                } else if (this.state.searchType == "substructure") {
-                    if (this.state.substructureSearchType == "default") {
-                        this.doSearch("/api/search/substructure?type=default&max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
-                    } else if (this.state.substructureSearchType == "df") {
-                        this.doSearch("/api/search/substructure?type=uit&max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
-                    } else {
-                        this.doSearch("/api/search/substructure?type=vf&max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
-                    }
-
-
-                } else if (this.state.searchType == "similarity") {
-
-                    //console.log("detected similarity");
-                    //console.log(this.state.similarityThreshold);
-
-                    this.doSearch("/api/search/similarity?simThreshold=" + this.state.similarityThreshold + "&max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
-
-
-                } else {
-                    this.doSearch("/api/search/exact-structure?max-hits=" + this.state.searchHitsLimit + "&smiles=", encodeURIComponent(structureAsSmiles));
                 }
-
-            }
-            else {
-                //console.log("you need to submit a valid molecule!");
-                alert("Please submit a valid molecule!");
-                this.state.smilesCorrect = false;
-                this.state.searchSubmittedButIncorrect = true;
-                this.setState({
-                    searchSubmittedButIncorrect: true
-                });
+                else {
+                    //console.log("you need to submit a valid molecule!");
+                    alert("Please submit a valid molecule!");
+                    this.state.smilesCorrect = false;
+                    this.state.searchSubmittedButIncorrect = true;
+                    this.setState({
+                        searchSubmittedButIncorrect: true
+                    });
+                }
             }
         }else{
             //console.log("wait till the previous query returns or open a new tab!");
@@ -326,6 +340,8 @@ export default class StructureSearch extends React.Component {
 
 
     doSearch(path, searchString) {
+        console.log("do search called!");
+
         this.setState({searchSubmittedAndSent:true});
         restClient({
             method: "GET",
@@ -335,15 +351,24 @@ export default class StructureSearch extends React.Component {
                 this.setState({
                     ajaxIsLoaded: true,
                     ajaxResult: response.entity,
-                    searchSubmittedAndSent:false
+                    searchSubmittedAndSent:false,
+                    ajaxErrorStatus:""
                 });
             },
             (error) => {
-                this.setState({
-                    ajaxIsLoaded: true,
-                    ajaxError: error,
-                    searchSubmittedAndSent:false
-                });
+                if (!error.response) {
+                    // network error
+                    this.state.ajaxErrorStatus = 'network';
+                } else {
+                    this.setState({
+                        ajaxIsLoaded: true,
+                        ajaxError: error,
+                        searchSubmittedAndSent:false,
+                        ajaxErrorStatus:""
+                    });
+                }
+
+
             });
     }
 
@@ -358,28 +383,44 @@ export default class StructureSearch extends React.Component {
         let resultRow;
         let alertMessage;
 
+        console.log("before");
+        console.log(this.state);
+
         //console.log(ajaxResult);
 
         if (searchSubmitted) {
             if(smilesCorrect){
                 if (ajaxError) {
-                    resultRow =
-                        <>
-                        <Error/>
-                        </>;
-                    this.state.ajaxIsLoaded = false; //TODO verify here!
+                    if (this.state.ajaxErrorStatus === "") {
+
+                        resultRow =
+                            <>
+                                <Row ref={this.allChangeRef}>
+                                    <Error/>
+                                </Row>
+                            </>;
+                    }else{
+                        resultRow =
+                            <>
+                                <Row ref={this.allChangeRef}>
+                                    <NetworkError/>
+                                </Row>
+                            </>;
+                    }
+                    this.state.ajaxIsLoaded = false;
                     this.state.ajaxError = null;
+                    this.state.searchSubmitted=false;
 
                 } else if (!ajaxIsLoaded) {
                     resultRow =
                         <>
-                        <Row><h2>Search running</h2></Row>
-                        <Row className="justify-content-center" ref={this.allChangeRef}>
-                            <Spinner/>
-                            {searchType=="substructure" &&
-                            <p>Note: The substructure search might be long if the input molecule is small.</p>}
-                            {searchType=="similarity" && <p>Note: The similarity search can be long.</p>}
-                        </Row>
+                            <Row><h2>Search running</h2></Row>
+                            <Row className="justify-content-center" ref={this.allChangeRef}>
+                                <Spinner/>
+                                {searchType=="substructure" &&
+                                <p>Note: The substructure search might be long if the input molecule is small.</p>}
+                                {searchType=="similarity" && <p>Note: The similarity search can be long.</p>}
+                            </Row>
                         </>;
                 } else {
                     let npList = [...ajaxResult.naturalProducts];
@@ -405,10 +446,11 @@ export default class StructureSearch extends React.Component {
                     } else {
                         resultRow = <Row><p>There are no results that match your structure.</p></Row>;
                     }
-                    this.state.ajaxIsLoaded = false; //TODO verify here!
+                    this.state.ajaxIsLoaded = false;
                     this.state.resultIsRendered = true;
+                    this.state.searchSubmitted = false;
 
-                    //console.log(this.state);
+                    console.log(this.state);
                 }
             }
         }
@@ -419,6 +461,8 @@ export default class StructureSearch extends React.Component {
             alert("Warning! You need to draw or paste a molecular structure!");
             //alertMessage = <Alert variant="danger" > Warning! You need to draw or paste a molecular structure! </Alert>;
         }
+        console.log("after");
+        console.log(this.state);
 
         return (
             <Container>
@@ -573,23 +617,23 @@ export default class StructureSearch extends React.Component {
                         <Form>
                             <Form.Row>
                                 <Col>
-                                <h4 >Select Tanimoto similarity threshold (in %)</h4>
-                                <Form.Group controlId="tanimotoThreshold"  as={Row}>
-                                    <Col xs="11">
+                                    <h4 >Select Tanimoto similarity threshold (in %)</h4>
+                                    <Form.Group controlId="tanimotoThreshold"  as={Row}>
+                                        <Col xs="11">
 
 
-                                        <RangeSlider
-                                            value={this.state.similarityThreshold}
-                                            onChange={this.handleSimilarityThreshold}
-                                            tooltip='auto'
-                                        />
+                                            <RangeSlider
+                                                value={this.state.similarityThreshold}
+                                                onChange={this.handleSimilarityThreshold}
+                                                tooltip='auto'
+                                            />
 
-                                    </Col>
-                                    <Col xs="1">
-                                        <Form.Control value={this.state.similarityThreshold} onChange={this.handleSimilarityThreshold}/>
-                                    </Col>
+                                        </Col>
+                                        <Col xs="1">
+                                            <Form.Control value={this.state.similarityThreshold} onChange={this.handleSimilarityThreshold}/>
+                                        </Col>
 
-                                </Form.Group>
+                                    </Form.Group>
                                 </Col>
                             </Form.Row>
                         </Form>

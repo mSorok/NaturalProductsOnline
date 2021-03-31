@@ -12,13 +12,30 @@ export default class NaturalProductCardItem extends React.Component {
         const linkToCompoundPage = "/compound/coconut_id/" + this.props.naturalProduct.coconut_id;
         const structure = Utils.drawMoleculeBySmiles(this.props.naturalProduct.smiles);
 
+        //TODO either here (test for Tanimoto field), either create a Tanimoto card
+
+        var cardTitle = "";
+
+        if(this.props.naturalProduct.hasOwnProperty('tanimoto') && this.props.naturalProduct.tanimoto &&  this.props.naturalProduct.tanimoto>0 ){
+
+            var tanomotoScore =  Math.round((this.props.naturalProduct.tanimoto*100 + Number.EPSILON) * 100)/100;
+
+
+            cardTitle = <>
+                <Card.Link href={linkToCompoundPage} className="cardItemHeadline">{this.props.naturalProduct.coconut_id}&nbsp;&nbsp;</Card.Link>
+                <p style={{color: "#FC6B1E"}}>{tanomotoScore} %</p>
+            </>;
+        }else{
+            cardTitle = <Card.Link href={linkToCompoundPage} className="cardItemHeadline">{this.props.naturalProduct.coconut_id}</Card.Link>;
+        }
+
 
         return (
             <Card className="cardBrowserItem">
                 <Card.Link href={linkToCompoundPage} className="cardItemImg"><Card.Img variant="top" src={structure.toDataURL()} alt="🥥"/></Card.Link>
                 <Card.Body>
                     <Card.Title>
-                        <Card.Link href={linkToCompoundPage} className="cardItemHeadline">{this.props.naturalProduct.coconut_id}</Card.Link>
+                        {cardTitle}
                     </Card.Title>
                     <Card.Subtitle>{this.props.naturalProduct.name ? this.props.naturalProduct.name : "no name available"}</Card.Subtitle>
                     <Table>

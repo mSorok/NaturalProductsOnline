@@ -8,7 +8,7 @@ export default class Introduction extends React.Component {
         return (
             <Container>
                 <Row>
-                    <p>Natural Products Online is an open source project for Natural Products (NPs) storage, search and analysis. The present version hosts COCONUT, the
+                    <p style={{textAlign: "justify"}}>Natural Products Online is an open source project for Natural Products (NPs) storage, search and analysis. The present version hosts COCONUT, the
                     COlleCtion of Open Natural ProdUcTs, one of the biggest and best annotated resources for NPs available free of charge and without any restriction.</p>
                 </Row>
             </Container>

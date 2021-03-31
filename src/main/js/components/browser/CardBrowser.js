@@ -10,7 +10,8 @@ const React = require("react");
 export default class CardBrowser extends React.Component {
     render() {
         const cardRowSize = 4;
-        let naturalProducts = this.props.naturalProducts;
+        let naturalProducts = this.props.naturalProducts; //TODO test the type: if list - normal card, if map, it's a map/hashtable, it's a Tanimoto!
+        //TODO OR - add a field to each np, and if the tanimoto field is present, treat the card differently
         let emptyCardKey = 0;
         let cardRows = [];
 

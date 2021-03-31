@@ -129,7 +129,7 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
 
         try {
             return this.doSubstructureSearch(URLDecoder.decode(smiles.trim(), "UTF-8"), type, maxHits.toIntOrNull())
-        }catch (ex: Exception){
+        }catch (ex: Exception ){
 
             when(ex) {
                 is MongoCommandException, is OutOfMemoryError -> {
@@ -186,7 +186,7 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
     fun similaritySearch(@RequestParam("smiles") smiles: String , @RequestParam("max-hits") maxHits:String, @RequestParam("simThreshold") simThreshold:String): Map<String, Any> {
 
         var th: Int? = simThreshold.toIntOrNull()
-        th = th
+        //th = th
 
         try {
             return this.doSimilaritySearch(URLDecoder.decode(smiles.trim(), "UTF-8"), maxHits.toIntOrNull(), th)
@@ -206,6 +206,9 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
 
         }
     }
+
+
+
 
 
     /**
@@ -237,9 +240,100 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
 
 
     /**
+     * Search by mass
+     */
+    @RequestMapping("/search/molweight")
+    fun massSearch(@RequestParam("minMass") minMass:String, @RequestParam("maxMass") maxMass:String, @RequestParam("maxHits", required=false) maxHits:String ): Map<String, Any>{
+        var minM:Double? = minMass.toDoubleOrNull()
+        var maxM:Double? = maxMass.toDoubleOrNull()
+        var maxNP:Int? = maxHits.toIntOrNull()
+
+        try {
+            return this.doMassSearch(minM, maxM, maxNP)
+        }catch (ex: Exception){
+
+            when(ex) {
+                is MongoCommandException, is OutOfMemoryError -> {
+                    val other: List<UniqueNaturalProduct> = emptyList()
+                    return mapOf(
+                            "count" to 0,
+                            "naturalProducts" to  other
+                    )
+                }
+                else -> throw ex
+            }
+
+        }
+
+    }
+
+
+    /**
     *  ************************************************************************************************
      *  Search functions
      */
+
+    fun doMassSearch(minMass:Double?, maxMass:Double?, maxHits:Int?): Map<String, Any>{
+        println("do mass search")
+
+        var maxResults = 100
+
+        if(maxHits != null ){
+            maxResults = maxHits
+        }
+
+
+
+        if(minMass != null && maxMass != null){
+            println("both min and max")
+            var results = this.uniqueNaturalProductRepository.minMaxMolecularWeightSearch(minMass, maxMass, maxResults)
+            println(results.size)
+
+            println("returning")
+
+            return mapOf(
+                    "count" to results.size,
+                    "naturalProducts" to results
+            )
+        }else if(minMass != null && maxMass == null){
+            println("only min")
+            var results = this.uniqueNaturalProductRepository.minMolecularWeightSearch(minMass, maxResults)
+            println(results.size)
+
+            println("returning")
+
+            return mapOf(
+                    "count" to results.size,
+                    "naturalProducts" to results
+            )
+        }else if(minMass == null && maxMass != null){
+            println("only max")
+            var results = this.uniqueNaturalProductRepository.maxMolecularWeightSearch(maxMass, maxResults)
+            println(results.size)
+
+            println("returning")
+
+            return mapOf(
+                    "count" to results.size,
+                    "naturalProducts" to results
+            )
+        }else{
+            println("0")
+
+            println("returning nothing")
+
+            var results = arrayListOf<UniqueNaturalProduct>()
+
+            return mapOf(
+                    "count" to 0,
+                    "naturalProducts" to results
+            )
+        }
+
+
+
+
+    }
 
 
     fun doChemclassSearch(query: String): Map<String, Any>{
@@ -409,17 +503,19 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
                     //it was probably a name
 
 
-                    naturalProducts = this.uniqueNaturalProductRepository.findByName(query)
+                    //naturalProducts = this.uniqueNaturalProductRepository.findByName(query)
 
-                    if (naturalProducts == null || naturalProducts.isEmpty()) {
+                    //if (naturalProducts == null || naturalProducts.isEmpty()) {
                         var altQuery = query
                         if(excludeWords.containsMatchIn(query)){
                             altQuery=altQuery.replace("alpha-", "")
                             altQuery=altQuery.replace("beta-", "")
                         }
+                        altQuery = "\""+altQuery+"\""
+                        println(altQuery)
 
                         naturalProducts = this.uniqueNaturalProductRepository.fuzzyNameSearch(altQuery)
-                    }
+                    //}
                     determinedInputType = "name"
                 }
             }
@@ -444,21 +540,44 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
         else{
             //try to march by name
             println("apparently a name string")
-            naturalProducts = this.uniqueNaturalProductRepository.findByName(query)
 
-            if(naturalProducts == null || naturalProducts.isEmpty()){
+            //try {
+            //    naturalProducts = this.uniqueNaturalProductRepository.findByName(query)
+
+            //}catch (ex: Exception){
+
+            //    when(ex) {
+            //        is MongoCommandException, is OutOfMemoryError -> {
+            //            val other: List<UniqueNaturalProduct> = emptyList()
+            //            return mapOf(
+             //                   "originalQuery" to query,
+             //                   "count" to 0,
+             //                   "naturalProducts" to  other
+             //           )
+             //       }
+             //       else -> throw ex
+             //   }
+            //}
+
+
+            //if(naturalProducts == null || naturalProducts.isEmpty()){
                 var altQuery = query
                 if(excludeWords.containsMatchIn(query)){
                     altQuery=altQuery.replace("alpha-", "")
                     altQuery=altQuery.replace("beta-", "")
                 }
+                altQuery = "\""+altQuery+"\""
+                println(altQuery)
+
 
                 naturalProducts = this.uniqueNaturalProductRepository.fuzzyNameSearch(altQuery)
-            }
+            //}
             determinedInputType = "name"
         }
         println(determinedInputType)
         println("returning")
+
+
 
 
 
@@ -500,7 +619,7 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
 
             //TODO get the exact bitset also? for faster substructure search of the first element
 
-            println("found molecules with bits set")
+            println("found "+matchedList.size+" molecules with bits set")
             val pattern: Pattern
             // return a list of UNP:
             if(type=="default") {
@@ -606,8 +725,6 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
             maxResults = maxHitsSubmitted
         }
 
-        val hits = mutableListOf<UniqueNaturalProduct>()
-        var counter: Int = 0
 
         try {
             val queryAC: IAtomContainer = this.smilesParser.parseSmiles(smiles)
@@ -645,6 +762,7 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
             val matchedList = this.uniqueNaturalProductRepository.similaritySearch(requestedBits, queryPF, qmin, qmax, qLen, threshold, maxResults)
 
             //TODO redo a tanomoto here to be sure that the match is correct
+            println(matchedList[0].tanimoto)
 
             //hits.sortBy { it.heavy_atom_number }
             //val hitsToReturn = matchedList.subList(0, minOf(matchedList.size , maxResults))
