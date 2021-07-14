@@ -762,7 +762,7 @@ class ApiController(val uniqueNaturalProductRepository: UniqueNaturalProductRepo
             val matchedList = this.uniqueNaturalProductRepository.similaritySearch(requestedBits, queryPF, qmin, qmax, qLen, threshold, maxResults)
 
             //TODO redo a tanomoto here to be sure that the match is correct
-            println(matchedList[0].tanimoto)
+            //println(matchedList[0].tanimoto)
 
             //hits.sortBy { it.heavy_atom_number }
             //val hitsToReturn = matchedList.subList(0, minOf(matchedList.size , maxResults))

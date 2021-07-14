@@ -14,6 +14,7 @@ import KnownStereochemicalVariants from "./KnownStereochemicalVariants";
 import References from "./References";
 import Synonyms from "./Synonyms";
 import ChemClassification from "./ChemClassification";
+import PredictedActivity from "./PredictedActivity";
 import Organisms from "./Organisms";
 import Geography from "./Geography";
 
@@ -70,6 +71,7 @@ export default class NaturalProductCompoundCard extends React.Component {
                 "representations",
                 "synonyms",
                 "molecular_properties",
+                "predicted_activities",
                 "molecular_descriptors",
                 "known_stereochemical_variants",
                 "references",
@@ -105,25 +107,29 @@ export default class NaturalProductCompoundCard extends React.Component {
                             </Row>
                             <br/>
                             <Row id={compoundCardItems[4]} className="compoundCardRow">
+                                <PredictedActivity naturalProduct={naturalProduct}/>
+                            </Row>
+                            <br/>
+                            <Row id={compoundCardItems[5]} className="compoundCardRow">
                                 <MolecularDescriptors naturalProduct={naturalProduct}/>
                             </Row>
 
                             <br/>
-                            <Row id={compoundCardItems[5]} className="compoundCardRow">
+                            <Row id={compoundCardItems[6]} className="compoundCardRow">
                                 <KnownStereochemicalVariants naturalProduct={naturalProduct}/>
                             </Row>
 
                             <br/>
-                            <Row id={compoundCardItems[6]} className="compoundCardRow">
+                            <Row id={compoundCardItems[7]} className="compoundCardRow">
                                 <References naturalProduct={naturalProduct}/>
                             </Row>
                             <br/>
-                            <Row id={compoundCardItems[7]} className="compoundCardRow">
+                            <Row id={compoundCardItems[8]} className="compoundCardRow">
                                 <ChemClassification naturalProduct={naturalProduct}/>
                             </Row>
                             <br/>
 
-                            <Row id={compoundCardItems[8]} className="compoundCardRow">
+                            <Row id={compoundCardItems[9]} className="compoundCardRow">
                                 <CrossReferences naturalProduct={naturalProduct}/>
                             </Row>
                             <br/>

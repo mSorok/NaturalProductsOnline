@@ -20,16 +20,16 @@ docker-compose up -d
 
 docker exec -it coconut-mongo-db bash
 
-mongo --port 27018
-use COCONUT2020-07
+mongo --port 27022
+use COCONUT_2021_03
 db.dropDatabase()
 exit
 
-cd mongodata/COCONUT2020-07/COCONUT2020-07/
-mongorestore --port 27018 --db=COCONUT2020-07 --noIndexRestore .
+cd mongodata/COCONUT_2021_03/COCONUT_2021_03/
+mongorestore --port 27022 --db=COCONUT_2021_03 --noIndexRestore .
 
-mongo --port 27018
-use COCONUT2020-07
+mongo --port 27022
+use COCONUT_2021_03
 
  db.sourceNaturalProduct.createIndex( {source:1})
 
@@ -54,7 +54,7 @@ db.runCommand(
     indexes: [
         {
             key: {
-                synonyms:"text", name:"text", chemicalClass:"text", chemicalSubClass:"text", chemicalSuperClass:"text", directParentClassification:"text"
+                synonyms:"text", name:"text", chemicalClass:"text", chemicalSubClass:"text", chemicalSuperClass:"text", directParentClassification:"text", pass_bioactivity_searcheable:"text"
             },
             name: "superTextIndex",
 	    weights: { name:10, synonyms:5  }
@@ -70,6 +70,13 @@ db.runCommand(
 db.uniqueNaturalProduct.createIndex( {annotationLevel:1})
 
 db.uniqueNaturalProduct.createIndex( {npl_score:1})
+db.uniqueNaturalProduct.createIndex( {molecular_weight:1})
+db.uniqueNaturalProduct.createIndex( {fsp3:1})
+db.uniqueNaturalProduct.createIndex( {lipinskiRuleOf5Failures:1})
+db.uniqueNaturalProduct.createIndex( {heavy_atom_number:1})
+
+db.uniqueNaturalProduct.createIndex( {found_in_databases:1})
+
 
 db.uniqueNaturalProduct.createIndex( {coconut_id:1})
 db.uniqueNaturalProduct.createIndex( {fragmentsWithSugar:"hashed"})
@@ -88,8 +95,24 @@ db.uniqueNaturalProduct.createIndex( {chemicalSubClass: "hashed"})
 db.uniqueNaturalProduct.createIndex( {directParentClassification: "hashed"})
 
 
+
+
+db.uniqueNaturalProduct.createIndex( {contains_sugar:1})
+db.uniqueNaturalProduct.createIndex( {contains_ring_sugars:1})
+db.uniqueNaturalProduct.createIndex( {contains_linear_sugars:1})
+
+
+
 db.fragment.createIndex({signature:1})
 db.fragment.createIndex({signature:1, withsugar:-1})
+
+
+
+db.uniqueNaturalProduct.update({"coconut_id":"CNP0228556"}, { $set:{"name":"Caffein"}})
+db.uniqueNaturalProduct.update({"coconut_id":"CNP0298040"}, { $set:{"name":"Octacosane"}})
+db.uniqueNaturalProduct.update({"coconut_id":"CNP0173017"}, { $set:{"name":"Myriocin"}})
+
+
 
 exit
 exit

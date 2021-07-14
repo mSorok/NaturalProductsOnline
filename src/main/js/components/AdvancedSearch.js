@@ -829,7 +829,7 @@ export default class AdvancedSearch extends React.Component {
     handleLipinskiMin(e){
         this.state.lipinskiMin = e.target.value;
 
-        if( (this.state.lipinskiMin != "" && this.state.lipinskiMin != null) || (this.state.lipinskiMin != "" && this.state.lipinskiMin != null) ) {
+        if( (this.state.lipinskiMin != "" && this.state.lipinskiMin != null) || (this.state.lipinskiMax != "" && this.state.lipinskiMax != null) ) {
             this.state.lipinskiSubmitted = true;
 
         }else{
@@ -839,7 +839,7 @@ export default class AdvancedSearch extends React.Component {
     handleLipinskiMax(e){
         this.state.lipinskiMax = e.target.value;
 
-        if( (this.state.lipinskiMin != "" && this.state.lipinskiMin != null) || (this.state.lipinskiMin != "" && this.state.lipinskiMin != null) ) {
+        if( (this.state.lipinskiMin != "" && this.state.lipinskiMin != null) || (this.state.lipinskiMax != "" && this.state.lipinskiMax != null) ) {
             this.state.lipinskiSubmitted = true;
 
         }else{
@@ -1465,7 +1465,7 @@ export default class AdvancedSearch extends React.Component {
 
                         <Col>
                             <Form>
-                                <Form.Label>Fractional CSP3 (non-flatness of a molecule)</Form.Label>
+                                <Form.Label>Fractional FSP3 (non-flatness of a molecule)</Form.Label>
                                 <Form.Row>
                                     <Col>
                                         <Form.Control onChange={this.handleFsp3Min} type={"number"}/>
@@ -1558,7 +1558,7 @@ export default class AdvancedSearch extends React.Component {
                     <Form.Row>
                         <Col>
                             <Form onChange = {this.handleDBselect}>
-                            <SourcesList/>
+                                <SourcesList/>
                             </Form>
                         </Col>
 
@@ -1589,18 +1589,23 @@ export default class AdvancedSearch extends React.Component {
 
 
                 <Container>
-                    <Row>
-                        <Form>
-                            <Form.Group controlId="search-hits-limit">
-                                <br/>
-                                <Form.Control as="select" size="lg" name="control-hits-limit" onChange={this.handleSearchHitsLimit}  >
-                                    <option value="100">100</option>
-                                    <option value="250">250</option>
-                                    <option value="1000">1000</option>
-                                    <option value="10000">10000 (can be long)</option>
-                                </Form.Control>
-                            </Form.Group>
-                        </Form>
+                    <Row className="align-items-center">
+                        <Col md="auto" >
+                            Select maximal number of returned hits:
+                        </Col>
+                        <Col md="auto">
+                            <Form>
+                                <Form.Group controlId="search-hits-limit">
+                                    <br/>
+                                    <Form.Control as="select" size="lg" name="control-hits-limit" onChange={this.handleSearchHitsLimit}  >
+                                        <option value="100">100</option>
+                                        <option value="250">250</option>
+                                        <option value="1000">1000</option>
+                                        <option value="10000">10000 (can be long)</option>
+                                    </Form.Control>
+                                </Form.Group>
+                            </Form>
+                        </Col>
                     </Row>
 
                     {/*{searchSubmittedButIncorrect}*/}

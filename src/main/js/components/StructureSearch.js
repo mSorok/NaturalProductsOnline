@@ -200,8 +200,10 @@ export default class StructureSearch extends React.Component {
 
 
             // testing if SMILES is correct (prevents entering random stuff for searching)
-            if(! /^([^J][a-z0-9@+\-\[\]\(\)\\\/%=#$]{6,})$/ig.test(structureAsSmiles)){
-                alert("The molecule you pasted is not in a recognized structure format!")
+            if(! /^([^J][a-z0-9@+\-\[\]\(\)\\\/%=#$]{4,})$/ig.test(structureAsSmiles)){
+
+                //console.log(structureAsSmiles);
+                alert("The molecule you pasted is not in a recognized structure format!");
             }else {
 
 
@@ -644,7 +646,11 @@ export default class StructureSearch extends React.Component {
 
 
                 <Container>
-                    <Row>
+                    <Row className="align-items-center">
+                    <Col md="auto" >
+                        Select maximal number of returned hits:
+                    </Col>
+                    <Col md="auto">
                         <Form>
                             <Form.Group controlId="search-hits-limit">
                                 <br/>
@@ -656,6 +662,7 @@ export default class StructureSearch extends React.Component {
                                 </Form.Control>
                             </Form.Group>
                         </Form>
+                    </Col>
                     </Row>
 
                     {searchSubmittedButIncorrect}

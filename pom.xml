@@ -10,7 +10,7 @@
     </parent>
     <groupId>de.unijena.cheminf</groupId>
     <artifactId>naturalproductsonline</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.9</version>
     <name>NaturalProductsOnline</name>
     <description>Natural Products, open and online</description>
 

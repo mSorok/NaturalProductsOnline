@@ -160,6 +160,11 @@ public class UniqueNaturalProduct {
     public Double tanimoto; //only for similarity measure when doing similarity search - not a storage in the DB!!!
 
 
+    public ArrayList<ArrayList<String>> pass_bioactivity_predictions;
+    public ArrayList<String> pass_bioactivity_searcheable;
+
+
+
 
 
 
@@ -1033,5 +1038,37 @@ public class UniqueNaturalProduct {
 
     public void setDirectParentClassification(String directParentClassification) {
         this.directParentClassification = directParentClassification;
+    }
+
+    public HashSet getClean_xrefs() {
+        return clean_xrefs;
+    }
+
+    public void setClean_xrefs(HashSet clean_xrefs) {
+        this.clean_xrefs = clean_xrefs;
+    }
+
+    public ArrayList<ArrayList<String>> getPass_bioactivity_predictions() {
+        return pass_bioactivity_predictions;
+    }
+
+    public void setPass_bioactivity_predictions(ArrayList<ArrayList<String>> pass_bioactivity_predictions) {
+        this.pass_bioactivity_predictions = pass_bioactivity_predictions;
+    }
+
+    public ArrayList<String> getPass_bioactivity_searcheable() {
+        return pass_bioactivity_searcheable;
+    }
+
+    public void setPass_bioactivity_searcheable(ArrayList<String> pass_bioactivity_searcheable) {
+        this.pass_bioactivity_searcheable = pass_bioactivity_searcheable;
+    }
+
+    public Double getWeinerPathNumber() {
+        return weinerPathNumber;
+    }
+
+    public Double getWienerPolarityNumber() {
+        return wienerPolarityNumber;
     }
 }

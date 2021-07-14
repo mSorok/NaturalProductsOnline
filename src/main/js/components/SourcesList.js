@@ -23,6 +23,7 @@ export default class  SourcesList  extends React.Component {
                 <option value="afrodb">AfroDB</option>
                 <option value="afromalariadb">AfroMalariaDB</option>
                 <option value="analyticon_all_np">Analyticon NP set</option>
+                <option value="ayurveda">Ayurveda</option>
                 <option value="biofacquim">BIOFACQUIM</option>
                 <option value="bitterdb">BitterDB</option>
                 <option value="carotenoids">Carotenoids database</option>
@@ -30,7 +31,9 @@ export default class  SourcesList  extends React.Component {
                 <option value="chembl_np">ChEMBL NP set</option>
                 <option value="chemspidernp">ChemSpider NP set</option>
                 <option value="cmaup">CMAUP</option>
+                <option value="cmnpd">CMNPD</option>
                 <option value="conmednp">ConMedNP</option>
+                <option value="cyanometdb">CyanoMetDB</option>
                 <option value="drugbanknp">DrugBank NP set</option>
                 <option value="etmdb">ETM (Ethiopian Traditional Medicine)</option>
                 <option value="exposome-explorer">Exposome Explorer NP set</option>

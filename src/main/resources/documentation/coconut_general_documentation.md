@@ -2,8 +2,7 @@
 
 If you use data from COCONUT Online, appropriate citation enables readers to locate the original source of the work. 
 
-Cite as: Maria Sorokina, & Christoph Steinbeck. (2020). COCONUT: the COlleCtion of Open NatUral producTs. (Version 4) (Data set). Zenodo. http://doi.org/10.5281/zenodo.3778405
-
+Cite as:Sorokina, M., Merseburger, P., Rajan, K. et al. COCONUT online: Collection of Open Natural Products database. J Cheminform 13, 2 (2021). https://doi.org/10.1186/s13321-020-00478-9
 
 
 
@@ -115,8 +114,11 @@ The user should use the above-presented URL link by adjusting the following opti
 * max-hits represents the maximum number of natural products to be displayed.  
 
 
+#### Search by mass
 
-
+The user can also use the Api to search by molecular mass (in Da) of the compounds, precising the desired minimal, maximal or both, molecular masses and the maximum number of molecules to return.
+    
+    https://coconut.naturalproducts/net/api/search/molweight?minMass=800&maxMass=1000&maxHits=20
 
 ### Data organization of natural products
 
