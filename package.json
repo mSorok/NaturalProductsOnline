@@ -27,7 +27,7 @@
     "react-dom": "^16.13.1",
     "react-infinite-scroll-component": "^5.1.0",
     "react-markdown": "^4.3.1",
-    "react-native": "^0.63.2",
+    "react-native": "^0.64.1",
     "react-router-bootstrap": "^0.25.0",
     "react-router-dom": "^5.2.0",
     "react-showdown": "^2.1.0",
