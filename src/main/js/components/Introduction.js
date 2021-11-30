@@ -7,7 +7,7 @@ import {useState} from "react";
 
 const React = require("react");
 
-function AlertLatestNews() {
+function AlertLatestNewsMarch2021() {
     const [show, setShow] = useState(true);
 
     if (show) {
@@ -33,6 +33,36 @@ function AlertLatestNews() {
 
 }
 
+
+function AlertLatestNewsNovember2021() {
+    const [show, setShow] = useState(true);
+
+    if (show) {
+        return(
+            <Alert variant="info" show={show} onClick={() => setShow(false)} dismissible
+                   style={{right:"0",left:"0",top:"0",bottom:"0",marginRight:"auto",marginLeft:"auto",marginTop:"auto",marginBottom:"auto"}}
+            >
+                <Alert.Heading>Latest updates: November 2021</Alert.Heading>
+                <strong>What's new?</strong>
+                <ul>
+                    <li>Improved taxonomic provenance</li>
+                    <li>Imrpved bibliography and references management</li>
+                    <li>Data described in the collaborative research consortium ChemBioSys added</li>
+                </ul>
+            </Alert>
+        );
+
+    }else{
+        return(
+            <p></p>
+        );
+    }
+
+}
+
+
+
+
 export default class Introduction extends React.Component {
 
 
@@ -46,7 +76,7 @@ export default class Introduction extends React.Component {
                     <p style={{textAlign: "justify"}}>Natural Products Online is an open source project for Natural Products (NPs) storage, search and analysis. The present version hosts COCONUT, the
                     COlleCtion of Open Natural ProdUcTs, one of the biggest and best annotated resources for NPs available free of charge and without any restriction.</p>
 
-                    {/*<AlertLatestNews/>*/}
+                    {<AlertLatestNewsNovember2021/>}
 
                 </Row>
             </Container>

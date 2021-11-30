@@ -35,7 +35,7 @@ export default class Download extends React.Component {
                 </Row>
                 <Row>
                     <Col>
-                        <i>COCONUT version from March 2020</i>
+                        <i>COCONUT version from November 2021</i>
                     </Col>
                 </Row>
 
