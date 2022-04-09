@@ -1439,7 +1439,7 @@ export default class AdvancedSearch extends React.Component {
                     <Row>
                         <Col>
                             <Form>
-                                <Form.Label>AlpgP</Form.Label>
+                                <Form.Label>AlogP</Form.Label>
                                 <Form.Row>
                                     <Col>
                                         <Form.Control onChange={this.handleAlogpMin} type={"number"}/>
